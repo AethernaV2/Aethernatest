@@ -762,4 +762,3 @@
         go(location.href, { push: false });
     });
 })();
-
