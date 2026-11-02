@@ -133,19 +133,10 @@
     if (!$('dock')) document.body.insertAdjacentHTML('beforeend', '<nav id="dock" aria-label="Navegación principal"><div id="dock-slots" class="dk-bar"></div></nav>');
     renderNav(pageKey(location));
 
-    // La barra aparece al bajar y se esconde al subir (siempre visible arriba del todo o si navegas con el teclado)
+    // Barra de habilidades: buscar y teclas 1-8
     (function () {
         const dock = $('dock'), wide = matchMedia('(min-width: 1024px)');
-        let lastY = window.scrollY;
-        window.addEventListener('scroll', () => {
-            const y = window.scrollY, dy = y - lastY;
-            if (y < 80 || dy > 6) dock.classList.remove('dk-hide');
-            else if (dy < -6) dock.classList.add('dk-hide');
-            if (Math.abs(dy) > 6 || y < 80) lastY = y;
-        }, { passive: true });
-        dock.addEventListener('focusin', () => dock.classList.remove('dk-hide'));
         dock.addEventListener('click', e => { if (e.target.closest('#dock-search')) { const b = $('search-btn'); if (b) b.click(); } });
-        window.addEventListener('aetherna:navigate', () => dock.classList.remove('dk-hide'));
         // Teclas 1-8: ir a cada sección
         window.addEventListener('keydown', e => {
             if (!wide.matches || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
@@ -771,3 +762,4 @@
         go(location.href, { push: false });
     });
 })();
+
