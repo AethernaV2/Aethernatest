@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
@@ -24,7 +25,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
 
     <!-- Estilos comunes + estilos propios de esta página + Tailwind compilado (ver LEEME.md) -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=3">
     <style id="page-style">
         .separator-line {
             display: flex;
@@ -117,6 +118,7 @@
         .home-news-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
         .home-news-media svg { position: relative; z-index: 2; transition: transform .35s cubic-bezier(.2,.8,.2,1), filter .35s; filter: drop-shadow(0 0 10px rgba(157,108,240,.5)); }
         .gold-card:hover .home-news-media svg { transform: scale(1.12); filter: drop-shadow(0 0 16px rgba(240,215,158,.7)); }
+        @media (min-width: 768px) { .home-news:not(.home-news-sm) .home-news-media { aspect-ratio: 16 / 9; min-height: 0; } }
         .home-news-more { display: grid; grid-template-columns: 1fr; gap: 1.5rem; max-width: 56rem; margin: 1.5rem auto 0; }
         @media (min-width: 768px) { .home-news-more { grid-template-columns: 1fr 1fr; } }
         .home-news-sm { grid-template-columns: 1fr; margin: 0; }
@@ -124,27 +126,50 @@
         .home-news-meta { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #B9A98A; }
         .home-news-tag { padding: .1rem .55rem; border: 1px solid rgba(217,180,106,.4); color: #D9B46A; }
 
-        /* Portada: título abajo a la izquierda en escritorio (encima de la barra de navegación), centrado en móvil */
+        /* Portada: texto a la izquierda y emblema a la derecha en escritorio; centrado en móvil */
         .home-hero { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 7rem 1rem 4rem; }
         .home-hero__in { max-width: 40rem; }
+        .home-hero__emblem { display: none; }
         .home-hero h1 { margin: 0 0 .9rem; font-family: 'Cinzel Decorative', serif; font-weight: 900; font-size: clamp(2.4rem, 8vw, 5.2rem); line-height: 1; letter-spacing: .05em;
             background: linear-gradient(180deg,#FFF2CF 8%,#F0D79E 48%,#C99A4A 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
             filter: drop-shadow(0 4px 22px rgba(0,0,0,.7)) drop-shadow(0 0 20px rgba(157,108,240,.4)); }
+        .home-hero h1 .v2 { font-size: .5em; letter-spacing: .08em; margin-left: .25em; background: linear-gradient(180deg,#E4D3FF,#9D6CF0); -webkit-background-clip: text; background-clip: text; }
         .home-hero__tag { margin: 0 0 1.25rem; display: flex; align-items: center; gap: 1rem; justify-content: center; font: 700 .8rem 'Cinzel', serif; letter-spacing: .35em; text-transform: uppercase; color: #D9B46A; }
         .home-hero__tag::before, .home-hero__tag::after { content: ""; height: 1px; width: 3rem; background: linear-gradient(90deg, transparent, #D9B46A); }
         .home-hero__tag::after { transform: scaleX(-1); }
         .home-hero__quote { margin: 0 0 2rem; font: italic 400 clamp(1.1rem,2.4vw,1.35rem)/1.6 'EB Garamond', serif; color: #F6E2B3; text-shadow: 0 2px 14px rgba(0,0,0,.8); }
         .home-hero__cta { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
-        .home-hero__cta a { padding: 1rem 1.75rem; font-size: .75rem; line-height: 1; }
+        .home-hero__cta a { padding: 1rem 1.75rem; font-size: .75rem; line-height: 1; background: rgba(11,8,36,.88); border: 1px solid rgba(217,180,106,.7); box-shadow: inset 0 0 0 2px rgba(90,74,138,.3); }
+        .home-hero__cta a.btn-primary-aetherna { background: linear-gradient(135deg,#4a2a9a,#1b1442); border-color: #F0D79E; }
         .home-hero__more { margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: .25rem; color: rgba(217,180,106,.7); animation: bounce 1s infinite; }
+        @keyframes emblem-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        @keyframes ring-spin { to { transform: rotate(360deg); } }
         @media (min-width: 1024px) {
-            .home-hero { justify-content: flex-end; align-items: flex-start; text-align: left; padding: 7rem clamp(1.5rem,5vw,4rem) 9rem; }
-            .home-hero h1 { font-size: clamp(2.4rem, 6.2vw, 5.2rem); white-space: nowrap; }
+            .home-hero { flex-direction: row; justify-content: space-between; text-align: left; padding: 8rem clamp(1.5rem,5vw,4rem) 4rem; gap: 3rem; }
+            .home-hero h1 { font-size: clamp(2.4rem, 6vw, 5rem); white-space: nowrap; }
             .home-hero__tag { justify-content: flex-start; }
             .home-hero__tag::before { display: none; }
             .home-hero__cta { justify-content: flex-start; }
             .home-hero__more { display: none; }
+            .home-hero__emblem { display: block; position: relative; flex: 0 0 auto; width: clamp(280px, 30vw, 440px); aspect-ratio: 1; margin-right: clamp(0rem, 3vw, 3rem); }
+            .home-hero__emblem img { position: absolute; inset: 14%; width: 72%; height: 72%; object-fit: contain; animation: emblem-float 6s ease-in-out infinite; filter: drop-shadow(0 0 30px rgba(157,108,240,.6)) drop-shadow(0 12px 24px rgba(0,0,0,.6)); }
+            .home-hero__emblem::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(217,180,106,.45);
+                background: radial-gradient(circle, rgba(157,108,240,.28), transparent 68%); }
+            .home-hero__emblem::after { content: ""; position: absolute; inset: 6%; border-radius: 50%; border: 1px dashed rgba(217,180,106,.5); animation: ring-spin 60s linear infinite; }
         }
+        @media (prefers-reduced-motion: reduce) { .home-hero__emblem img, .home-hero__emblem::after { animation: none; } }
+        /* Discord y pie */
+        .discord-panel { max-width: 46rem; margin: 0 auto; padding: 3rem 1.5rem; text-align: center;
+            background: radial-gradient(120% 140% at 50% 0%, rgba(157,108,240,.22), rgba(14,11,38,.9) 62%); border-color: rgba(217,180,106,.5); }
+        @media (min-width: 640px) { .discord-panel { padding: 3.5rem 3rem; } }
+        .site-foot { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 2.5rem 1rem 3rem; text-align: center;
+            background: linear-gradient(180deg, transparent, rgba(7,5,26,.75)); }
+        .site-foot::before { content: ""; width: min(24rem, 70%); height: 1px; background: linear-gradient(90deg, transparent, rgba(217,180,106,.6), transparent); margin-bottom: .5rem; }
+        .site-foot img { opacity: .9; }
+        .site-foot nav { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem 1.75rem; font: 600 .7rem 'Cinzel', serif; letter-spacing: .2em; text-transform: uppercase; }
+        .site-foot nav a { color: #D9B46A; transition: color .2s; }
+        .site-foot nav a:hover, .site-foot nav a:focus-visible { color: #FFF2CF; }
+        .site-foot p { margin: 0; font: 400 .95rem 'EB Garamond', serif; color: #B9A98A; }
     </style>
     <link rel="stylesheet" href="tailwind.css">
 </head>
@@ -158,7 +183,7 @@
     <!-- Hero Principal -->
     <section id="inicio" class="home-hero">
         <div class="home-hero__in reveal active">
-            <h1>AETHERNA V2</h1>
+            <h1>AETHERNA <span class="v2">V2</span></h1>
             <p class="home-hero__tag">Códice de rol d20</p>
             <p class="home-hero__quote">&ldquo;Un mundo virgen creado de las cenizas del cosmos, donde los mortales y las leyendas se entrelazan al calor de la hoguera.&rdquo;</p>
             <div class="home-hero__cta">
@@ -166,6 +191,7 @@
                 <a href="#discord" class="btn-normal gold-btn">Comunidad Discord</a>
             </div>
         </div>
+        <div class="home-hero__emblem" aria-hidden="true"><img src="fotos/Logo.png" alt="" width="300" height="300"></div>
         <a href="#origen" class="home-hero__more" aria-label="Continuar">
             <span class="font-cinzel text-[9px] tracking-[0.3em] uppercase">Continuar</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
@@ -312,11 +338,10 @@
     </section>
 
     <!-- Discord CTA -->
-    <section id="discord" class="py-24 px-4 relative z-10 border-t border-aetherna-goldMain/20 bg-aetherna-bgSec">
-        <div class="max-w-4xl mx-auto text-center reveal">
-            <h2 class="font-title-deco text-2xl md:text-3xl text-aetherna-goldLight mb-6 tracking-wide">
-                ¿Listo para pertenecer al nuevo mundo?
-            </h2>
+    <section id="discord" class="py-24 px-4 relative z-10">
+        <div class="discord-panel frame-panel reveal">
+            <h2 class="font-title-deco text-2xl md:text-3xl text-aetherna-goldLight mb-4 tracking-wide">¿Listo para pertenecer al nuevo mundo?</h2>
+            <p class="font-garamond text-aetherna-textSoft text-lg mb-8">Charla con otros jugadores, comparte tus partidas y entérate antes que nadie de las novedades del Códice.</p>
             <a href="https://discord.gg/gWMFjzKaPe" target="_blank" rel="noopener noreferrer"
                class="btn-primary-aetherna gold-btn inline-flex items-center gap-3 px-10 py-4 text-xs tracking-[0.25em]">
                 <span>Unirse a Discord</span>
@@ -325,15 +350,16 @@
     </section>
 
     <!-- Footer -->
-
-    <footer class="py-8 px-4 border-t border-aetherna-goldMain/15 text-center text-xs text-aetherna-textMuted relative z-10">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 font-garamond">
-            <div>&copy; Aetherna V2 &bull; Códice de Fantasía Oscura</div>
-        </div>
+    <footer class="site-foot relative z-10">
+        <img src="fotos/Logo.png" alt="" width="36" height="36" loading="lazy">
+        <nav aria-label="Secciones">
+            <a href="lore.html">Lore</a><a href="razas.html">Razas</a><a href="clases.html">Clases</a><a href="oficios.html">Oficios</a><a href="manual.html">Manual</a><a href="noticias.html">Noticias</a>
+        </nav>
+        <p>&copy; Aetherna V2 &bull; Códice de Fantasía Oscura</p>
     </footer>
     </div>
 
-    <script src="site.js"></script>
+    <script src="site.js?v=3"></script>
     <script data-page>
         (function () {
             // ---- Selección al azar: cada visita a la portada enseña otras razas y otras clases ----
