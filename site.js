@@ -40,9 +40,9 @@
     const NAV = [
         ['inicio',   'Inicio',   './'],
         ['lore',     'Lore',     'lore.html'],
+        ['epoca',    'Época',    'epoca.html'],
         ['razas',    'Razas',    'razas.html'],
         ['clases',   'Clases',   'clases.html'],
-        ['epoca',    'Época',    'epoca.html'],
         ['oficios',  'Oficios',  'oficios.html'],
         ['manual',   'Manual',   'manual.html'],
         ['noticias', 'Noticias', 'noticias.html']
@@ -762,3 +762,4 @@
         go(location.href, { push: false });
     });
 })();
+
