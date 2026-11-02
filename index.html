@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetherna V2 · Códice de Fantasía Oscura</title>
+    <meta name="description" content="Códice de Aetherna V2: lore, razas, clases y las épocas de Aetherna, un mundo de fantasía oscura.">
+    <meta name="theme-color" content="#07051A">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Aetherna V2">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:title" content="Aetherna V2 · Códice de Fantasía Oscura">
+    <meta property="og:description" content="Códice de Aetherna V2: lore, razas, clases y las épocas de Aetherna, un mundo de fantasía oscura.">
+    <meta property="og:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <meta property="og:url" content="https://aetherna-cyan.vercel.app/">
+    <link rel="canonical" href="https://aetherna-cyan.vercel.app/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <link rel="icon" type="image/png" href="fotos/Logo.png">
+
+    <!-- Google Fonts: Cinzel Decorative, Cinzel & EB Garamond -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+    <!-- Estilos comunes + estilos propios de esta página + Tailwind compilado (ver LEEME.md) -->
+    <link rel="stylesheet" href="styles.css">
+    <style id="page-style">
+        .separator-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            margin: 2.5rem 0;
+        }
+        .separator-line::before, .separator-line::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(217,180,106,.4), transparent);
+        }
+        .separator-diamond {
+            color: #D9B46A;
+            padding: 0 1rem;
+            font-size: 12px;
+        }
+        .btn-primary-aetherna {
+            background: linear-gradient(135deg, #5A2BA8 0%, #2B1263 100%);
+            border: 1px solid #D9B46A;
+            box-shadow: inset 0 0 0 1px #D9B46A, 0 0 15px rgba(120,70,200,.35);
+            border-radius: 0px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: #F6E2B3;
+            transition: all 0.3s ease;
+        }
+        .btn-primary-aetherna:hover {
+            box-shadow: inset 0 0 0 1px #FFF2CF, 0 0 25px rgba(157,108,240,.5);
+            color: #FFF2CF;
+        }
+        .unreadable-interior {
+            filter: blur(12px);
+            opacity: 0.35;
+            user-select: none;
+            pointer-events: none;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+        }
+
+        /* Efecto dorado al pasar el ratón (tarjetas y botones), igual que en Razas y Clases */
+        .gold-card { overflow: hidden; transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .35s, opacity .7s cubic-bezier(0.16, 1, 0.3, 1); }
+        .gold-card > * { position: relative; z-index: 2; }
+        .gold-card::before { content: ""; position: absolute; inset: 0; z-index: 1; opacity: 0; pointer-events: none; transition: opacity .35s;
+            background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(157,108,240,.28), rgba(217,180,106,.10) 45%, transparent 70%); }
+        .gold-card::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%; z-index: 1; pointer-events: none;
+            background: linear-gradient(100deg, transparent, rgba(255,242,207,.13), transparent); transform: skewX(-18deg); }
+        .gold-card h3 { transition: color .3s, text-shadow .3s, letter-spacing .35s; }
+        .gold-card:hover { transform: translateY(-7px); border-color: rgba(217,180,106,.85);
+            box-shadow: 0 16px 34px rgba(0,0,0,.55), 0 0 26px rgba(157,108,240,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
+        .gold-card:hover::before { opacity: 1; }
+        .gold-card:hover::after { left: 130%; transition: left .8s ease; }
+        .gold-card:hover h3 { color: #FFF2CF; text-shadow: 0 0 14px rgba(196,160,255,.55); letter-spacing: .04em; }
+        .gold-btn { position: relative; overflow: hidden; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s, color .3s; }
+        .gold-btn::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%; pointer-events: none;
+            background: linear-gradient(100deg, transparent, rgba(255,242,207,.28), transparent); transform: skewX(-18deg); }
+        .gold-btn:hover, .gold-btn:focus-visible { transform: translateY(-3px); border-color: #F0D79E; color: #FFF2CF;
+            box-shadow: 0 10px 24px rgba(0,0,0,.5), 0 0 24px rgba(217,180,106,.45), inset 0 0 0 1px rgba(240,215,158,.65); }
+        .gold-btn:hover::after { left: 130%; transition: left .7s ease; }
+        @media (prefers-reduced-motion: reduce) { .gold-card, .gold-card *, .gold-btn { transition: none !important; } .gold-card:hover, .gold-btn:hover { transform: none; } .gold-card::after, .gold-btn::after { display: none; } }
+
+        /* Oficios en portada: si falta la ilustración (fotos/<oficio>.webp) la tarjeta enseña el nombre y se ve siempre */
+        .of-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+        .emblem-card.no-emblem .of-name { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; margin-bottom: .5rem; }
+        .frame-panel.emblem-card.emblem-reveal.no-emblem { background-color: rgba(14, 11, 38, 0.86); border-color: rgba(217,180,106,.22); box-shadow: inset 0 0 0 3px rgba(90, 74, 138, 0.3); }
+        .frame-panel.emblem-card.emblem-reveal.no-emblem > :not(.emblem-stage) { opacity: 1; transform: none; }
+
+        /* Noticia destacada de la portada */
+        .home-news { display: grid; grid-template-columns: 1fr; max-width: 56rem; margin: 0 auto; }
+        @media (min-width: 768px) { .home-news { grid-template-columns: 1.1fr 1fr; } }
+        .home-news-media { position: relative; display: flex; align-items: center; justify-content: center; min-height: 200px; overflow: hidden;
+            background: radial-gradient(120% 120% at 30% 20%, #44207F 0%, #151034 60%, #0B0824 100%); border-bottom: 1px solid rgba(217,180,106,.25); }
+        @media (min-width: 768px) { .home-news-media { border-bottom: 0; border-right: 1px solid rgba(217,180,106,.25); } }
+        .home-news-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .home-news-media svg { position: relative; z-index: 2; transition: transform .35s cubic-bezier(.2,.8,.2,1), filter .35s; filter: drop-shadow(0 0 10px rgba(157,108,240,.5)); }
+        .gold-card:hover .home-news-media svg { transform: scale(1.12); filter: drop-shadow(0 0 16px rgba(240,215,158,.7)); }
+        .home-news-more { display: grid; grid-template-columns: 1fr; gap: 1.5rem; max-width: 56rem; margin: 1.5rem auto 0; }
+        @media (min-width: 768px) { .home-news-more { grid-template-columns: 1fr 1fr; } }
+        .home-news-sm { grid-template-columns: 1fr; margin: 0; }
+        .home-news-sm .home-news-media { min-height: 140px; border-right: 0; border-bottom: 1px solid rgba(217,180,106,.25); }
+        .home-news-meta { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #B9A98A; }
+        .home-news-tag { padding: .1rem .55rem; border: 1px solid rgba(217,180,106,.4); color: #D9B46A; }
+
+        /* Portada: título abajo a la izquierda en escritorio (encima de la barra de navegación), centrado en móvil */
+        .home-hero { position: relative; z-index: 10; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 7rem 1rem 4rem; }
+        .home-hero__in { max-width: 40rem; }
+        .home-hero h1 { margin: 0 0 .9rem; font-family: 'Cinzel Decorative', serif; font-weight: 900; font-size: clamp(2.4rem, 8vw, 5.2rem); line-height: 1; letter-spacing: .05em;
+            background: linear-gradient(180deg,#FFF2CF 8%,#F0D79E 48%,#C99A4A 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+            filter: drop-shadow(0 4px 22px rgba(0,0,0,.7)) drop-shadow(0 0 20px rgba(157,108,240,.4)); }
+        .home-hero__tag { margin: 0 0 1.25rem; display: flex; align-items: center; gap: 1rem; justify-content: center; font: 700 .8rem 'Cinzel', serif; letter-spacing: .35em; text-transform: uppercase; color: #D9B46A; }
+        .home-hero__tag::before, .home-hero__tag::after { content: ""; height: 1px; width: 3rem; background: linear-gradient(90deg, transparent, #D9B46A); }
+        .home-hero__tag::after { transform: scaleX(-1); }
+        .home-hero__quote { margin: 0 0 2rem; font: italic 400 clamp(1.1rem,2.4vw,1.35rem)/1.6 'EB Garamond', serif; color: #F6E2B3; text-shadow: 0 2px 14px rgba(0,0,0,.8); }
+        .home-hero__cta { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+        .home-hero__cta a { padding: 1rem 1.75rem; font-size: .75rem; line-height: 1; }
+        .home-hero__more { margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: .25rem; color: rgba(217,180,106,.7); animation: bounce 1s infinite; }
+        @media (min-width: 1024px) {
+            .home-hero { justify-content: flex-end; align-items: flex-start; text-align: left; padding: 7rem clamp(1.5rem,5vw,4rem) 9rem; }
+            .home-hero h1 { font-size: clamp(2.4rem, 6.2vw, 5.2rem); white-space: nowrap; }
+            .home-hero__tag { justify-content: flex-start; }
+            .home-hero__tag::before { display: none; }
+            .home-hero__cta { justify-content: flex-start; }
+            .home-hero__more { display: none; }
+        }
+    </style>
+    <link rel="stylesheet" href="tailwind.css">
+</head>
+<body class="relative selection:bg-aetherna-goldMain selection:text-aetherna-bgMain">
+    <!-- Fondo cósmico + brasas (los anima site.js) -->
+    <canvas id="cosmos-bg" width="128" height="72" aria-hidden="true"></canvas>
+    <canvas id="cosmos-stars" aria-hidden="true"></canvas>
+    <canvas id="ember-canvas" aria-hidden="true"></canvas>
+
+    <div id="page-root">
+    <!-- Hero Principal -->
+    <section id="inicio" class="home-hero">
+        <div class="home-hero__in reveal active">
+            <h1>AETHERNA V2</h1>
+            <p class="home-hero__tag">Códice de rol d20</p>
+            <p class="home-hero__quote">&ldquo;Un mundo virgen creado de las cenizas del cosmos, donde los mortales y las leyendas se entrelazan al calor de la hoguera.&rdquo;</p>
+            <div class="home-hero__cta">
+                <a href="lore.html" class="btn-primary-aetherna gold-btn">Explorar Lore</a>
+                <a href="#discord" class="btn-normal gold-btn">Comunidad Discord</a>
+            </div>
+        </div>
+        <a href="#origen" class="home-hero__more" aria-label="Continuar">
+            <span class="font-cinzel text-[9px] tracking-[0.3em] uppercase">Continuar</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        </a>
+    </section>
+
+    <!-- Separador con Rombo -->
+    <div class="separator-line max-w-4xl mx-auto px-4 z-10 relative reveal">
+        <span class="separator-diamond font-cinzel">◆</span>
+    </div>
+
+    <!-- Lore (Resumen en Portada) -->
+    <section id="origen" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">CRÓNICAS ASTRALES</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">EL ORIGEN DE LA PENUMBRA</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 stagger-group">
+            <div class="reveal frame-panel gold-card p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-10 h-10 bg-aetherna-field border border-aetherna-goldMain/30 text-aetherna-goldMain flex items-center justify-center mb-6 font-cinzel text-sm">I</div>
+                    <h3 class="font-cinzel text-lg text-aetherna-goldLight font-bold mb-3 tracking-wide">El Mundo que se Perdió</h3>
+                    <p class="font-garamond text-aetherna-textNormal text-base leading-relaxed mb-6">Una guerra divina eterna terminó en un estallido que destruyó el único suelo habitable del cosmos.</p>
+                </div>
+                <a href="lore.html" class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-[0.2em] flex items-center gap-2 hover:text-aetherna-goldHover">Leer Más →</a>
+            </div>
+
+            <div class="reveal frame-panel gold-card p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-10 h-10 bg-aetherna-field border border-aetherna-goldMain/30 text-aetherna-goldMain flex items-center justify-center mb-6 font-cinzel text-sm">II</div>
+                    <h3 class="font-cinzel text-lg text-aetherna-goldLight font-bold mb-3 tracking-wide">El Mundo Nuevo</h3>
+                    <p class="font-garamond text-aetherna-textNormal text-base leading-relaxed mb-6">Los dioses crearon nuevas razas y se retiraron a sus planos, dejando un mundo virgen sin su influencia.</p>
+                </div>
+                <a href="lore.html" class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-[0.2em] flex items-center gap-2 hover:text-aetherna-goldHover">Leer Más →</a>
+            </div>
+
+            <div class="reveal frame-panel gold-card p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-10 h-10 bg-aetherna-field border border-aetherna-goldMain/30 text-aetherna-goldMain flex items-center justify-center mb-6 font-cinzel text-sm">III</div>
+                    <h3 class="font-cinzel text-lg text-aetherna-goldLight font-bold mb-3 tracking-wide">La Nada</h3>
+                    <p class="font-garamond text-aetherna-textNormal text-base leading-relaxed mb-6">Una niebla blanca silenciosa que devora el suelo, el sonido y la existencia allá por donde pasa.</p>
+                </div>
+                <a href="lore.html" class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-[0.2em] flex items-center gap-2 hover:text-aetherna-goldHover">Leer Más →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Razas -->
+    <section id="razas" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">LINAJES DEL FIRMAMENTO</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">RAZAS PRINCIPALES</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+
+        <div id="razas-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger-group">
+            <a href="razas.html#humano" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Humano</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Versatilidad incansable</p>
+            </a>
+            <a href="razas.html#elfo" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Elfo</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Elegancia milenaria y arquería</p>
+            </a>
+            <a href="razas.html#enanos" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Enanos</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Maestros de la piedra y forja</p>
+            </a>
+            <a href="razas.html#infernal" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Infernal</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Parias con cornamentas</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Clases -->
+    <section id="clases" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">DISCIPLINAS DE COMBATE</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">CLASES DISPONIBLES</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+
+        <div id="clases-grid" class="grid md:grid-cols-3 gap-x-8 gap-y-28 pt-20 stagger-group">
+            <a href="clases.html#luchador" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/luchador.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <h3 class="sr-only">Luchador</h3>
+                <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">Defensor Marcial</p>
+                <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
+            </a>
+            <a href="clases.html#hechicero" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/hechicero.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <h3 class="sr-only">Hechicero</h3>
+                <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">Artillería de Magia Innata</p>
+                <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
+            </a>
+            <a href="clases.html#picaro" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/picaro.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <h3 class="sr-only">Pícaro</h3>
+                <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">Asesino de un solo objetivo</p>
+                <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Oficios -->
+    <section id="oficios" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">ARTES Y SUSTENTO</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">OFICIOS DE AETHERNA</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+
+        <div id="oficios-grid" class="grid md:grid-cols-3 gap-x-8 gap-y-28 pt-20 stagger-group"></div>
+    </section>
+
+    <!-- Noticias -->
+    <section id="noticias" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">NOVEDADES DEL CÓDICE</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">ÚLTIMOS ANUNCIOS</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+
+        <div class="stagger-group" id="news-home">
+            <a href="noticias.html#teaser-aetherna-v2" class="reveal frame-panel gold-card home-news">
+                <span class="home-news-media">
+                    <img src="fotos/noticia-teaser-aetherna-v2.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+                    <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="rgba(11,8,36,.55)" stroke="#D9B46A" stroke-width="2"/><path d="M26 20l20 12-20 12z" fill="#F0D79E"/></svg>
+                </span>
+                <span class="block p-6 sm:p-8">
+                    <span class="home-news-meta"><span class="home-news-tag">Teaser</span><time datetime="2026-10-28">28 de octubre de 2026</time></span>
+                    <h3 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight mb-2">Teaser de Aetherna V2</h3>
+                    <span class="font-garamond text-aetherna-textNormal text-base block leading-relaxed">El Códice se abre al mundo: contempla el teaser oficial de Aetherna V2.</span>
+                    <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Ver el teaser &rarr;</span>
+                </span>
+            </a>
+        </div>
+        <div class="text-center mt-10 reveal">
+            <a href="noticias.html" class="gold-btn btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs font-cinzel">Ver todas las noticias</a>
+        </div>
+    </section>
+
+    <!-- Discord CTA -->
+    <section id="discord" class="py-24 px-4 relative z-10 border-t border-aetherna-goldMain/20 bg-aetherna-bgSec">
+        <div class="max-w-4xl mx-auto text-center reveal">
+            <h2 class="font-title-deco text-2xl md:text-3xl text-aetherna-goldLight mb-6 tracking-wide">
+                ¿Listo para pertenecer al nuevo mundo?
+            </h2>
+            <a href="https://discord.gg/gWMFjzKaPe" target="_blank" rel="noopener noreferrer"
+               class="btn-primary-aetherna gold-btn inline-flex items-center gap-3 px-10 py-4 text-xs tracking-[0.25em]">
+                <span>Unirse a Discord</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+
+    <footer class="py-8 px-4 border-t border-aetherna-goldMain/15 text-center text-xs text-aetherna-textMuted relative z-10">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 font-garamond">
+            <div>&copy; Aetherna V2 &bull; Códice de Fantasía Oscura</div>
+        </div>
+    </footer>
+    </div>
+
+    <script src="site.js"></script>
+    <script data-page>
+        (function () {
+            // ---- Selección al azar: cada visita a la portada enseña otras razas y otras clases ----
+            // Para añadir una raza o clase nueva a este sorteo, añádela a su lista (id = el del enlace: razas.html#id / clases.html#id).
+            // Para cambiar cuántas salen, cambia el número de cada pintar(...). Los oficios (oficios.html#id) funcionan igual.
+            const RAZAS = [{"id": "engendro", "name": "Engendro", "tag": "Formas libres y exóticas"}, {"id": "mecarionte", "name": "Mecarionte", "tag": "Carne y metal antiguo"}, {"id": "bestia", "name": "Bestia", "tag": "Híbridos salvajes"}, {"id": "abisal", "name": "Abisal", "tag": "Tentáculos y ojos insondables"}, {"id": "profundos", "name": "Profundos", "tag": "Señores de las mareas"}, {"id": "celestial", "name": "Celestial", "tag": "Esencia de luz y sabiduría"}, {"id": "trasgoide", "name": "Trasgoide", "tag": "Fuerza bruta y robustez"}, {"id": "enanos", "name": "Enanos", "tag": "Maestros de la piedra y forja"}, {"id": "infernal", "name": "Infernal", "tag": "Parias con cornamentas"}, {"id": "elfo", "name": "Elfo", "tag": "Elegancia milenaria y arquería"}, {"id": "humano", "name": "Humano", "tag": "Versatilidad incansable"}];
+            const CLASES = [{"id": "barbaro", "name": "Bárbaro", "sub": "Luchador de Vanguardia"}, {"id": "bardo", "name": "Bardo", "sub": "Sonomancia"}, {"id": "luchador", "name": "Luchador", "sub": "Defensor Marcial"}, {"id": "monje", "name": "Monje", "sub": "Artista Marcial"}, {"id": "explorador", "name": "Explorador", "sub": "Tirador y Cazador"}, {"id": "artificiero", "name": "Artificiero", "sub": "Inventor y Apoyo Técnico"}, {"id": "picaro", "name": "Pícaro", "sub": "Asesino de un solo objetivo"}, {"id": "hechicero", "name": "Hechicero", "sub": "Artillería de Magia Innata"}, {"id": "brujo", "name": "Brujo", "sub": "Pactos y Maldiciones"}, {"id": "clerigo", "name": "Clérigo", "sub": "Sanador y Castigador Divino"}, {"id": "paladin", "name": "Paladín", "sub": "Defensor Sagrado y Sanador"}, {"id": "psionico", "name": "Psiónico", "sub": "Mente sobre Materia"}];
+            const OFICIOS = [{"id": "alquimista", "name": "Alquimista", "sub": "Maestro de químicos y pócimas"}, {"id": "cocinero", "name": "Cocineros", "sub": "Artista culinario"}, {"id": "herrero", "name": "Herreros", "sub": "Maestro del metal y el fuego"}, {"id": "joyero", "name": "Joyeros", "sub": "Artista de las piedras preciosas"}, {"id": "herborista", "name": "Herboristas", "sub": "Recolector de plantas"}, {"id": "cazador", "name": "Cazadores", "sub": "Rastreador y depredador"}, {"id": "minero", "name": "Mineros", "sub": "Explorador del subsuelo"}, {"id": "pescador", "name": "Pescador", "sub": "Señor de ríos y mares"}, {"id": "lenador", "name": "Leñador", "sub": "Talador de bosques"}];
+            const barajar = lista => {
+                const a = lista.slice();
+                for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+                return a;
+            };
+            const pintar = (idGrid, lista, cuantas, tarjeta) => {
+                const grid = document.getElementById(idGrid);
+                if (grid) grid.innerHTML = barajar(lista).slice(0, cuantas).map(tarjeta).join('');
+            };
+            pintar('razas-grid', RAZAS, 4, r => `
+            <a href="razas.html#${r.id}" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">${r.name}</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">${r.tag}</p>
+            </a>`);
+            pintar('clases-grid', CLASES, 3, c => `
+            <a href="clases.html#${c.id}" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/${c.id}.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <h3 class="sr-only">${c.name}</h3>
+                <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">${c.sub}</p>
+                <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
+            </a>`);
+
+            pintar('oficios-grid', OFICIOS, 3, o => `
+            <a href="oficios.html#${o.id}" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/${o.id}.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <h3 class="of-name font-cinzel text-base font-bold text-aetherna-goldLight">${o.name}</h3>
+                <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">${o.sub}</p>
+                <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
+            </a>`);
+
+            // Aplicar retrasos escalonados a los elementos dentro de filas/grillas
+            document.querySelectorAll('.stagger-group').forEach(group => {
+                const items = group.querySelectorAll('.reveal');
+                items.forEach((item, index) => {
+                    item.style.transitionDelay = `${index * 55}ms`;
+                });
+            });
+
+            // IntersectionObserver con control bidireccional estricto (Aparecer al bajar, Desaparecer al subir)
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -10% 0px',
+                threshold: 0.08
+            };
+
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    } else {
+                        entry.target.classList.remove('active');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal').forEach(el => {
+                scrollObserver.observe(el);
+            });
+
+            // Efecto dorado: la luz sigue al cursor y el retardo escalonado del reveal no frena el hover
+            document.querySelectorAll('.gold-card').forEach(c => {
+                c.addEventListener('pointermove', ev => {
+                    const r = c.getBoundingClientRect();
+                    c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+                    c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+                });
+                c.addEventListener('pointerenter', () => { c.style.transitionDelay = '0s'; }, { once: true });
+            });
+
+            // ---- Últimos anuncios: las 3 noticias más recientes de noticias.json (la misma lista que usa noticias.html) ----
+            const escH = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            fetch('noticias.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(list => {
+                const N = list.slice().sort((a, b) => (b.iso || '').localeCompare(a.iso || '')).slice(0, 3);
+                const box = document.getElementById('news-home');
+                if (!box || !N.length) return;
+                const card = (n, i) => `
+                <a href="noticias.html#${escH(n.id)}" class="reveal frame-panel gold-card home-news${i ? ' home-news-sm' : ''}">
+                    <span class="home-news-media">
+                        <img src="fotos/noticia-${escH(n.id)}.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+                        ${n.video ? '<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="rgba(11,8,36,.55)" stroke="#D9B46A" stroke-width="2"/><path d="M26 20l20 12-20 12z" fill="#F0D79E"/></svg>' : ''}
+                    </span>
+                    <span class="block p-6 sm:p-8">
+                        <span class="home-news-meta"><span class="home-news-tag">${escH(n.tag)}</span><time datetime="${escH(n.iso)}">${escH(n.date)}</time></span>
+                        <h3 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight mb-2">${escH(n.title)}</h3>
+                        <span class="font-garamond text-aetherna-textNormal text-base block leading-relaxed">${escH(n.summary)}</span>
+                        <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Leer noticia &rarr;</span>
+                    </span>
+                </a>`;
+                box.innerHTML = card(N[0], 0) + (N.length > 1 ? '<div class="home-news-more">' + N.slice(1).map(n => card(n, 1)).join('') + '</div>' : '');
+                box.querySelectorAll('.reveal').forEach(el => scrollObserver.observe(el));
+                box.querySelectorAll('.gold-card').forEach(c => {
+                    c.addEventListener('pointermove', ev => {
+                        const r = c.getBoundingClientRect();
+                        c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+                        c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+                    });
+                });
+            }).catch(() => { /* si falla, se queda la noticia que ya está escrita en el HTML */ });
+        })();
+    </script>
+</body>
+</html>

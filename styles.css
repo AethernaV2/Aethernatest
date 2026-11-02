@@ -1,0 +1,218 @@
+/* Aetherna V2 · estilos comunes a todas las páginas */
+body {
+    font-family: 'EB Garamond', serif;
+    font-size: 18px;
+    line-height: 1.55;
+    color: #E9D7B0;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .font-cinzel {
+    font-family: 'Cinzel', serif;
+}
+
+.font-title-deco {
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 900;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    right: -100px;
+    transform: translateY(-50%);
+    width: 600px;
+    height: 600px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,3 93,27 93,73 50,97 7,73 7,27' fill='none' stroke='%23D9B46A' stroke-width='0.5' opacity='0.05'/%3E%3Cpolygon points='50,20 80,37 80,63 50,80 20,63 20,37' fill='none' stroke='%23D9B46A' stroke-width='0.3' opacity='0.05'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.frame-panel {
+    background-color: rgba(14, 11, 38, 0.86);
+    border: 1px solid rgba(217,180,106,.22);
+    box-shadow: inset 0 0 0 3px rgba(90, 74, 138, 0.3);
+    border-radius: 0px;
+    position: relative;
+}
+
+.frame-panel:hover {
+    border-color: rgba(217,180,106,.55);
+}
+
+.btn-normal {
+    background: linear-gradient(135deg, #231A52 0%, #0F0B2C 100%);
+    border: 1px solid #5A4A8A;
+    border-radius: 0px;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #E9D7B0;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-normal:hover {
+    border-color: #D9B46A;
+    box-shadow: 0 0 15px rgba(217, 180, 106, 0.2);
+    color: #FFF2CF;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#ember-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+}
+
+::-webkit-scrollbar { width: 6px; }
+
+::-webkit-scrollbar-track { background: #07051A; }
+
+::-webkit-scrollbar-thumb { background: #5A4A8A; border-radius: 0px; }
+
+::-webkit-scrollbar-thumb:hover { background: #D9B46A; }
+
+body { background-color: #05030C;
+    background-image:
+        radial-gradient(ellipse 60% 45% at 48% 36%, rgba(120,40,170,.55), transparent 70%),
+        radial-gradient(ellipse 60% 35% at 40% 100%, rgba(176,138,74,.45), transparent 70%),
+        radial-gradient(ellipse 35% 25% at 62% 88%, rgba(196,111,176,.30), transparent 70%),
+        linear-gradient(#05030C, #0A0614);
+    background-attachment: fixed; }
+
+#cosmos-bg, #cosmos-stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+
+#cosmos-bg { object-fit: cover; opacity: .92; }
+
+/* ===== Reproductor flotante ===== */
+#music-player-capsule { transition: padding .35s ease, gap .35s ease, background-color .35s ease, border-color .35s ease, box-shadow .35s ease; }
+#music-player-capsule .mp-body { display: flex; align-items: center; gap: .6rem; overflow: hidden; white-space: nowrap; max-width: 560px; opacity: 1; transition: max-width .4s ease, opacity .25s ease; }
+#music-player-capsule .mp-info > * { line-height: 1.2; }
+#music-player-capsule .mp-disc { width: 38px; height: 38px; padding: 0; border-radius: 9999px; flex: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #2E1B63, #0A0720); box-shadow: inset 0 2px 6px rgba(0,0,0,.5); transition: width .35s ease, height .35s ease, box-shadow .35s ease; }
+#music-player-capsule .mp-logo { width: 24px; height: 24px; object-fit: contain; animation: mp-spin 9s linear infinite; animation-play-state: paused; transition: width .35s ease, height .35s ease; }
+#music-player-capsule.mp-playing .mp-logo { animation-play-state: running; }
+#music-player-capsule.mp-collapsed { padding: 0; gap: 0; height: auto !important; background-color: transparent; border-color: transparent; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+#music-player-capsule.mp-collapsed .mp-body { max-width: 0; opacity: 0; pointer-events: none; }
+#music-player-capsule.mp-collapsed .mp-disc { width: 54px; height: 54px; box-shadow: 0 0 18px rgba(157,108,240,.40), 0 6px 18px rgba(0,0,0,.6); }
+#music-player-capsule.mp-collapsed .mp-logo { width: 36px; height: 36px; }
+@keyframes mp-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { #music-player-capsule .mp-logo, .gate-logo { animation-duration: 40s; } }
+
+/* barras de progreso y volumen */
+.mp-range { -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; margin: 0; padding: 0; --p: 0%; }
+.mp-range:focus-visible { outline: 1px solid #D9B46A; outline-offset: 3px; }
+.mp-range::-webkit-slider-runnable-track { height: 3px; border-radius: 3px; background: linear-gradient(to right, #D9B46A var(--p), rgba(217,180,106,.22) var(--p)); }
+.mp-range::-moz-range-track { height: 3px; border-radius: 3px; background: rgba(217,180,106,.22); }
+.mp-range::-moz-range-progress { height: 3px; border-radius: 3px; background: #D9B46A; }
+.mp-range::-webkit-slider-thumb { -webkit-appearance: none; width: 9px; height: 9px; border-radius: 50%; background: #F0D79E; border: 0; margin-top: -3px; box-shadow: 0 0 6px rgba(217,180,106,.6); }
+.mp-range::-moz-range-thumb { width: 9px; height: 9px; border-radius: 50%; background: #F0D79E; border: 0; }
+.mp-seek { width: 100%; height: 9px; margin-top: 2px; display: block; }
+.mp-vol { width: 64px; flex: none; }
+
+/* ===== Buscador ===== */
+#search-results mark { background: rgba(217,180,106,.28); color: #FFF2CF; padding: 0 1px; }
+#search-results a.sr.is-active { border-color: rgba(217,180,106,.7); background-color: rgba(21,16,52,.95); }
+
+/* ===== Pantalla de entrada ===== */
+.gate-logo { animation: mp-spin 24s linear infinite; filter: drop-shadow(0 0 18px rgba(157,108,240,.5)); }
+#search-input::-webkit-search-cancel-button, #search-input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; display: none; }
+
+/* ===== Emblemas de clase (fotos/<clase>.png) ===== */
+.emblem { display: block; height: auto; object-fit: contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,.55)) drop-shadow(0 0 8px rgba(217,180,106,.15));
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), filter .35s; }
+.clase-card:hover .emblem, .clase-card:focus-visible .emblem, .gold-card:hover .emblem { transform: translateY(-3px) scale(1.07);
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,.6)) drop-shadow(0 0 16px rgba(217,180,106,.5)); }
+#search-results a.sr:hover .emblem, #search-results a.sr.is-active .emblem { transform: scale(1.08); }
+@media (prefers-reduced-motion: reduce) { .emblem { transition: none; } .clase-card:hover .emblem, .gold-card:hover .emblem { transform: none; } }
+
+/* ===== Tarjeta de clase con el emblema asomando por encima del marco ===== */
+.frame-panel.emblem-card { overflow: visible; padding-top: 148px; }
+.frame-panel.emblem-card > .emblem-stage { position: absolute; z-index: 3; left: 50%; top: -76px; width: 240px; height: 230px; margin-left: -120px; pointer-events: none; }
+/* escenario: halo dorado/violeta + hexágono tenue detrás del emblema */
+.emblem-stage::before { content: ""; position: absolute; left: -10px; right: -10px; top: 6px; bottom: -6px; z-index: -1; opacity: .7; filter: blur(8px);
+    background: radial-gradient(closest-side, rgba(217,180,106,.38), rgba(157,108,240,.24) 58%, transparent 80%); transition: opacity .4s, transform .5s cubic-bezier(.2,.8,.2,1); }
+.emblem-stage::after { content: ""; position: absolute; left: 50%; top: 50%; width: 262px; height: 262px; margin: -131px 0 0 -131px; z-index: -1; opacity: .28; transition: opacity .4s, transform .9s cubic-bezier(.2,.8,.2,1);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,3 93,27 93,73 50,97 7,73 7,27' fill='none' stroke='%23D9B46A' stroke-width='.7'/%3E%3Cpolygon points='50,12 85,32 85,68 50,88 15,68 15,32' fill='none' stroke='%23D9B46A' stroke-width='.35'/%3E%3C/svg%3E") center / contain no-repeat; }
+.emblem-stage .emblem { position: absolute; left: 50%; top: 50%; width: 210px; height: 210px; margin: -105px 0 0 -105px; max-width: none; }
+.frame-panel.emblem-card:hover .emblem-stage::before, .frame-panel.emblem-card:focus-visible .emblem-stage::before { opacity: 1; transform: scale(1.12); }
+.frame-panel.emblem-card:hover .emblem-stage::after, .frame-panel.emblem-card:focus-visible .emblem-stage::after { opacity: .55; transform: rotate(30deg) scale(1.05); }
+/* el destello pasa ahora DENTRO de la tarjeta (antes se recortaba con overflow:hidden, que ya no se puede usar) */
+.frame-panel.emblem-card::after { left: 0; top: 0; width: 100%; height: 100%; transform: none; background: linear-gradient(100deg, transparent 38%, rgba(255,242,207,.15) 50%, transparent 62%) no-repeat; background-size: 260% 100%; background-position: 130% 0; }
+.frame-panel.emblem-card:hover::after { left: 0; background-position: -30% 0; transition: background-position .8s ease; }
+/* si falta el archivo del emblema, la tarjeta se queda como una normal */
+.frame-panel.emblem-card.no-emblem { padding-top: 1.25rem; }
+.emblem-card.no-emblem > .emblem-stage { display: none; }
+@media (prefers-reduced-motion: reduce) { .emblem-stage::before, .emblem-stage::after { transition: none; } .frame-panel.emblem-card:hover::after { transition: none; } }
+
+/* ===== Variante «solo emblema»: en reposo solo se ve el emblema (con su halo y su hexágono);
+        al pasar el ratón (o enfocar con teclado) aparecen el marco y el texto ===== */
+.frame-panel.emblem-card.emblem-reveal { background-color: transparent; border-color: transparent; box-shadow: none;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .4s, box-shadow .4s, background-color .4s, opacity .7s cubic-bezier(0.16, 1, 0.3, 1); }
+.frame-panel.emblem-card.emblem-reveal > :not(.emblem-stage) { opacity: 0; transform: translateY(10px); transition: opacity .35s ease, transform .35s ease; }
+/* el emblema también activa el hover (la parte que asoma queda fuera de la caja de la tarjeta) */
+.emblem-reveal .emblem-stage .emblem { pointer-events: auto; }
+.frame-panel.emblem-card.emblem-reveal:hover, .frame-panel.emblem-card.emblem-reveal:focus-visible {
+    background-color: rgba(14, 11, 38, 0.86); border-color: rgba(217,180,106,.85);
+    box-shadow: 0 16px 34px rgba(0,0,0,.55), 0 0 26px rgba(157,108,240,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
+.frame-panel.emblem-card.emblem-reveal:hover > :not(.emblem-stage), .frame-panel.emblem-card.emblem-reveal:focus-visible > :not(.emblem-stage) { opacity: 1; transform: none; }
+/* sin ratón (móvil/tablet) no hay «pasar por encima»: se enseña todo siempre */
+@media (hover: none) {
+    .frame-panel.emblem-card.emblem-reveal { background-color: rgba(14, 11, 38, 0.86); border-color: rgba(217,180,106,.22); box-shadow: inset 0 0 0 3px rgba(90, 74, 138, 0.3); }
+    .frame-panel.emblem-card.emblem-reveal > :not(.emblem-stage) { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .frame-panel.emblem-card.emblem-reveal > :not(.emblem-stage) { transition: none; } }
+
+/* ===== Variante «asoma»: el emblema, el capítulo y el subtítulo se ven siempre, con un marco apenas insinuado;
+        las características y el botón aparecen al pasar el ratón, junto con el marco dorado ===== */
+.frame-panel.emblem-card.emblem-peek { background-color: rgba(14, 11, 38, 0.38); border-color: rgba(217,180,106,.10); box-shadow: none;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .4s, box-shadow .4s, background-color .4s; }
+.emblem-peek .emblem-stage .emblem { pointer-events: auto; }
+.emblem-peek .peek-more { opacity: 0; transform: translateY(8px); transition: opacity .35s ease, transform .35s ease; }
+.frame-panel.emblem-card.emblem-peek:hover, .frame-panel.emblem-card.emblem-peek:focus-visible {
+    background-color: rgba(14, 11, 38, 0.86); border-color: rgba(217,180,106,.85);
+    box-shadow: 0 16px 34px rgba(0,0,0,.55), 0 0 26px rgba(157,108,240,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
+.emblem-peek:hover .peek-more, .emblem-peek:focus-visible .peek-more { opacity: 1; transform: none; }
+@media (hover: none) {
+    .frame-panel.emblem-card.emblem-peek { background-color: rgba(14, 11, 38, 0.86); border-color: rgba(217,180,106,.22); box-shadow: inset 0 0 0 3px rgba(90, 74, 138, 0.3); }
+    .emblem-peek .peek-more { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .emblem-peek .peek-more { transition: none; } }
+
+
+/* ===== Barra de navegación estilo habilidades (escritorio) ===== */
+#dock { display: none; }
+@media (min-width: 1024px) {
+    #navbar { display: none !important; }
+    body { padding-bottom: 6.5rem; }
+    #music-player-capsule { top: 1rem !important; bottom: auto !important; }
+    #dock { display: block; position: fixed; left: 50%; bottom: 1rem; z-index: 45; transform: translate(-50%, 0);
+        transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .25s ease; }
+    #dock.dk-hide { transform: translate(-50%, calc(100% + 2rem)); opacity: 0; pointer-events: none; }
+    .dk-bar { display: flex; gap: .4rem; padding: .5rem; background: rgba(11,8,36,.9); border: 1px solid rgba(217,180,106,.5); border-radius: 8px;
+        box-shadow: inset 0 0 0 2px rgba(90,74,138,.28), 0 12px 32px rgba(0,0,0,.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+    .dk-slot { position: relative; width: 70px; height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0;
+        border: 2px solid rgba(217,180,106,.55); border-radius: 4px; background: linear-gradient(160deg,#1b1442,#0B0824); color: #E7DCC3; cursor: pointer;
+        transition: transform .2s cubic-bezier(.2,.8,.2,1), border-color .2s, box-shadow .2s, color .2s; }
+    .dk-slot svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .dk-slot img { width: 24px; height: 24px; object-fit: contain; }
+    .dk-slot .l { font: 400 12.5px/1 'EB Garamond', serif; letter-spacing: .02em; }
+    .dk-slot .k { position: absolute; top: 2px; left: 5px; font: 600 9.5px/1 system-ui, sans-serif; color: #9b8d72; }
+    .dk-slot.on { border-color: #F0D79E; color: #FFF2CF; background: linear-gradient(160deg,#2a1d63,#0B0824); box-shadow: 0 0 14px rgba(240,215,158,.4); }
+    .dk-slot:hover, .dk-slot:focus-visible { transform: translateY(-4px); border-color: #FFF2CF; color: #FFF2CF; box-shadow: 0 0 18px rgba(157,108,240,.55), inset 0 0 0 1px rgba(240,215,158,.45); outline: none; }
+}
+@media (prefers-reduced-motion: reduce) { #dock, .dk-slot { transition: none !important; } }

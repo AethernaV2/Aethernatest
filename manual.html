@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetherna V2 · Manual de Clases y Disciplinas</title>
+    <meta name="description" content="Manual de clases y disciplinas de Aetherna V2: capítulos, tramos de nivel, técnicas y conjuros.">
+    <meta name="theme-color" content="#07051A">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Aetherna V2">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:title" content="Aetherna V2 · Manual de Clases y Disciplinas">
+    <meta property="og:description" content="Manual de clases y disciplinas de Aetherna V2: capítulos, tramos de nivel, técnicas y conjuros.">
+    <meta property="og:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <meta property="og:url" content="https://aetherna-cyan.vercel.app/manual">
+    <link rel="canonical" href="https://aetherna-cyan.vercel.app/manual">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <link rel="icon" type="image/png" href="fotos/Logo.png">
+
+    <!-- Google Fonts: Cinzel Decorative, Cinzel & EB Garamond -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+    <!-- Estilos comunes + estilos propios de esta página + Tailwind compilado (ver LEEME.md) -->
+    <link rel="stylesheet" href="styles.css">
+    <style id="page-style">
+        .separator-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            margin: 2.5rem 0;
+        }
+        .separator-line::before, .separator-line::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(217,180,106,.4), transparent);
+        }
+        .separator-diamond {
+            color: #D9B46A;
+            padding: 0 1rem;
+            font-size: 12px;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Manual: tablero, selector de nivel, tirada y glosario */
+        .mn-sub { font-family: 'EB Garamond', serif; font-style: italic; color: #C8B48C; text-align: center; margin: -.6rem 0 1.2rem; }
+        .mn-chips { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+        .mn-chip { padding: .3rem .8rem; font: 600 11px 'Cinzel', serif; letter-spacing: .12em; text-transform: uppercase; color: #C8B48C; background: #0B0824; border: 1px solid rgba(217,180,106,.25); cursor: pointer; transition: all .25s; }
+        .mn-chip:hover, .mn-chip:focus-visible { color: #FFF2CF; border-color: rgba(217,180,106,.75); outline: none; }
+        .mn-chip.on { color: #07051A; background: #D9B46A; border-color: #D9B46A; }
+        .mn-bar { display: flex; flex-wrap: wrap; gap: .8rem 1.5rem; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+        .mn-sort, .mn-roll label { font: 11px 'Cinzel', serif; letter-spacing: .15em; text-transform: uppercase; color: #9C8865; }
+        .mn-sort select, .mn-roll input { margin-left: .5rem; background: #0B0824; color: #E9D7B0; border: 1px solid rgba(217,180,106,.3); padding: .3rem .5rem; font: 14px 'EB Garamond', serif; }
+        .mn-roll input { width: 4.5rem; }
+        .mn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+        .mn-card { padding: 1.1rem; overflow: hidden; display: flex; flex-direction: column; gap: .5rem; transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .35s; }
+        .mn-card > * { position: relative; z-index: 2; }
+        .mn-card::before { content: ""; position: absolute; inset: 0; z-index: 1; opacity: 0; pointer-events: none; transition: opacity .35s;
+            background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(157,108,240,.28), rgba(217,180,106,.10) 45%, transparent 70%); }
+        .mn-card::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%; z-index: 1; pointer-events: none; background: linear-gradient(100deg, transparent, rgba(255,242,207,.13), transparent); transform: skewX(-18deg); }
+        .mn-card:hover { transform: translateY(-6px); border-color: rgba(217,180,106,.85); box-shadow: 0 16px 34px rgba(0,0,0,.55), 0 0 26px rgba(157,108,240,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
+        .mn-card:hover::before { opacity: 1; } .mn-card:hover::after { left: 130%; transition: left .8s ease; }
+        .mn-name { font: 700 1.2rem 'Cinzel', serif; color: #F0D79E; line-height: 1.2; }
+        .mn-role { font-style: italic; color: #C8B48C; }
+        .mn-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+        .mn-tag { padding: .1rem .5rem; font: 600 10px 'Cinzel', serif; letter-spacing: .1em; color: #D9B46A; background: #0B0824; border: 1px solid rgba(217,180,106,.3); }
+        .mn-dl { display: grid; gap: .25rem; font-size: .92rem; margin: .2rem 0 .4rem; }
+        .mn-dl div { display: flex; justify-content: space-between; gap: .8rem; border-bottom: 1px solid rgba(217,180,106,.12); padding-bottom: .2rem; }
+        .mn-dl dt { font: 10px 'Cinzel', serif; letter-spacing: .14em; text-transform: uppercase; color: #9C8865; flex: none; padding-top: .2rem; }
+        .mn-dl dd { color: #E9D7B0; text-align: right; }
+        .mn-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; }
+        .mn-btn { padding: .4rem .8rem; font: 600 11px 'Cinzel', serif; letter-spacing: .12em; text-transform: uppercase; color: #D9B46A; background: #0B0824; border: 1px solid rgba(217,180,106,.35); cursor: pointer; transition: all .25s; }
+        .mn-btn:hover, .mn-btn:focus-visible { color: #FFF2CF; border-color: #D9B46A; box-shadow: 0 0 14px rgba(217,180,106,.3); outline: none; }
+        .mn-lvlrow { display: flex; align-items: center; gap: 1.2rem; margin: 1.4rem 0; font: 600 13px 'Cinzel', serif; letter-spacing: .15em; text-transform: uppercase; color: #C8B48C; }
+        .mn-lvlrow b { font-size: 1.6rem; color: #F0D79E; margin-left: .3rem; }
+        .mn-lvl { flex: 1; width: 100%; height: 18px; }
+        .mn-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: .7rem; margin-bottom: 1rem; }
+        .mn-stats div { text-align: center; padding: .6rem; background: #0B0824; border: 1px solid rgba(217,180,106,.25); font: 700 1.5rem 'Cinzel', serif; color: #F0D79E; }
+        .mn-stats b { display: block; font: 600 10px 'Cinzel', serif; letter-spacing: .18em; text-transform: uppercase; color: #9C8865; margin-bottom: .2rem; }
+        .mn-tramos { display: grid; grid-template-columns: repeat(4, 1fr); gap: .4rem; margin-bottom: 1rem; }
+        .mn-tr { text-align: center; padding: .5rem .3rem; background: #0B0824; border: 1px solid rgba(217,180,106,.2); opacity: .5; transition: all .3s; font: 600 11px 'Cinzel', serif; color: #C8B48C; }
+        .mn-tr strong { display: block; font-size: 1.1rem; color: #F0D79E; } .mn-tr span { font-size: 10px; letter-spacing: .08em; }
+        .mn-tr.on { opacity: 1; border-color: #D9B46A; background: linear-gradient(135deg, #231A52, #0F0B2C); box-shadow: 0 0 18px rgba(157,108,240,.35); }
+        .mn-line { margin: .5rem 0; color: #E9D7B0; } .mn-line b { font: 600 11px 'Cinzel', serif; letter-spacing: .12em; text-transform: uppercase; color: #D9B46A; margin-right: .4rem; }
+        .mn-techs { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: .6rem; margin-top: 1rem; }
+        .mn-t { padding: .6rem .8rem; background: #0B0824; border: 1px solid rgba(217,180,106,.25); display: flex; flex-direction: column; gap: .15rem; transition: opacity .3s, border-color .3s; }
+        .mn-t strong { font: 700 .95rem 'Cinzel', serif; color: #F0D79E; } .mn-t small { color: #9C8865; font-style: italic; } .mn-t span { color: #E9D7B0; font-size: .92rem; }
+        .mn-t.lock { opacity: .38; } .mn-t:not(.lock):hover { border-color: rgba(217,180,106,.7); }
+        .mn-final { margin-top: 1rem; padding: .8rem 1rem; text-align: center; background: #0B0824; border: 1px solid rgba(217,180,106,.5); } .mn-final b { display: block; font: 600 11px 'Cinzel', serif; letter-spacing: .18em; text-transform: uppercase; color: #D9B46A; }
+        .mn-roll { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; align-items: center; }
+        .mn-rollout { margin-top: 1rem; padding: 1rem; text-align: center; background: #0B0824; border: 1px solid rgba(217,180,106,.25); font-size: 1.05rem; color: #E9D7B0; }
+        .mn-rollout b { color: #F0D79E; font-size: 1.3rem; } .mn-rollout .ok { color: #86C98A; } .mn-rollout .ko { color: #FF7A6A; } .mn-rollout .crit { color: #D9B46A; }
+        .mn-pop { position: fixed; z-index: 90; max-width: 290px; padding: .6rem .8rem; background: #0E0A26; border: 1px solid #D9B46A; box-shadow: 0 10px 28px rgba(0,0,0,.6); color: #E9D7B0; font-size: .92rem; line-height: 1.4; pointer-events: none; }
+        .mn-pop b { display: block; font: 700 11px 'Cinzel', serif; letter-spacing: .14em; text-transform: uppercase; color: #F0D79E; margin-bottom: .2rem; }
+        @media (prefers-reduced-motion: reduce) { .mn-card, .mn-chip, .mn-tr { transition: none; } .mn-card:hover { transform: none; } .mn-card::after { display: none; } }
+    </style>
+    <link rel="stylesheet" href="tailwind.css">
+</head>
+<body class="relative selection:bg-aetherna-goldMain selection:text-aetherna-bgMain">
+    <!-- Fondo cósmico + brasas (los anima site.js) -->
+    <canvas id="cosmos-bg" width="128" height="72" aria-hidden="true"></canvas>
+    <canvas id="cosmos-stars" aria-hidden="true"></canvas>
+    <canvas id="ember-canvas" aria-hidden="true"></canvas>
+
+    <div id="page-root">
+    <main class="pt-32 pb-24 px-4 max-w-5xl mx-auto relative z-10">
+        
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">ROLEPLAY REDUX &bull; SISTEMA D20 &bull; EDICIÓN PvP &bull; NIVELES 1 A 20</span>
+            <h1 class="font-title-deco text-4xl sm:text-6xl text-aetherna-goldLight tracking-wider mb-4">MANUAL DE CLASES</h1>
+            <div class="w-24 h-[1px] bg-aetherna-goldMain mx-auto mb-6"></div>
+            <p class="font-garamond italic text-aetherna-parchment text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                Compara las doce clases, prueba cómo crece cada una nivel a nivel y repasa las reglas. Al final están las tablas completas y todas las técnicas por tramos de poder.
+            </p>
+        </div>
+
+        <!-- Tablero comparativo -->
+        <section id="tablero" class="reveal frame-panel p-6 sm:p-8 mb-16">
+            <h2 class="font-cinzel text-aetherna-goldLight text-xl font-bold mb-6 tracking-wider text-center border-b border-aetherna-goldMain/20 pb-3">TABLERO DE CLASES</h2>
+            <p class="mn-sub">Compáralas de un vistazo: filtra por tipo, ordénalas y pulsa «Ver niveles» para probar cómo crece una.</p>
+            <div class="mn-bar"><div id="mn-filters" class="mn-chips"></div>
+                <label class="mn-sort">Ordenar <select id="mn-sort"><option value="orden">Orden del manual</option><option value="nombre">Nombre</option><option value="pv1">PV nivel 1</option><option value="pv20">PV nivel 20</option></select></label></div>
+            <div id="mn-board" class="mn-grid"></div>
+        </section>
+
+        <!-- Selector de nivel -->
+        <section id="nivel" class="reveal frame-panel p-6 sm:p-8 mb-16">
+            <h2 class="font-cinzel text-aetherna-goldLight text-xl font-bold mb-6 tracking-wider text-center border-b border-aetherna-goldMain/20 pb-3">¿QUÉ NIVEL ERES?</h2>
+            <p class="mn-sub">Elige una clase y mueve el deslizador: verás la competencia, el tramo de poder, los PV y qué técnicas tienes desbloqueadas.</p>
+            <div id="mn-classes" class="mn-chips"></div>
+            <div class="mn-lvlrow"><span>Nivel <b id="mn-lvlnum">1</b></span><input id="mn-lvl" class="mp-range mn-lvl" type="range" min="1" max="20" value="1" aria-label="Nivel"></div>
+            <div id="mn-out"></div>
+        </section>
+
+        <!-- Tirada de ejemplo y glosario -->
+        <section id="tirada" class="reveal frame-panel p-6 sm:p-8 mb-16">
+            <h2 class="font-cinzel text-aetherna-goldLight text-xl font-bold mb-6 tracking-wider text-center border-b border-aetherna-goldMain/20 pb-3">CÓMO SE TIRA</h2>
+            <p class="mn-sub">Ataque contra CA: d20 + atributo + competencia. Usa la clase y el nivel elegidos arriba (ejemplo con atributo principal +3).</p>
+            <div class="mn-roll"><label>CA del objetivo <input id="mn-ca" type="number" min="5" max="30" value="15"></label><button id="mn-rollbtn" class="mn-btn" type="button">Tirar d20</button></div>
+            <div id="mn-rollout" class="mn-rollout" aria-live="polite">Pulsa «Tirar d20».</div>
+            <h3 class="font-cinzel text-aetherna-goldLight text-lg font-bold mt-8 mb-1 tracking-wider text-center">GLOSARIO</h3>
+            <p class="mn-sub">Pasa el cursor (o toca) un término para ver qué significa.</p>
+            <div id="mn-gloss" class="mn-chips"></div>
+        </section>
+
+        <!-- Cómo Usar Este Manual -->
+        <div class="reveal frame-panel p-8 mb-16">
+            <h3 class="font-cinzel text-aetherna-goldLight text-xl font-bold mb-6 tracking-wider text-center border-b border-aetherna-goldMain/20 pb-3">CÓMO USAR ESTE MANUAL</h3>
+            <div class="grid md:grid-cols-2 gap-8 font-garamond text-aetherna-textNormal text-base leading-relaxed">
+                <div class="space-y-4">
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Tu personaje</strong>
+                        <p>Elige una raza y una clase (perks públicos de tu ficha). Reparte tus 7 puntos de atributo como indica tu clase. El narrador te asigna el perk de tu nivel; al subir de nivel cambia por el nuevo y haces un descanso largo.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Competencia</strong>
+                        <p>+2 en niveles 1–4, +3 en 5–8, +4 en 9–12, +5 en 13–16 y +6 en 17–20. Se suma a tus ataques con el atributo principal y con DES, y a las salvaciones de tu clase.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Tramos de poder</strong>
+                        <p>Tus técnicas tienen cuatro versiones: I (niveles 1–4), II (5–10), III (11–16) y IV (17–20). Al cambiar de tramo, todas tus técnicas mejoran a la vez.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Tiradas</strong>
+                        <p><strong>Ataque vs CA:</strong> d20 + atributo + competencia contra la CA del objetivo; un 20 natural es crítico (dobla los dados).<br><strong>Salvación:</strong> el objetivo tira d20 + su salvación contra tu dificultad; según la técnica, recibe la mitad o nada.</p>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Clase de armadura</strong>
+                        <p>10 + pechera + escudo + DES. Armadura ligera: CA 12 + DES. Media: CA 15 + DES (máximo +2). Pesada: CA 18, sin DES. Escudo: +2. La calidad de la pechera suma +1, +2 o +3. Monje y Bárbaro sin armadura: CA 12 + DES.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Combate</strong>
+                        <p>Al empezar, todos tiran Iniciativa (d20 + DES) y actúan de mayor a menor. En tu turno usa Inicio de turno (aplica el daño continuo que sufras), una técnica y Fin de turno (termina los efectos de un turno y cuenta las mejoras). Al acabar, Fin de combate.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Huecos y usos</strong>
+                        <p>Una técnica con «Hueco N+» gasta un hueco de nivel N. Si te quedan huecos de nivel superior pero no de ese, usa Usar hueco de nivel N+1 como nivel N. Las técnicas «a voluntad» no gastan nada.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Descansos</strong>
+                        <p><strong>Descanso largo:</strong> solo en un campamento. Recupera todos los PV, huecos y usos, y te da 2 descansos cortos.<br><strong>Descanso corto:</strong> recupera 1/4 de tus PV máximos, los huecos de pacto, el ki, los dados de superioridad y 1 uso de Furia y de Segundo aliento.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-aetherna-goldMain/20 pt-6">
+                <h3 class="font-cinzel text-aetherna-goldLight text-lg font-bold mb-1 tracking-wider text-center">RAZAS</h3>
+                <p class="font-garamond italic text-sm text-aetherna-textMuted text-center mb-4">Cada raza da +2 a una habilidad.</p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Humano</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Persuasión</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Elfos</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Percepción</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Enanos</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Historia</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Infernales</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Intimidación</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Trasgoide</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Sigilo</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Celestiales</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Medicina</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Profundos</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Atletismo</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Abisales</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Arcanos</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Bestias</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Supervivencia</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Mecarionte</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Investigación</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Engendros</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Engaño</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Índice Interactivo -->
+        <div class="reveal frame-panel p-6 mb-16">
+            <h3 class="font-cinzel text-aetherna-goldLight text-lg font-bold mb-4 tracking-wider text-center">REFERENCIA COMPLETA · TABLAS Y TÉCNICAS (CLIC PARA DESPLEGAR)</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-center">
+                <button onclick="toggleClase('barbaro')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">1. Bárbaro</button>
+                <button onclick="toggleClase('bardo')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">2. Bardo</button>
+                <button onclick="toggleClase('luchador')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">3. Luchador</button>
+                <button onclick="toggleClase('monje')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">4. Monje</button>
+                <button onclick="toggleClase('explorador')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">5. Explorador</button>
+                <button onclick="toggleClase('artificiero')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">6. Artificiero</button>
+                <button onclick="toggleClase('picaro')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">7. Pícaro</button>
+                <button onclick="toggleClase('hechicero')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">8. Hechicero</button>
+                <button onclick="toggleClase('brujo')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">9. Brujo</button>
+                <button onclick="toggleClase('clerigo')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">10. Clérigo</button>
+                <button onclick="toggleClase('paladin')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">11. Paladín</button>
+                <button onclick="toggleClase('psionico')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">12. Psiónico</button>
+            </div>
+        </div>
+
+        <!-- ACORDEÓN DE LAS 12 CLASES CON TODAS SUS TÉCNICAS Y TRAMOS -->
+        <div class="space-y-8">
+            
+            <!-- 1. BÁRBARO -->
+            <section id="sec-barbaro" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('barbaro')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/barbaro.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo I</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">1. Bárbaro — Luchador salvaje</h2>
+                    </div>
+                    <span id="icon-barbaro" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-barbaro" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/barbaro.htm"></div>
+            </section>
+
+            <!-- 2. BARDO -->
+            <section id="sec-bardo" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('bardo')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/bardo.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo II</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">2. Bardo — Apoyo y control mental</h2>
+                    </div>
+                    <span id="icon-bardo" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-bardo" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/bardo.htm"></div>
+            </section>
+
+            <!-- 3. LUCHADOR -->
+            <section id="sec-luchador" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('luchador')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/luchador.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo III</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">3. Luchador — Defensor marcial</h2>
+                    </div>
+                    <span id="icon-luchador" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-luchador" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/luchador.htm"></div>
+            </section>
+
+            <!-- 4. MONJE -->
+            <section id="sec-monje" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('monje')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/monje.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo IV</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">4. Monje — Luchador ágil y controlador</h2>
+                    </div>
+                    <span id="icon-monje" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-monje" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/monje.htm"></div>
+            </section>
+
+            <!-- 5. EXPLORADOR -->
+            <section id="sec-explorador" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('explorador')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/explorador.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo V</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">5. Explorador — Tirador y cazador</h2>
+                    </div>
+                    <span id="icon-explorador" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-explorador" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/explorador.htm"></div>
+            </section>
+
+            <!-- 6. ARTIFICIERO -->
+            <section id="sec-artificiero" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('artificiero')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/artificiero.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo VI</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">6. Artificiero — Inventor y apoyo técnico</h2>
+                    </div>
+                    <span id="icon-artificiero" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-artificiero" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/artificiero.htm"></div>
+            </section>
+
+            <!-- 7. PÍCARO -->
+            <section id="sec-picaro" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('picaro')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/picaro.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo VII</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">7. Pícaro — Asesino de un solo objetivo</h2>
+                    </div>
+                    <span id="icon-picaro" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-picaro" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/picaro.htm"></div>
+            </section>
+
+            <!-- 8. HECHICERO -->
+            <section id="sec-hechicero" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('hechicero')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/hechicero.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo VIII</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">8. Hechicero — Artillería de magia innata</h2>
+                    </div>
+                    <span id="icon-hechicero" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-hechicero" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/hechicero.htm"></div>
+            </section>
+
+            <!-- 9. BRUJO -->
+            <section id="sec-brujo" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('brujo')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/brujo.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo IX</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">9. Brujo — Pactos y maldiciones</h2>
+                    </div>
+                    <span id="icon-brujo" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-brujo" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/brujo.htm"></div>
+            </section>
+
+            <!-- 10. CLÉRIGO -->
+            <section id="sec-clerigo" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('clerigo')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/clerigo.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo X</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">10. Clérigo — Sanador y castigador divino</h2>
+                    </div>
+                    <span id="icon-clerigo" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-clerigo" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/clerigo.htm"></div>
+            </section>
+
+            <!-- 11. PALADÍN -->
+            <section id="sec-paladin" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('paladin')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/paladin.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo XI</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">11. Paladín — Defensor sagrado y sanador</h2>
+                    </div>
+                    <span id="icon-paladin" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-paladin" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/paladin.htm"></div>
+            </section>
+
+            <!-- 12. PSIÓNICO -->
+            <section id="sec-psionico" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('psionico')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <img src="fotos/psionico.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10 sm:w-12 sm:h-12">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo XII</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">12. Psiónico — Mente sobre materia</h2>
+                    </div>
+                    <span id="icon-psionico" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-psionico" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/psionico.htm"></div>
+            </section>
+
+
+        </div>
+
+        <div class="text-center mt-16 reveal">
+            <a href="index.html" class="btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs">
+                ← Volver al Códice Principal
+            </a>
+        </div>
+
+    </main>
+
+    <footer class="py-8 px-4 border-t border-aetherna-goldMain/15 text-center text-xs text-aetherna-textMuted relative z-10">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 font-garamond">
+            <div>&copy; Aetherna V2 &bull; Manual de Clases y Disciplinas Oficiales</div>
+        </div>
+    </footer>
+    </div>
+
+    <script src="site.js"></script>
+    <script data-page>
+        (function () {
+            // Carga bajo demanda del detalle (fragments/...): la página pesa poco y cada sección se descarga al abrirla
+            const frags = {};
+            function fetchFrag(url) {
+                return frags[url] || (frags[url] = fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); }));
+            }
+            function loadFrag(el) {
+                if (el.dataset.loaded) return Promise.resolve();
+                return fetchFrag(el.dataset.frag)
+                    .then(h => { el.innerHTML = h; el.dataset.loaded = '1'; })
+                    .catch(() => {
+                        delete frags[el.dataset.frag];
+                        el.innerHTML = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">No se pudo cargar esta sección. <a href="#" class="text-aetherna-goldMain underline">Volver</a></p>';
+                    });
+            }
+            const LOADING = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">Abriendo el códice…</p>';
+
+            async function toggleClase(id) {
+                const content = document.getElementById('content-' + id);
+                if (content.dataset.frag && !content.dataset.loaded) { content.innerHTML = LOADING; await loadFrag(content); }
+                const icon = document.getElementById('icon-' + id);
+
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                    document.getElementById('sec-' + id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    content.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            }
+
+            function revealOnScroll() {
+                const reveals = document.querySelectorAll('.reveal');
+                for (let i = 0; i < reveals.length; i++) {
+                    if (reveals[i].getBoundingClientRect().top < window.innerHeight - 60) {
+                        reveals[i].classList.add('active');
+                    }
+                }
+            }
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll();
+
+            // ===== Tablero, selector de nivel, tirada de ejemplo y glosario =====
+            (function () {
+                const D = [{"k":"barbaro","n":"Bárbaro","role":"Luchador salvaje","attr":"FUE","saves":"FUE, CON","armor":"Media armadura","weapon":"Espadón (2d6); Tridente (1d8)","hp1":14,"hp20":210,"res":"Furia: usos por descanso largo (un descanso corto devuelve 1)","cat":"marcial","fin":["Campeón primigenio","Tu FUE y tu CON suben +2 cada una (pueden pasar de +5): +2 al ataque y al daño con FUE, +2 a las salvaciones de FUE y CON, y +20 PV máximos."],"rows":[["+2",14,"Hachazo salvaje, Arma arrojada",["Furia: 2"]],["+2",32,"Resistencia salvaje",["Furia: 2"]],["+2",44,"Furia",["Furia: 3"]],["+2",52,"Mejora de FUE (+1)",["Furia: 3"]],["+3",53,"Ataque temerario, Técnicas de tramo II",["Furia: 3"]],["+3",59,"—",["Furia: 4"]],["+3",74,"Presencia intimidante",["Furia: 4"]],["+3",82,"Mejora de FUE (+1)",["Furia: 4"]],["+4",101,"Salto devastador",["Furia: 4"]],["+4",109,"—",["Furia: 4"]],["+4",114,"Frenesí, Técnicas de tramo III",["Furia: 4"]],["+4",117,"Punto de atributo",["Furia: 5"]],["+5",132,"Golpe brutal",["Furia: 5"]],["+5",136,"—",["Furia: 5"]],["+5",169,"—",["Furia: 5"]],["+5",173,"Punto de atributo",["Furia: 5"]],["+6",177,"Furia implacable, Técnicas de tramo IV, Técnica definitiva",["Furia: 6"]],["+6",186,"—",["Furia: 6"]],["+6",199,"Punto de atributo",["Furia: 6"]],["+6",210,"Campeón primigenio",["Furia: 6"]]],"techs":[["Hachazo salvaje",1,"A voluntad",{"I":"da + ATR","II":"da + ATR","III":"da + 1d4 + ATR","IV":"da + 1d4 + ATR"}],["Arma arrojada",1,"A voluntad",{"I":"da + ATR","II":"da + 1d4 + ATR","III":"da + 2d4 + ATR","IV":"da + 2d4 + ATR"}],["Resistencia salvaje",2,"A voluntad",{"I":"1d6 + ATR","II":"3d6 + ATR","III":"3d6 + ATR","IV":"4d6 + ATR"}],["Furia",3,"Furia 1",{"I":"2d8 + ATR · luego +2 al daño 3 turnos","II":"5d8 + ATR · luego +3 al daño 3 turnos","III":"6d8 + ATR · luego +4 al daño 3 turnos","IV":"6d8 + ATR · luego +5 al daño 3 turnos"}],["Ataque temerario",5,"A voluntad",{"II":"da + 3d10 + ATR","III":"da + 4d10 + ATR","IV":"da + 4d10 + ATR"}],["Presencia intimidante",7,"A voluntad",{"II":"10d6 + ATR","III":"12d6 + ATR","IV":"12d6 + ATR"}],["Salto devastador",9,"A voluntad",{"II":"6d8 + ATR","III":"7d8 + ATR","IV":"7d8 + ATR"}],["Frenesí",11,"A voluntad",{"III":"3 × (da + 2d6 + ATR)","IV":"3 × (da + 2d6 + ATR)"}],["Golpe brutal",13,"A voluntad",{"III":"5d8 + ATR por ronda","IV":"6d8 + ATR por ronda"}],["Furia implacable",17,"1/descanso largo",{"IV":"2 × (da + 3d12 + ATR)"}]]},{"k":"bardo","n":"Bardo","role":"Apoyo y control mental","attr":"CAR","saves":"DES, CAR","armor":"Armadura de cuero tachonado","weapon":"Lanza o bastón a dos manos (1d8)","hp1":13,"hp20":155,"res":"Lanzador completo: huecos de conjuro de nivel 1 a 9","cat":"full","fin":["Palabras de creación","Una vez por descanso largo, lanzas Palabra de curación en masa o Hipnotizar sin gastar hueco. Hipnotizar lanzado así afecta a un segundo objetivo."],"rows":[["+2",13,"Burla cruel, Floritura de arma",["Huecos 1.º ×2"]],["+2",23,"Susurros disonantes",["Huecos 1.º ×3"]],["+2",32,"Inspiración bárdica",["Huecos 1.º ×4 · 2.º ×2"]],["+2",42,"Mejora de CAR (+1)",["Huecos 1.º ×4 · 2.º ×3"]],["+3",56,"Onda atronadora, Técnicas de tramo II",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×2"]],["+3",57,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3"]],["+3",64,"Palabra de curación en masa",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×1"]],["+3",79,"Mejora de CAR (+1)",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×2"]],["+4",80,"Hipnotizar",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×1"]],["+4",81,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2"]],["+4",100,"Palabra de dolor, Técnicas de tramo III",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1"]],["+4",102,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1"]],["+5",114,"Danza de armas",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1"]],["+5",119,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1"]],["+5",131,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1"]],["+5",135,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1"]],["+6",137,"Crescendo final, Técnicas de tramo IV",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",139,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×1 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",151,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×2 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",155,"Palabras de creación",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×2 · 7.º ×2 · 8.º ×1 · 9.º ×1"]]],"techs":[["Burla cruel",1,"A voluntad",{"I":"2d8 + ATR","II":"3d8 + ATR","III":"3d8 + ATR","IV":"4d8 + ATR"}],["Floritura de arma",1,"A voluntad",{"I":"da + 1d4 + ATR","II":"da + 2d4 + ATR","III":"da + 3d4 + ATR","IV":"da + 4d4 + ATR"}],["Susurros disonantes",2,"Hueco 1+",{"I":"3d4 + ATR","II":"5d4 + ATR","III":"6d4 + ATR","IV":"7d4 + ATR"}],["Inspiración bárdica",3,"Hueco 2+",{"I":"3d4 + ATR","II":"5d4 + ATR","III":"6d4 + ATR","IV":"7d4 + ATR"}],["Onda atronadora",5,"Hueco 3+",{"II":"7d8 + ATR","III":"8d8 + ATR","IV":"10d8 + ATR"}],["Palabra de curación en masa",7,"Hueco 4+",{"II":"9d6 + ATR","III":"10d6 + ATR","IV":"12d6 + ATR"}],["Hipnotizar",9,"Hueco 5+",{"II":"11d12 + ATR","III":"12d12 + ATR","IV":"15d12 + ATR"}],["Palabra de dolor",11,"Hueco 6+",{"III":"10d12 + ATR","IV":"12d12 + ATR"}],["Danza de armas",13,"Hueco 7+",{"III":"2 × (da + 7d8 + ATR)","IV":"2 × (da + 9d8 + ATR)"}],["Crescendo final",17,"Hueco 9+",{"IV":"14d12 + ATR"}]]},{"k":"luchador","n":"Luchador","role":"Defensor marcial","attr":"FUE","saves":"FUE, CON","armor":"Armadura de placas","weapon":"Espada larga con escudo (1d8)","hp1":13,"hp20":178,"res":"Dados de superioridad (vuelven todos con un descanso corto) y Segundo aliento (un descanso corto devuelve 1)","cat":"marcial","fin":["Maestro de armas","Ataque adicional hace 3 ataques en lugar de 2."],"rows":[["+2",13,"Golpe firme, Ataque de empujón",["Segundo aliento: 2"]],["+2",25,"Segundo aliento",["Segundo aliento: 2"]],["+2",35,"Ataque de derribo",["Dados de superioridad: 4","Segundo aliento: 2"]],["+2",42,"Mejora de FUE (+1)",["Dados de superioridad: 4","Segundo aliento: 3"]],["+3",50,"Ataque adicional, Técnicas de tramo II",["Dados de superioridad: 4","Segundo aliento: 3"]],["+3",59,"—",["Dados de superioridad: 4","Segundo aliento: 3"]],["+3",60,"Muro de escudos",["Dados de superioridad: 5","Segundo aliento: 3"]],["+3",68,"Mejora de FUE (+1)",["Dados de superioridad: 5","Segundo aliento: 3"]],["+4",93,"Ataque de barrido",["Dados de superioridad: 5","Segundo aliento: 3"]],["+4",105,"—",["Dados de superioridad: 5","Segundo aliento: 4"]],["+4",106,"Golpe demoledor, Técnicas de tramo III",["Dados de superioridad: 5","Segundo aliento: 4"]],["+4",107,"Punto de atributo",["Dados de superioridad: 5","Segundo aliento: 4"]],["+5",109,"Carga imparable",["Dados de superioridad: 5","Segundo aliento: 4"]],["+5",114,"—",["Dados de superioridad: 5","Segundo aliento: 4"]],["+5",133,"—",["Dados de superioridad: 6","Segundo aliento: 4"]],["+5",137,"Punto de atributo",["Dados de superioridad: 6","Segundo aliento: 4"]],["+6",160,"Oleada de acción, Técnicas de tramo IV, Técnica definitiva",["Dados de superioridad: 6","Segundo aliento: 4"]],["+6",167,"—",["Dados de superioridad: 6","Segundo aliento: 4"]],["+6",174,"Punto de atributo",["Dados de superioridad: 6","Segundo aliento: 4"]],["+6",178,"Maestro de armas",["Dados de superioridad: 6","Segundo aliento: 4"]]],"techs":[["Golpe firme",1,"A voluntad",{"I":"da + ATR","II":"da + 1d4 + ATR","III":"da + 1d4 + ATR","IV":"da + 1d4 + ATR"}],["Ataque de empujón",1,"A voluntad",{"I":"da + ATR","II":"da + ATR","III":"da + ATR","IV":"da + ATR"}],["Segundo aliento",2,"Segundo aliento",{"I":"1d10 + ATR","II":"4d10 + ATR","III":"4d10 + ATR","IV":"4d10 + ATR"}],["Ataque de derribo",3,"Dados de superioridad 1",{"I":"da + 1d4 + ATR","II":"da + 7d4 + ATR","III":"da + 7d4 + ATR","IV":"da + 7d4 + ATR"}],["Ataque adicional",5,"A voluntad",{"II":"2 × (da + 2d6 + ATR)","III":"2 × (da + 2d6 + ATR)","IV":"2 × (da + 2d6 + ATR)"}],["Muro de escudos",7,"Dados de superioridad 1",{"II":"3d8 + ATR","III":"3d8 + ATR","IV":"3d8 + ATR"}],["Ataque de barrido",9,"Dados de superioridad 1",{"II":"da + 6d8 + ATR","III":"da + 6d8 + ATR","IV":"da + 7d8 + ATR"}],["Golpe demoledor",11,"Dados de superioridad 1",{"III":"da + 8d8 + ATR","IV":"da + 8d8 + ATR"}],["Carga imparable",13,"Dados de superioridad 1",{"III":"da + 9d10 + ATR","IV":"da + 9d10 + ATR"}],["Oleada de acción",17,"1/descanso largo",{"IV":"3 × (da + 3d10 + ATR)"}]]},{"k":"monje","n":"Monje","role":"Luchador ágil y controlador","attr":"DES","saves":"FUE, DES","armor":"Defensa sin armadura","weapon":"Artes marciales o bastón (1d8 / 1d8 / 1d10 / 1d12)","hp1":17,"hp20":167,"res":"Ki igual a tu nivel; vuelve entero con un descanso corto","cat":"marcial","fin":["Cuerpo y mente","Tu DES y tu SAB suben +2 cada una (pueden pasar de +5): +2 al ataque y al daño con DES, +2 a la CA y +2 a las salvaciones de DES."],"rows":[["+2",17,"Puño de hierro, Barrido",[]],["+2",23,"Defensa paciente",["Ki: 2"]],["+2",40,"Ráfaga de golpes",["Ki: 3"]],["+2",41,"Mejora de DES (+1)",["Ki: 4"]],["+3",47,"Golpe aturdidor, Técnicas de tramo II",["Ki: 5"]],["+3",49,"—",["Ki: 6"]],["+3",62,"Paso del viento",["Ki: 7"]],["+3",64,"Mejora de DES (+1)",["Ki: 8"]],["+4",80,"Palma temblorosa",["Ki: 9"]],["+4",85,"—",["Ki: 10"]],["+4",98,"Tormenta de puños, Técnicas de tramo III",["Ki: 11"]],["+4",102,"Punto de atributo",["Ki: 12"]],["+5",113,"Onda de ki",["Ki: 13"]],["+5",116,"—",["Ki: 14"]],["+5",140,"—",["Ki: 15"]],["+5",143,"Punto de atributo",["Ki: 16"]],["+6",146,"Cien palmas, Técnicas de tramo IV, Técnica definitiva",["Ki: 17"]],["+6",148,"—",["Ki: 18"]],["+6",160,"Punto de atributo",["Ki: 19"]],["+6",167,"Cuerpo y mente",["Ki: 20"]]],"techs":[["Puño de hierro",1,"A voluntad",{"I":"da + 1d4 + ATR","II":"da + 2d4 + ATR","III":"da + 2d4 + ATR","IV":"da + 2d4 + ATR"}],["Barrido",1,"A voluntad",{"I":"da + ATR","II":"da + ATR","III":"da + ATR","IV":"da + ATR"}],["Defensa paciente",2,"Ki 1",{"I":"2d8 + ATR","II":"2d8 + ATR","III":"2d8 + ATR","IV":"2d8 + ATR"}],["Ráfaga de golpes",3,"Ki 1",{"I":"2 × (da + 1d4 + ATR)","II":"2 × (da + 2d4 + ATR)","III":"2 × (da + 2d4 + ATR)","IV":"2 × (da + 2d4 + ATR)"}],["Golpe aturdidor",5,"Ki 1",{"II":"da + 8d6 + ATR","III":"da + 8d6 + ATR","IV":"da + 8d6 + ATR"}],["Paso del viento",7,"Ki 1",{"II":"da + 8d8 + ATR","III":"da + 8d8 + ATR","IV":"da + 8d8 + ATR"}],["Palma temblorosa",9,"Ki 2",{"II":"da + 9d8 + ATR","III":"da + 9d8 + ATR","IV":"da + 9d8 + ATR"}],["Tormenta de puños",11,"Ki 2",{"III":"2 × (da + 6d6 + ATR)","IV":"2 × (da + 6d6 + ATR)"}],["Onda de ki",13,"Ki 3",{"III":"11d10 + ATR","IV":"11d10 + ATR"}],["Cien palmas",17,"1/descanso largo",{"IV":"4 × (da + 2d8 + ATR)"}]]},{"k":"explorador","n":"Explorador","role":"Tirador y cazador","attr":"DES","saves":"FUE, DES","armor":"Media armadura","weapon":"Arco largo (1d8); Ballesta pesada (1d10); Espadón (2d6)","hp1":15,"hp20":161,"res":"Lanzador medio: huecos de conjuro de nivel 1 a 5","cat":"half","fin":["Asesino de enemigos","Marca del cazador duplica su bonificación de daño (+12 en lugar de +6)."],"rows":[["+2",15,"Disparo preciso, Tajo del cazador",["Huecos 1.º ×2"]],["+2",25,"Disparo a la pierna",["Huecos 1.º ×2"]],["+2",36,"Marca del cazador",["Huecos 1.º ×3"]],["+2",46,"Mejora de DES (+1)",["Huecos 1.º ×3"]],["+3",48,"Golpe atrapador, Técnicas de tramo II",["Huecos 1.º ×4 · 2.º ×2"]],["+3",52,"—",["Huecos 1.º ×4 · 2.º ×2"]],["+3",58,"Andanada conjurada",["Huecos 1.º ×4 · 2.º ×3"]],["+3",67,"Mejora de DES (+1)",["Huecos 1.º ×4 · 2.º ×3"]],["+4",69,"Ataque adicional",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×2"]],["+4",77,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×2"]],["+4",106,"Flecha relampagueante, Técnicas de tramo III",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3"]],["+4",110,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3"]],["+5",111,"Ataque del compañero",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×1"]],["+5",112,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×1"]],["+5",136,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×2"]],["+5",138,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×2"]],["+6",152,"Descarga conjurada, Técnicas de tramo IV",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×1"]],["+6",159,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×1"]],["+6",160,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2"]],["+6",161,"Asesino de enemigos",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2"]]],"techs":[["Disparo preciso",1,"A voluntad",{"I":"da + ATR","II":"da + 1d4 + ATR","III":"da + 2d4 + ATR","IV":"da + 2d4 + ATR"}],["Tajo del cazador",1,"A voluntad",{"I":"da + ATR","II":"da + 1d4 + ATR","III":"da + 1d4 + ATR","IV":"da + 1d4 + ATR"}],["Disparo a la pierna",2,"Hueco 1+",{"I":"da + 2d6 + ATR","II":"da + 4d6 + ATR","III":"da + 5d6 + ATR","IV":"da + 5d6 + ATR"}],["Marca del cazador",3,"Hueco 1+",{"I":"3d8 + ATR · luego +3 al daño 3 turnos","II":"5d8 + ATR · luego +4 al daño 3 turnos","III":"6d8 + ATR · luego +5 al daño 3 turnos","IV":"6d8 + ATR · luego +6 al daño 3 turnos"}],["Golpe atrapador",5,"Hueco 2+",{"II":"da + 7d8 + ATR","III":"da + 8d8 + ATR","IV":"da + 8d8 + ATR"}],["Andanada conjurada",7,"Hueco 2+",{"II":"7d6 + ATR","III":"9d6 + ATR","IV":"9d6 + ATR"}],["Ataque adicional",9,"A voluntad",{"II":"2 × (da + 4d8 + ATR)","III":"2 × (da + 4d8 + ATR)","IV":"2 × (da + 4d8 + ATR)"}],["Flecha relampagueante",11,"Hueco 3+",{"III":"9d10 + ATR","IV":"9d10 + ATR"}],["Ataque del compañero",13,"A voluntad",{"III":"2 × (6d8 + ATR)","IV":"2 × (6d8 + ATR)"}],["Descarga conjurada",17,"Hueco 5+",{"IV":"14d10 + ATR"}]]},{"k":"artificiero","n":"Artificiero","role":"Inventor y apoyo técnico","attr":"INT","saves":"CON, INT","armor":"Media armadura","weapon":"Maza con escudo (1d6)","hp1":16,"hp20":148,"res":"Lanzador medio: huecos de conjuro de nivel 1 a 5","cat":"half","fin":["Genio inventor","+2 a todas tus salvaciones. Una vez por descanso largo, si caes a 0 PV, quedas a 1 PV."],"rows":[["+2",16,"Ballesta de repetición, Martillo de trueno",["Huecos 1.º ×2"]],["+2",26,"Poción restauradora",["Huecos 1.º ×2"]],["+2",37,"Infusión de arma",["Huecos 1.º ×3"]],["+2",48,"Mejora de INT (+1)",["Huecos 1.º ×3"]],["+3",52,"Torreta de fuego, Técnicas de tramo II",["Huecos 1.º ×4 · 2.º ×2"]],["+3",56,"—",["Huecos 1.º ×4 · 2.º ×2"]],["+3",72,"Granada de humo",["Huecos 1.º ×4 · 2.º ×3"]],["+3",85,"Mejora de INT (+1)",["Huecos 1.º ×4 · 2.º ×3"]],["+4",91,"Armadura de acero",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×2"]],["+4",103,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×2"]],["+4",110,"Cañón de relámpago, Técnicas de tramo III",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3"]],["+4",113,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3"]],["+5",120,"Red electrificada",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×1"]],["+5",127,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×1"]],["+5",128,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×2"]],["+5",130,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×2"]],["+6",134,"Gólem de guerra, Técnicas de tramo IV",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×1"]],["+6",138,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×1"]],["+6",145,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2"]],["+6",148,"Genio inventor",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2"]]],"techs":[["Ballesta de repetición",1,"A voluntad",{"I":"1d8 + ATR","II":"2d8 + ATR","III":"2d8 + ATR","IV":"2d8 + ATR"}],["Martillo de trueno",1,"A voluntad",{"I":"da + ATR","II":"da + 2d4 + ATR","III":"da + 2d4 + ATR","IV":"da + 2d4 + ATR"}],["Poción restauradora",2,"Hueco 1+",{"I":"2d6 + ATR","II":"4d6 + ATR","III":"4d6 + ATR","IV":"4d6 + ATR"}],["Infusión de arma",3,"Hueco 1+",{"I":"3d8 + ATR · luego +2 al daño 3 turnos","II":"6d8 + ATR · luego +3 al daño 3 turnos","III":"6d8 + ATR · luego +4 al daño 3 turnos","IV":"6d8 + ATR · luego +5 al daño 3 turnos"}],["Torreta de fuego",5,"Hueco 2+",{"II":"4d4 + ATR por ronda","III":"5d4 + ATR por ronda","IV":"5d4 + ATR por ronda"}],["Granada de humo",7,"Hueco 2+",{"II":"8d6 + ATR","III":"9d6 + ATR","IV":"9d6 + ATR"}],["Armadura de acero",9,"Hueco 3+",{"II":"5d8 + ATR","III":"5d8 + ATR","IV":"5d8 + ATR"}],["Cañón de relámpago",11,"Hueco 3+",{"III":"7d12 + ATR","IV":"7d12 + ATR"}],["Red electrificada",13,"Hueco 4+",{"III":"11d10 + ATR","IV":"11d10 + ATR"}],["Gólem de guerra",17,"Hueco 5+",{"IV":"3 × (4d10 + ATR)"}]]},{"k":"picaro","n":"Pícaro","role":"Asesino de un solo objetivo","attr":"DES","saves":"DES, INT","armor":"Armadura de cuero tachonado","weapon":"Estoque (1d8); Hacha de mano o jabalina (1d6)","hp1":19,"hp20":156,"res":"Todas tus técnicas son a voluntad","cat":"marcial","fin":["Golpe de suerte","Una vez por descanso corto, conviertes un ataque fallado en un impacto, o una tirada contra ti en un 20."],"rows":[["+2",19,"Estocada rápida, Lanzamiento certero",[]],["+2",22,"Esquiva asombrosa",[]],["+2",28,"Ataque furtivo",[]],["+2",31,"Mejora de DES (+1)",[]],["+3",47,"Golpe taimado: cegar, Técnicas de tramo II",[]],["+3",52,"—",[]],["+3",62,"Golpe astuto: veneno",[]],["+3",63,"Mejora de DES (+1)",[]],["+4",80,"Abanico de cuchillos",[]],["+4",85,"—",[]],["+4",87,"Golpe taimado: aturdir, Técnicas de tramo III",[]],["+4",90,"Punto de atributo",[]],["+5",99,"Corte de tendones",[]],["+5",106,"—",[]],["+5",129,"—",[]],["+5",132,"Punto de atributo",[]],["+6",136,"Asesinar, Técnicas de tramo IV, Técnica definitiva",[]],["+6",139,"—",[]],["+6",150,"Punto de atributo",[]],["+6",156,"Golpe de suerte",[]]],"techs":[["Estocada rápida",1,"A voluntad",{"I":"da + ATR","II":"da + 1d4 + ATR","III":"da + 1d4 + ATR","IV":"da + 2d4 + ATR"}],["Lanzamiento certero",1,"A voluntad",{"I":"da + 1d4 + ATR","II":"da + 2d4 + ATR","III":"da + 2d4 + ATR","IV":"da + 4d4 + ATR"}],["Esquiva asombrosa",2,"A voluntad",{"I":"2d6 + ATR","II":"3d6 + ATR","III":"3d6 + ATR","IV":"3d6 + ATR"}],["Ataque furtivo",3,"A voluntad",{"I":"da + ATR","II":"da + 1d6 + ATR","III":"da + 1d6 + ATR","IV":"da + 2d6 + ATR"}],["Golpe taimado: cegar",5,"A voluntad",{"II":"da + 6d10 + ATR","III":"da + 6d10 + ATR","IV":"da + 8d10 + ATR"}],["Golpe astuto: veneno",7,"A voluntad",{"II":"3d6 + ATR por ronda","III":"3d6 + ATR por ronda","IV":"4d6 + ATR por ronda"}],["Abanico de cuchillos",9,"A voluntad",{"II":"9d6 + ATR","III":"9d6 + ATR","IV":"12d6 + ATR"}],["Golpe taimado: aturdir",11,"A voluntad",{"III":"da + 7d6 + ATR","IV":"da + 8d6 + ATR"}],["Corte de tendones",13,"A voluntad",{"III":"da + 10d10 + ATR","IV":"da + 12d10 + ATR"}],["Asesinar",17,"1/descanso largo",{"IV":"da + 15d8 + ATR"}]]},{"k":"hechicero","n":"Hechicero","role":"Artillería de magia innata","attr":"CAR","saves":"CON, CAR","armor":"Sin armadura","weapon":"Sin arma de clase (técnicas a distancia)","hp1":19,"hp20":195,"res":"Lanzador completo: huecos de conjuro de nivel 1 a 9","cat":"full","fin":["Apoteosis arcana","Conjuro potenciado ya no gasta hueco."],"rows":[["+2",19,"Descarga de fuego, Toque gélido",["Huecos 1.º ×2"]],["+2",24,"Proyectil mágico",["Huecos 1.º ×3"]],["+2",34,"Conjuro potenciado",["Huecos 1.º ×4 · 2.º ×2"]],["+2",43,"Mejora de CAR (+1)",["Huecos 1.º ×4 · 2.º ×3"]],["+3",51,"Bola de fuego, Técnicas de tramo II",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×2"]],["+3",53,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3"]],["+3",64,"Resiliencia dracónica",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×1"]],["+3",75,"Mejora de CAR (+1)",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×2"]],["+4",86,"Relámpago",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×1"]],["+4",89,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2"]],["+4",109,"Desintegrar, Técnicas de tramo III",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1"]],["+4",113,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1"]],["+5",123,"Cono de frío",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1"]],["+5",128,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1"]],["+5",144,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1"]],["+5",148,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1"]],["+6",166,"Enjambre de meteoros, Técnicas de tramo IV",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",173,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×1 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",188,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×2 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",195,"Apoteosis arcana",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×2 · 7.º ×2 · 8.º ×1 · 9.º ×1"]]],"techs":[["Descarga de fuego",1,"A voluntad",{"I":"2d8 + ATR","II":"2d8 + ATR","III":"3d8 + ATR","IV":"3d8 + ATR"}],["Toque gélido",1,"A voluntad",{"I":"2d6 + ATR","II":"2d6 + ATR","III":"3d6 + ATR","IV":"3d6 + ATR"}],["Proyectil mágico",2,"Hueco 1+",{"I":"4d4","II":"5d4","III":"6d4","IV":"6d4"}],["Conjuro potenciado",3,"Hueco 2+",{"I":"4d8 + ATR · luego +3 al daño 3 turnos","II":"6d8 + ATR · luego +4 al daño 3 turnos","III":"7d8 + ATR · luego +5 al daño 3 turnos","IV":"7d8 + ATR · luego +6 al daño 3 turnos"}],["Bola de fuego",5,"Hueco 3+",{"II":"10d6 + ATR","III":"12d6 + ATR","IV":"12d6 + ATR"}],["Resiliencia dracónica",7,"Hueco 4+",{"II":"5d4 + ATR","III":"6d4 + ATR","IV":"6d4 + ATR"}],["Relámpago",9,"Hueco 5+",{"II":"10d8 + ATR","III":"12d8 + ATR","IV":"12d8 + ATR"}],["Desintegrar",11,"Hueco 6+",{"III":"10d10 + ATR","IV":"11d10 + ATR"}],["Cono de frío",13,"Hueco 7+",{"III":"13d10 + ATR","IV":"13d10 + ATR"}],["Enjambre de meteoros",17,"Hueco 9+",{"IV":"16d10 + ATR"}]]},{"k":"brujo","n":"Brujo","role":"Pactos y maldiciones","attr":"CAR","saves":"SAB, CAR","armor":"Armadura de cuero tachonado","weapon":"Espadón del pacto (2d6)","hp1":15,"hp20":174,"res":"Huecos de pacto: pocos, pero vuelven con cada descanso corto y siempre son del nivel más alto que conoces","cat":"pact","fin":["Maestro sobrenatural","Una vez por descanso largo, recuperas todos tus huecos de pacto sin descansar."],"rows":[["+2",15,"Descarga sobrenatural, Filo del pacto",["Huecos de pacto: 1","Nivel del hueco: 1.º"]],["+2",23,"Armadura de Agathys",["Huecos de pacto: 2","Nivel del hueco: 1.º"]],["+2",33,"Maleficio",["Huecos de pacto: 2","Nivel del hueco: 2.º"]],["+2",42,"Mejora de CAR (+1)",["Huecos de pacto: 2","Nivel del hueco: 2.º"]],["+3",61,"Brazos de Hadar, Técnicas de tramo II",["Huecos de pacto: 2","Nivel del hueco: 3.º"]],["+3",70,"—",["Huecos de pacto: 2","Nivel del hueco: 3.º"]],["+3",71,"Toque vampírico",["Huecos de pacto: 2","Nivel del hueco: 4.º"]],["+3",82,"Mejora de CAR (+1)",["Huecos de pacto: 2","Nivel del hueco: 4.º"]],["+4",98,"Hambre de Hadar",["Huecos de pacto: 2","Nivel del hueco: 5.º"]],["+4",108,"—",["Huecos de pacto: 2","Nivel del hueco: 5.º"]],["+4",109,"Palabra de terror, Técnicas de tramo III",["Huecos de pacto: 3","Nivel del hueco: 5.º","Arcanos: 6.º"]],["+4",110,"Punto de atributo",["Huecos de pacto: 3","Nivel del hueco: 5.º","Arcanos: 6.º"]],["+5",112,"Descarga triple",["Huecos de pacto: 3","Nivel del hueco: 5.º","Arcanos: 6.º, 7.º"]],["+5",113,"—",["Huecos de pacto: 3","Nivel del hueco: 5.º","Arcanos: 6.º, 7.º"]],["+5",142,"—",["Huecos de pacto: 3","Nivel del hueco: 5.º","Arcanos: 6.º, 7.º"]],["+5",146,"Punto de atributo",["Huecos de pacto: 3","Nivel del hueco: 5.º","Arcanos: 6.º, 7.º"]],["+6",149,"Invocación del patrón, Técnicas de tramo IV",["Huecos de pacto: 4","Nivel del hueco: 5.º","Arcanos: 6.º, 7.º, 9.º"]],["+6",154,"—",["Huecos de pacto: 4","Nivel del hueco: 5.º","Arcanos: 6.º, 7.º, 9.º"]],["+6",165,"Punto de atributo",["Huecos de pacto: 4","Nivel del hueco: 5.º","Arcanos: 6.º, 7.º, 9.º"]],["+6",174,"Maestro sobrenatural",["Huecos de pacto: 4","Nivel del hueco: 5.º","Arcanos: 6.º, 7.º, 9.º"]]],"techs":[["Descarga sobrenatural",1,"A voluntad",{"I":"1d12 + ATR","II":"2d12 + ATR","III":"2d12 + ATR","IV":"2d12 + ATR"}],["Filo del pacto",1,"A voluntad",{"I":"da + 1d4 + ATR","II":"da + 2d4 + ATR","III":"da + 2d4 + ATR","IV":"da + 3d4 + ATR"}],["Armadura de Agathys",2,"Pacto",{"I":"3d4 + ATR","II":"5d4 + ATR","III":"5d4 + ATR","IV":"6d4 + ATR"}],["Maleficio",3,"Pacto",{"I":"4d10 + ATR · luego +3 al daño 3 turnos","II":"6d10 + ATR · luego +4 al daño 3 turnos","III":"6d10 + ATR · luego +5 al daño 3 turnos","IV":"6d10 + ATR · luego +6 al daño 3 turnos"}],["Brazos de Hadar",5,"Pacto",{"II":"10d6 + ATR","III":"10d6 + ATR","IV":"11d6 + ATR"}],["Toque vampírico",7,"Pacto",{"II":"8d12 + ATR","III":"8d12 + ATR","IV":"9d12 + ATR"}],["Hambre de Hadar",9,"Pacto",{"II":"9d4 + ATR por ronda","III":"9d4 + ATR por ronda","IV":"9d4 + ATR por ronda"}],["Palabra de terror",11,"Arcano 6",{"III":"10d10 + ATR","IV":"13d10 + ATR"}],["Descarga triple",13,"Arcano 7",{"III":"3 × (4d8 + ATR)","IV":"3 × (6d8 + ATR)"}],["Invocación del patrón",17,"Arcano 9",{"IV":"13d12 + ATR"}]]},{"k":"clerigo","n":"Clérigo","role":"Sanador y castigador divino","attr":"SAB","saves":"SAB, CAR","armor":"Media armadura","weapon":"Maza con escudo (1d6)","hp1":17,"hp20":156,"res":"Lanzador completo: huecos de conjuro de nivel 1 a 9","cat":"full","fin":["Intervención divina mayor","Una vez por descanso largo, lanzas Intervención divina sin gastar hueco."],"rows":[["+2",17,"Llama sagrada, Maza bendita",["Huecos 1.º ×2"]],["+2",21,"Bendecir",["Huecos 1.º ×3"]],["+2",26,"Palabra de curación",["Huecos 1.º ×4 · 2.º ×2"]],["+2",33,"Mejora de SAB (+1)",["Huecos 1.º ×4 · 2.º ×3"]],["+3",47,"Guardianes espirituales, Técnicas de tramo II",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×2"]],["+3",50,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3"]],["+3",57,"Escudo de fe",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×1"]],["+3",62,"Mejora de SAB (+1)",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×2"]],["+4",73,"Curar heridas en masa",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×1"]],["+4",75,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2"]],["+4",112,"Golpe flamígero, Técnicas de tramo III",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1"]],["+4",114,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1"]],["+5",123,"Castigo sagrado",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1"]],["+5",130,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1"]],["+5",131,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1"]],["+5",132,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1"]],["+6",141,"Intervención divina, Técnicas de tramo IV",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",146,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×1 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",151,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×2 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",156,"Intervención divina mayor",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×2 · 7.º ×2 · 8.º ×1 · 9.º ×1"]]],"techs":[["Llama sagrada",1,"A voluntad",{"I":"1d8 + ATR","II":"3d8 + ATR","III":"3d8 + ATR","IV":"3d8 + ATR"}],["Maza bendita",1,"A voluntad",{"I":"da + ATR","II":"da + 2d4 + ATR","III":"da + 2d4 + ATR","IV":"da + 3d4 + ATR"}],["Bendecir",2,"Hueco 1+",{"I":"2d6 + ATR","II":"4d6 + ATR","III":"4d6 + ATR","IV":"5d6 + ATR"}],["Palabra de curación",3,"Hueco 2+",{"I":"2d4 + ATR","II":"5d4 + ATR","III":"5d4 + ATR","IV":"5d4 + ATR"}],["Guardianes espirituales",5,"Hueco 3+",{"II":"3d6 + ATR por ronda","III":"3d6 + ATR por ronda","IV":"4d6 + ATR por ronda"}],["Escudo de fe",7,"Hueco 4+",{"II":"5d6 + ATR","III":"5d6 + ATR","IV":"5d6 + ATR"}],["Curar heridas en masa",9,"Hueco 5+",{"II":"9d6 + ATR","III":"9d6 + ATR","IV":"10d6 + ATR"}],["Golpe flamígero",11,"Hueco 6+",{"III":"12d10 + ATR","IV":"14d10 + ATR"}],["Castigo sagrado",13,"Hueco 7+",{"III":"8d10 + ATR","IV":"10d10 + ATR"}],["Intervención divina",17,"Hueco 9+",{"IV":"10d10 + ATR"}]]},{"k":"paladin","n":"Paladín","role":"Defensor sagrado y sanador","attr":"FUE","saves":"SAB, CAR","armor":"Armadura de placas","weapon":"Espada larga con escudo (1d8); Tridente (1d8)","hp1":13,"hp20":177,"res":"Lanzador medio: huecos de conjuro de nivel 1 a 5","cat":"half","fin":["Santo guerrero","Castigo divino, Castigo atronador y Castigo cegador suman +2d8 de daño radiante al impactar."],"rows":[["+2",13,"Golpe justo, Jabalina sagrada",["Huecos 1.º ×2"]],["+2",29,"Voto de enemistad",["Huecos 1.º ×2"]],["+2",44,"Imposición de manos",["Huecos 1.º ×3"]],["+2",57,"Mejora de FUE (+1)",["Huecos 1.º ×3"]],["+3",58,"Castigo divino, Técnicas de tramo II",["Huecos 1.º ×4 · 2.º ×2"]],["+3",65,"—",["Huecos 1.º ×4 · 2.º ×2"]],["+3",73,"Aura de protección",["Huecos 1.º ×4 · 2.º ×3"]],["+3",94,"Mejora de FUE (+1)",["Huecos 1.º ×4 · 2.º ×3"]],["+4",95,"Castigo atronador",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×2"]],["+4",105,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×2"]],["+4",123,"Juicio sagrado, Técnicas de tramo III",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3"]],["+4",127,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3"]],["+5",133,"Castigo cegador",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×1"]],["+5",140,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×1"]],["+5",150,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×2"]],["+5",154,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×2"]],["+6",166,"Avatar de la justicia, Técnicas de tramo IV",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×1"]],["+6",170,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×1"]],["+6",172,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2"]],["+6",177,"Santo guerrero",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2"]]],"techs":[["Golpe justo",1,"A voluntad",{"I":"da + ATR","II":"da + 1d4 + ATR","III":"da + 1d4 + ATR","IV":"da + 1d4 + ATR"}],["Jabalina sagrada",1,"A voluntad",{"I":"da + ATR","II":"da + 1d4 + ATR","III":"da + 1d4 + ATR","IV":"da + 1d4 + ATR"}],["Voto de enemistad",2,"Hueco 1+",{"I":"da + ATR","II":"da + 2d8 + ATR","III":"da + 3d8 + ATR","IV":"da + 3d8 + ATR"}],["Imposición de manos",3,"Hueco 1+",{"I":"3d6 + ATR","II":"7d6 + ATR","III":"9d6 + ATR","IV":"9d6 + ATR"}],["Castigo divino",5,"Hueco 2+",{"II":"da + 3d8 + ATR","III":"da + 3d8 + ATR","IV":"da + 4d8 + ATR"}],["Aura de protección",7,"Hueco 2+",{"II":"6d6 + ATR","III":"6d6 + ATR","IV":"6d6 + ATR"}],["Castigo atronador",9,"Hueco 3+",{"II":"da + 7d8 + ATR","III":"da + 7d8 + ATR","IV":"da + 8d8 + ATR"}],["Juicio sagrado",11,"Hueco 3+",{"III":"9d8 + ATR","IV":"9d8 + ATR"}],["Castigo cegador",13,"Hueco 4+",{"III":"da + 8d10 + ATR","IV":"da + 9d10 + ATR"}],["Avatar de la justicia",17,"Hueco 5+",{"IV":"2 × (da + 4d8 + ATR)"}]]},{"k":"psionico","n":"Psiónico","role":"Mente sobre materia","attr":"INT","saves":"INT, SAB","armor":"Sin armadura","weapon":"Sin arma de clase (técnicas a distancia)","hp1":28,"hp20":171,"res":"Lanzador completo: huecos de conjuro de nivel 1 a 9","cat":"full","fin":["Mente trascendida","Barrera mental ya no gasta hueco, y tus salvaciones de INT y SAB suben +2."],"rows":[["+2",28,"Cuchillas psíquicas, Astilla mental",["Huecos 1.º ×2"]],["+2",38,"Barrera mental",["Huecos 1.º ×3"]],["+2",40,"Empuje telequinético",["Huecos 1.º ×4 · 2.º ×2"]],["+2",44,"Mejora de INT (+1)",["Huecos 1.º ×4 · 2.º ×3"]],["+3",57,"Estática sináptica, Técnicas de tramo II",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×2"]],["+3",58,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3"]],["+3",64,"Dominar mente",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×1"]],["+3",94,"Mejora de INT (+1)",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×2"]],["+4",98,"Golpe psiónico",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×1"]],["+4",100,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2"]],["+4",102,"Grito mental, Técnicas de tramo III",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1"]],["+4",105,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1"]],["+5",106,"Drenaje mental",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1"]],["+5",107,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1"]],["+5",125,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1"]],["+5",129,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1"]],["+6",154,"Singularidad psíquica, Técnicas de tramo IV",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×2 · 6.º ×1 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",156,"—",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×1 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",170,"Punto de atributo",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×2 · 7.º ×1 · 8.º ×1 · 9.º ×1"]],["+6",171,"Mente trascendida",["Huecos 1.º ×4 · 2.º ×3 · 3.º ×3 · 4.º ×3 · 5.º ×3 · 6.º ×2 · 7.º ×2 · 8.º ×1 · 9.º ×1"]]],"techs":[["Cuchillas psíquicas",1,"A voluntad",{"I":"1d8 + ATR","II":"2d8 + ATR","III":"3d8 + ATR","IV":"3d8 + ATR"}],["Astilla mental",1,"A voluntad",{"I":"2d6 + ATR","II":"4d6 + ATR","III":"6d6 + ATR","IV":"6d6 + ATR"}],["Barrera mental",2,"Hueco 1+",{"I":"4d4 + ATR","II":"6d4 + ATR","III":"8d4 + ATR","IV":"8d4 + ATR"}],["Empuje telequinético",3,"Hueco 2+",{"I":"4d8 + ATR","II":"7d8 + ATR","III":"9d8 + ATR","IV":"9d8 + ATR"}],["Estática sináptica",5,"Hueco 3+",{"II":"7d8 + ATR","III":"9d8 + ATR","IV":"9d8 + ATR"}],["Dominar mente",7,"Hueco 4+",{"II":"8d10 + ATR","III":"10d10 + ATR","IV":"10d10 + ATR"}],["Golpe psiónico",9,"Hueco 5+",{"II":"10d10 + ATR","III":"13d10 + ATR","IV":"13d10 + ATR"}],["Grito mental",11,"Hueco 6+",{"III":"9d10 + ATR","IV":"9d10 + ATR"}],["Drenaje mental",13,"Hueco 7+",{"III":"14d8 + ATR","IV":"14d8 + ATR"}],["Singularidad psíquica",17,"Hueco 9+",{"IV":"14d10 + ATR"}]]}], $ = id => document.getElementById(id);
+                if (!$('mn-board')) return;
+                const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+                const TR = [['I', '1–4'], ['II', '5–10'], ['III', '11–16'], ['IV', '17–20']], ROM = ['I', 'II', 'III', 'IV'];
+                const tOf = l => l < 5 ? 0 : l < 11 ? 1 : l < 17 ? 2 : 3;
+                const CATS = [['all', 'Todas'], ['marcial', 'Marciales'], ['full', 'Lanzador completo'], ['half', 'Medio lanzador'], ['pact', 'Pacto']];
+                let cat = 'all', sort = 'orden', cur = D[0].k, lvl = 1;
+
+                // 1) Tablero
+                function board() {
+                    $('mn-filters').innerHTML = CATS.map(c => `<button type="button" class="mn-chip${c[0] === cat ? ' on' : ''}" data-cat="${c[0]}">${c[1]}</button>`).join('');
+                    const cmp = { orden: () => 0, nombre: (a, b) => a.n.localeCompare(b.n, 'es'), pv1: (a, b) => b.hp1 - a.hp1, pv20: (a, b) => b.hp20 - a.hp20 }[sort];
+                    const list = D.filter(c => cat === 'all' || c.cat === cat).sort(cmp);
+                    $('mn-board').innerHTML = list.map(c => `<article class="mn-card frame-panel">
+                        <h3 class="mn-name">${esc(c.n)}</h3><span class="mn-role">${esc(c.role)}</span>
+                        <div class="mn-tags"><span class="mn-tag">${esc(c.attr)}</span><span class="mn-tag" title="Salvaciones con competencia">Salv. ${esc(c.saves)}</span></div>
+                        <dl class="mn-dl"><div><dt>Armadura</dt><dd>${esc(c.armor)}</dd></div><div><dt>Arma</dt><dd>${esc(c.weapon)}</dd></div>
+                        <div><dt>PV</dt><dd>${c.hp1} → ${c.hp20}</dd></div><div><dt>Recurso</dt><dd>${esc(c.res)}</dd></div><div><dt>Nivel 20</dt><dd>${esc(c.fin[0])}</dd></div></dl>
+                        <div class="mn-actions"><button type="button" class="mn-btn" data-k="${c.k}">Ver niveles ↓</button><a class="mn-btn" href="clases.html#${c.k}">Ficha completa →</a></div></article>`).join('')
+                        || '<p class="mn-sub">Ninguna clase coincide.</p>';
+                }
+                $('mn-filters').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (b) { cat = b.dataset.cat; board(); } });
+                $('mn-sort').addEventListener('change', e => { sort = e.target.value; board(); });
+                $('mn-board').addEventListener('click', e => { const b = e.target.closest('button[data-k]'); if (b) { cur = b.dataset.k; level(); $('nivel').scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
+                $('mn-board').addEventListener('pointermove', e => { const c = e.target.closest('.mn-card'); if (!c) return; const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
+
+                // 2) Selector de nivel
+                function level() {
+                    const c = D.find(x => x.k === cur), r = c.rows[lvl - 1], t = tOf(lvl), T = ROM[t];
+                    $('mn-classes').innerHTML = D.map(x => `<button type="button" class="mn-chip${x.k === cur ? ' on' : ''}" data-k="${x.k}">${esc(x.n)}</button>`).join('');
+                    $('mn-lvlnum').textContent = lvl;
+                    $('mn-lvl').style.setProperty('--p', ((lvl - 1) / 19 * 100) + '%');
+                    $('mn-out').innerHTML = `<div class="mn-stats"><div><b>Nivel</b>${lvl}</div><div><b>Competencia</b>${r[0]}</div><div><b>Tramo</b>${T}</div><div><b>PV</b>${r[1]}</div></div>
+                        <div class="mn-tramos">${TR.map((x, i) => `<div class="mn-tr${i === t ? ' on' : ''}"><strong>${x[0]}</strong><span>niv. ${x[1]}</span></div>`).join('')}</div>
+                        <p class="mn-line"><b>Nuevo en este nivel</b>${esc(r[2])}</p>${r[3].length ? `<p class="mn-line"><b>Recursos</b>${esc(r[3].join(' · '))}</p>` : ''}
+                        <div class="mn-techs">${c.techs.map(x => { const ok = lvl >= x[1], v = x[3][T] || x[3][ROM.filter(z => x[3][z]).pop()];
+                            return `<div class="mn-t${ok ? '' : ' lock'}"><strong>${esc(x[0])}</strong><small>${ok ? esc(x[2]) : 'Se desbloquea en el nivel ' + x[1]}</small>${ok ? `<span>${esc(v)}</span>` : ''}</div>`; }).join('')}</div>
+                        ${lvl === 20 ? `<div class="mn-final"><b>Rasgo final · ${esc(c.fin[0])}</b>${esc(c.fin[1])}</div>` : ''}`;
+                }
+                $('mn-classes').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) { cur = b.dataset.k; level(); } });
+                $('mn-lvl').addEventListener('input', e => { lvl = +e.target.value; level(); });
+
+                // 3) Tirada de ejemplo
+                $('mn-rollbtn').addEventListener('click', () => {
+                    const c = D.find(x => x.k === cur), comp = parseInt(c.rows[lvl - 1][0], 10), ca = +$('mn-ca').value || 15, out = $('mn-rollout');
+                    let n = 0; const iv = setInterval(() => {
+                        const d = 1 + Math.floor(Math.random() * 20);
+                        if (++n < 8) { out.textContent = 'd20 → ' + d; return; }
+                        clearInterval(iv);
+                        const tot = d + 3 + comp, res = d === 20 ? '<span class="crit">¡Crítico! Doblas los dados.</span>' : tot >= ca ? '<span class="ok">Impacta</span>' : '<span class="ko">Falla</span>';
+                        out.innerHTML = `${esc(c.n)} nivel ${lvl}: d20 <b>${d}</b> + atributo 3 + competencia ${comp} = <b>${tot}</b> contra CA ${ca} → ${res}`;
+                    }, 60);
+                });
+
+                // 4) Glosario con aviso emergente
+                const G = [['CA', 'Clase de armadura: 10 + pechera + escudo + DES. Ligera: 12 + DES. Media: 15 + DES (máximo +2). Pesada: 18, sin DES. Escudo: +2.'],
+                    ['Competencia', '+2 en niveles 1–4, +3 en 5–8, +4 en 9–12, +5 en 13–16 y +6 en 17–20. Se suma a tus ataques con el atributo principal y con DES, y a las salvaciones de tu clase.'],
+                    ['ATR', 'Modificador de tu atributo principal. Se suma al daño de tus técnicas.'], ['da', 'El dado de tu arma.'],
+                    ['Tramo de poder', 'Cada técnica tiene cuatro versiones: I (niveles 1–4), II (5–10), III (11–16) y IV (17–20). Al cambiar de tramo, todas tus técnicas mejoran a la vez.'],
+                    ['Ataque vs CA', 'd20 + atributo + competencia contra la CA del objetivo. Un 20 natural es crítico (dobla los dados).'],
+                    ['Salvación', 'El objetivo tira d20 + su salvación contra tu dificultad; según la técnica, recibe la mitad o nada.'],
+                    ['A voluntad', 'Las técnicas «a voluntad» no gastan ningún recurso.'],
+                    ['Hueco N+', 'Gasta un hueco de nivel N. Si te quedan huecos de nivel superior pero no de ese, usa uno de nivel N+1 como si fuera de nivel N.'],
+                    ['Hueco de pacto', 'Pocos, pero vuelven con cada descanso corto y siempre son del nivel más alto que conoces.'],
+                    ['Arcano místico', 'El brujo tiene arcanos de nivel 6, 7 y 9: uno de cada, por descanso largo.'],
+                    ['Ki', 'Iguala tu nivel; vuelve entero con un descanso corto.'], ['Furia', 'Usos por descanso largo; un descanso corto devuelve 1.'],
+                    ['Dados de superioridad', 'Vuelven todos con un descanso corto.'], ['Segundo aliento', 'Un descanso corto devuelve 1 uso.'],
+                    ['Descanso largo', 'Solo en un campamento. Recupera todos los PV, huecos y usos, y te da 2 descansos cortos.'],
+                    ['Descanso corto', 'Recupera 1/4 de tus PV máximos, los huecos de pacto, el ki, los dados de superioridad y 1 uso de Furia y de Segundo aliento.'],
+                    ['Iniciativa', 'Al empezar el combate todos tiran d20 + DES y actúan de mayor a menor.']];
+                document.querySelectorAll('.mn-pop').forEach(p => p.remove());
+                const pop = document.createElement('div'); pop.className = 'mn-pop'; pop.hidden = true; document.body.appendChild(pop);
+                $('mn-gloss').innerHTML = G.map((g, i) => `<button type="button" class="mn-chip" data-g="${i}">${esc(g[0])}</button>`).join('');
+                const show = b => { const g = G[b.dataset.g]; pop.innerHTML = `<b>${esc(g[0])}</b>${esc(g[1])}`; pop.hidden = false;
+                    const r = b.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+                    pop.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.left + r.width / 2 - w / 2)) + 'px';
+                    pop.style.top = (r.top - h - 8 > 8 ? r.top - h - 8 : r.bottom + 8) + 'px'; };
+                const gl = $('mn-gloss');
+                gl.addEventListener('pointerover', e => { const b = e.target.closest('[data-g]'); if (b) show(b); });
+                gl.addEventListener('pointerout', () => { pop.hidden = true; });
+                gl.addEventListener('focusin', e => { const b = e.target.closest('[data-g]'); if (b) show(b); });
+                gl.addEventListener('focusout', () => { pop.hidden = true; });
+                gl.addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (b) show(b); });
+                addEventListener('scroll', () => { pop.hidden = true; }, { passive: true });
+
+                board(); level();
+            })();
+
+            // expuesto porque el HTML lo llama con onclick=""
+            window.toggleClase = toggleClase;
+
+            // enlaces del buscador: manual#sec-clase abre ese capítulo
+            if (location.hash.indexOf('#sec-') === 0) toggleClase(location.hash.slice(5));
+        })();
+    </script>
+</body>
+</html>

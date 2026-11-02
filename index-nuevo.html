@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetherna V2 · Códice de Fantasía Oscura</title>
+    <meta name="description" content="Códice de Aetherna V2: lore, razas, clases y las épocas de Aetherna, un mundo de fantasía oscura.">
+    <meta name="theme-color" content="#07051A">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Aetherna V2">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:title" content="Aetherna V2 · Códice de Fantasía Oscura">
+    <meta property="og:description" content="Códice de Aetherna V2: lore, razas, clases y las épocas de Aetherna, un mundo de fantasía oscura.">
+    <meta property="og:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <meta property="og:url" content="https://aetherna-cyan.vercel.app/">
+    <link rel="canonical" href="https://aetherna-cyan.vercel.app/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <link rel="icon" type="image/png" href="fotos/Logo.png">
+
+    <!-- Google Fonts: Cinzel Decorative, Cinzel & EB Garamond -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Estilos comunes + estilos propios de esta página + Tailwind compilado (ver LEEME.md) -->
+    <link rel="stylesheet" href="styles.css">
+    <style id="page-style">
+        .separator-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            margin: 2.5rem 0;
+        }
+        .separator-line::before, .separator-line::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(217,180,106,.4), transparent);
+        }
+        .separator-diamond {
+            color: #D9B46A;
+            padding: 0 1rem;
+            font-size: 12px;
+        }
+        .btn-primary-aetherna {
+            background: linear-gradient(135deg, #5A2BA8 0%, #2B1263 100%);
+            border: 1px solid #D9B46A;
+            box-shadow: inset 0 0 0 1px #D9B46A, 0 0 15px rgba(120,70,200,.35);
+            border-radius: 0px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: #F6E2B3;
+            transition: all 0.3s ease;
+        }
+        .btn-primary-aetherna:hover {
+            box-shadow: inset 0 0 0 1px #FFF2CF, 0 0 25px rgba(157,108,240,.5);
+            color: #FFF2CF;
+        }
+        .unreadable-interior {
+            filter: blur(12px);
+            opacity: 0.35;
+            user-select: none;
+            pointer-events: none;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+        }
+
+        /* Efecto dorado al pasar el ratón (tarjetas y botones), igual que en Razas y Clases */
+        .gold-card { overflow: hidden; transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .35s, opacity .7s cubic-bezier(0.16, 1, 0.3, 1); }
+        .gold-card > * { position: relative; z-index: 2; }
+        .gold-card::before { content: ""; position: absolute; inset: 0; z-index: 1; opacity: 0; pointer-events: none; transition: opacity .35s;
+            background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(157,108,240,.28), rgba(217,180,106,.10) 45%, transparent 70%); }
+        .gold-card::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%; z-index: 1; pointer-events: none;
+            background: linear-gradient(100deg, transparent, rgba(255,242,207,.13), transparent); transform: skewX(-18deg); }
+        .gold-card h3 { transition: color .3s, text-shadow .3s, letter-spacing .35s; }
+        .gold-card:hover { transform: translateY(-7px); border-color: rgba(217,180,106,.85);
+            box-shadow: 0 16px 34px rgba(0,0,0,.55), 0 0 26px rgba(157,108,240,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
+        .gold-card:hover::before { opacity: 1; }
+        .gold-card:hover::after { left: 130%; transition: left .8s ease; }
+        .gold-card:hover h3 { color: #FFF2CF; text-shadow: 0 0 14px rgba(196,160,255,.55); letter-spacing: .04em; }
+        .gold-btn { position: relative; overflow: hidden; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s, color .3s; }
+        .gold-btn::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%; pointer-events: none;
+            background: linear-gradient(100deg, transparent, rgba(255,242,207,.28), transparent); transform: skewX(-18deg); }
+        .gold-btn:hover, .gold-btn:focus-visible { transform: translateY(-3px); border-color: #F0D79E; color: #FFF2CF;
+            box-shadow: 0 10px 24px rgba(0,0,0,.5), 0 0 24px rgba(217,180,106,.45), inset 0 0 0 1px rgba(240,215,158,.65); }
+        .gold-btn:hover::after { left: 130%; transition: left .7s ease; }
+        @media (prefers-reduced-motion: reduce) { .gold-card, .gold-card *, .gold-btn { transition: none !important; } .gold-card:hover, .gold-btn:hover { transform: none; } .gold-card::after, .gold-btn::after { display: none; } }
+
+        /* Oficios en portada: si falta la ilustración (fotos/<oficio>.webp) la tarjeta enseña el nombre y se ve siempre */
+        .of-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+        .emblem-card.no-emblem .of-name { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; margin-bottom: .5rem; }
+        .frame-panel.emblem-card.emblem-reveal.no-emblem { background-color: rgba(14, 11, 38, 0.86); border-color: rgba(217,180,106,.22); box-shadow: inset 0 0 0 3px rgba(90, 74, 138, 0.3); }
+        .frame-panel.emblem-card.emblem-reveal.no-emblem > :not(.emblem-stage) { opacity: 1; transform: none; }
+
+        /* Noticia destacada de la portada */
+        .home-news { display: grid; grid-template-columns: 1fr; max-width: 56rem; margin: 0 auto; }
+        @media (min-width: 768px) { .home-news { grid-template-columns: 1.1fr 1fr; } }
+        .home-news-media { position: relative; display: flex; align-items: center; justify-content: center; min-height: 200px; overflow: hidden;
+            background: radial-gradient(120% 120% at 30% 20%, #44207F 0%, #151034 60%, #0B0824 100%); border-bottom: 1px solid rgba(217,180,106,.25); }
+        @media (min-width: 768px) { .home-news-media { border-bottom: 0; border-right: 1px solid rgba(217,180,106,.25); } }
+        .home-news-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .home-news-media svg { position: relative; z-index: 2; transition: transform .35s cubic-bezier(.2,.8,.2,1), filter .35s; filter: drop-shadow(0 0 10px rgba(157,108,240,.5)); }
+        .gold-card:hover .home-news-media svg { transform: scale(1.12); filter: drop-shadow(0 0 16px rgba(240,215,158,.7)); }
+        .home-news-more { display: grid; grid-template-columns: 1fr; gap: 1.5rem; max-width: 56rem; margin: 1.5rem auto 0; }
+        @media (min-width: 768px) { .home-news-more { grid-template-columns: 1fr 1fr; } }
+        .home-news-sm { grid-template-columns: 1fr; margin: 0; }
+        .home-news-sm .home-news-media { min-height: 140px; border-right: 0; border-bottom: 1px solid rgba(217,180,106,.25); }
+        .home-news-meta { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #B9A98A; }
+        .home-news-tag { padding: .1rem .55rem; border: 1px solid rgba(217,180,106,.4); color: #D9B46A; }
+
+        /* ===== Portada nueva: interfaz de combate ===== */
+        .hud { background: rgba(11,8,36,.86); border: 1px solid rgba(217,180,106,.45); border-radius: 6px; box-shadow: inset 0 0 0 2px rgba(90,74,138,.28), 0 10px 30px rgba(0,0,0,.45); backdrop-filter: blur(4px); }
+        .cb-hero { position: relative; z-index: 10; min-height: 100vh; padding: 6.5rem clamp(1rem,3vw,2.5rem) 1.5rem; display: grid; gap: 1rem 1.5rem;
+            grid-template-columns: minmax(200px,250px) 1fr minmax(260px,330px); grid-template-rows: auto 1fr auto;
+            grid-template-areas: "party init log" "title title ." "bar bar bar"; }
+        .cb-bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; -webkit-mask-image: linear-gradient(180deg,#000 70%,transparent); mask-image: linear-gradient(180deg,#000 70%,transparent); }
+        .cb-bg img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; filter: saturate(.8) contrast(1.05); }
+        .cb-bg::after { content: ""; position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(7,5,26,.78) 0%, rgba(21,16,52,.38) 38%, rgba(7,5,26,.88) 88%), radial-gradient(70% 55% at 50% 38%, rgba(124,60,210,.38), transparent 70%); }
+        .cb-party { grid-area: party; align-self: start; padding: .6rem; display: grid; gap: .5rem; font-family: 'Inter', system-ui, sans-serif; }
+        .cb-member { display: flex; gap: .6rem; align-items: center; padding: .35rem .5rem; background: rgba(255,255,255,.03); border-radius: 4px; }
+        .cb-member img { width: 36px; height: 36px; object-fit: contain; flex: none; }
+        .cb-member > div { flex: 1; min-width: 0; }
+        .cb-member b { display: block; font: 600 12px 'Cinzel', serif; letter-spacing: .06em; color: #F0D79E; margin-bottom: 3px; }
+        .cb-member small { font-size: 11px; color: #B9A98A; }
+        .cb-hp { display: block; height: 6px; background: rgba(255,255,255,.1); border-radius: 3px; overflow: hidden; margin-bottom: 2px; }
+        .cb-hp i { display: block; height: 100%; background: linear-gradient(90deg,#2fbf8a,#4fe0a8); }
+        .cb-init { grid-area: init; justify-self: center; align-self: start; display: grid; justify-items: center; gap: .5rem; }
+        .cb-init-bar { display: flex; align-items: center; gap: 1rem; padding: .5rem 1rem .5rem .8rem; }
+        .cb-round { text-align: center; font-family: 'Cinzel', serif; color: #B9A98A; line-height: 1; }
+        .cb-round span { display: block; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; margin-bottom: 4px; }
+        .cb-round b { font-size: 26px; color: #F0D79E; }
+        .cb-init ol { display: flex; gap: .6rem; list-style: none; margin: 0; padding: 0; }
+        .cb-init li { display: grid; justify-items: center; gap: 2px; opacity: .7; }
+        .cb-init li.on { opacity: 1; }
+        .cb-init li img { width: 44px; height: 44px; object-fit: contain; padding: 2px; border-radius: 4px; border: 1px solid transparent; }
+        .cb-init li.on img { border-color: #F0D79E; background: rgba(217,180,106,.14); box-shadow: 0 0 14px rgba(240,215,158,.45); }
+        .cb-init small { font: 500 10px 'Inter', system-ui, sans-serif; color: #D8C9A8; white-space: nowrap; }
+        .cb-turn { font: 600 12px 'Inter', system-ui, sans-serif; color: #F0D79E; background: rgba(11,8,36,.9); border: 1px solid rgba(217,180,106,.45); border-radius: 999px; padding: .25rem .9rem; margin: 0; }
+        .cb-log { grid-area: log; align-self: start; padding: .8rem 1rem; font: 400 12.5px/1.5 'Inter', system-ui, sans-serif; color: #E7DCC3; }
+        .cb-log header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .5rem; }
+        .cb-log h2 { margin: 0; font: 600 12px 'Cinzel', serif; letter-spacing: .14em; text-transform: uppercase; color: #D9B46A; }
+        .cb-log header span { color: #B9A98A; font-size: 12px; }
+        .cb-log ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .3rem; }
+        .cb-log li { padding-left: .6rem; border-left: 2px solid rgba(217,180,106,.25); }
+        .cb-log .mut { color: #A99C82; }
+        .cb-log .ok { color: #4fe0a8; } .cb-log .bad { color: #ff7d7d; } .cb-log .vio { color: #C4A0FF; }
+        .cb-log a { color: #F0D79E; text-decoration: underline; text-underline-offset: 3px; }
+        .cb-log li.news { border-left-color: #C4A0FF; }
+        .cb-log li { transition: opacity .5s ease, translate .5s ease; }
+        .cb-log.is-typing li:not(.shown) { opacity: 0; translate: 0 6px; }
+        .cb-title { grid-area: title; align-self: end; padding-bottom: 1.5rem; }
+        .cb-title h1 { margin: 0 0 .75rem; font-family: 'Cinzel Decorative', serif; font-weight: 900; font-size: clamp(2.4rem, 6.2vw, 5.2rem); line-height: 1; letter-spacing: .05em;
+            background: linear-gradient(180deg,#FFF2CF 8%,#F0D79E 48%,#C99A4A 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+            filter: drop-shadow(0 4px 22px rgba(0,0,0,.7)) drop-shadow(0 0 20px rgba(157,108,240,.4)); }
+        .cb-title p { margin: 0 0 1.5rem; font: italic 400 clamp(1.1rem,1.6vw,1.35rem)/1.5 'EB Garamond', serif; color: #F6E2B3; text-shadow: 0 2px 14px rgba(0,0,0,.8); max-width: 34rem; }
+        @media (min-width: 1024px) { .cb-title h1 { white-space: nowrap; } }
+        .cb-cta { display: flex; flex-wrap: wrap; gap: 1rem; }
+        .cb-cta a { padding: 1rem 1.75rem; font-size: .75rem; line-height: 1; }
+        .cb-bar { grid-area: bar; display: flex; align-items: flex-end; justify-content: center; gap: 1.25rem; position: relative; }
+        .cb-hotwrap { position: relative; }
+        .cb-counts { position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); display: flex; gap: 1.1rem; padding: .3rem .9rem; font: 500 12px 'Inter', system-ui, sans-serif; color: #E7DCC3; white-space: nowrap; }
+        .cb-counts i { display: inline-block; width: 8px; height: 8px; transform: rotate(45deg); margin-right: .4rem; }
+        .cb-counts .bl { background: #4aa3ff; } .cb-counts .or { background: #E2A24A; }
+        .cb-hotbar { display: flex; gap: .45rem; padding: .55rem; }
+        .cb-slot { position: relative; width: 64px; height: 64px; display: grid; place-items: center; border: 2px solid rgba(217,180,106,.8); border-radius: 4px; color: #F0D79E; background: linear-gradient(160deg,#1b1442,#0B0824);
+            transition: transform .2s cubic-bezier(.2,.8,.2,1), border-color .2s, box-shadow .2s; }
+        .cb-slot svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+        .cb-slot .k { position: absolute; top: 2px; left: 5px; font: 600 10px 'Inter', system-ui, sans-serif; color: #B9A98A; }
+        .cb-slot:hover, .cb-slot:focus-visible { transform: translateY(-5px); border-color: #FFF2CF; box-shadow: 0 0 18px rgba(157,108,240,.55), inset 0 0 0 1px rgba(240,215,158,.5); outline: none; }
+        .cb-tip { position: absolute; bottom: calc(100% + 14px); left: 50%; translate: -50% 4px; width: 14rem; padding: .6rem .8rem; text-align: left; opacity: 0; pointer-events: none; transition: opacity .18s, translate .18s;
+            background: rgba(11,8,36,.97); border: 1px solid rgba(217,180,106,.6); border-radius: 6px; font: 400 12px/1.4 'Inter', system-ui, sans-serif; color: #E7DCC3; box-shadow: 0 10px 26px rgba(0,0,0,.6); }
+        .cb-tip b { display: block; font: 600 13px 'Cinzel', serif; letter-spacing: .06em; color: #F0D79E; margin-bottom: 2px; }
+        .cb-tip span { display: block; } .cb-tip em { display: block; margin-top: .3rem; font-style: normal; color: #B9A98A; font-size: 11px; }
+        .cb-counts { transition: opacity .15s; }
+        .cb-hotwrap:hover .cb-counts, .cb-hotwrap:focus-within .cb-counts { opacity: 0; }
+        .cb-slot:hover .cb-tip, .cb-slot:focus-visible .cb-tip { opacity: 1; translate: -50% 0; }
+        .cb-end { width: 92px; height: 92px; border-radius: 50%; display: grid; place-content: center; text-align: center; border: 3px solid rgba(217,180,106,.85);
+            background: radial-gradient(circle at 50% 35%, #2a1d63, #0B0824 72%); color: #F0D79E; box-shadow: 0 0 0 3px rgba(11,8,36,.8), 0 8px 24px rgba(0,0,0,.55); transition: transform .2s, box-shadow .2s, border-color .2s; }
+        .cb-end b { font: 600 15px 'Cinzel', serif; letter-spacing: .04em; } .cb-end small { font: 400 11px 'Inter', system-ui, sans-serif; color: #B9A98A; }
+        .cb-end:hover, .cb-end:focus-visible { transform: scale(1.06); border-color: #FFF2CF; box-shadow: 0 0 0 3px rgba(11,8,36,.8), 0 0 26px rgba(157,108,240,.6); outline: none; }
+
+        .cb-how { scroll-margin-top: 5rem; position: relative; z-index: 10; max-width: 72rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+        .cb-how-head { max-width: 38rem; margin-bottom: 2.5rem; }
+        .cb-how h2 { margin: 0 0 .6rem; font: 700 clamp(1.7rem,3.4vw,2.5rem)/1.15 'Cinzel', serif; color: #F0D79E; letter-spacing: .03em; }
+        .cb-how-head p { margin: 0; font: 400 1.15rem/1.6 'EB Garamond', serif; color: #D8C9A8; }
+        .cb-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+        .cb-steps li { display: flex; flex-direction: column; gap: 1rem; }
+        .cb-steps figure { margin: 0; overflow: hidden; padding: 4px; }
+        .cb-steps figure img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 3px; display: block; transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+        .cb-steps li:hover figure img { transform: scale(1.04); }
+        .cb-steps .n { display: inline-grid; place-items: center; width: 30px; height: 30px; margin-bottom: .6rem; border-radius: 50%; border: 1px solid rgba(217,180,106,.8); font: 600 14px 'Cinzel', serif; color: #F0D79E; background: #0B0824; }
+        .cb-steps h3 { margin: 0 0 .35rem; font: 700 1.1rem/1.3 'Cinzel', serif; color: #F0D79E; }
+        .cb-steps p { margin: 0; font: 400 1.05rem/1.6 'EB Garamond', serif; color: #E7DCC3; }
+
+        @media (max-width: 1023px) {
+            .cb-hero { grid-template-columns: 1fr; grid-template-rows: auto; grid-template-areas: "init" "title" "bar" "party" "log"; padding-top: 6rem; }
+            .cb-party { grid-auto-flow: column; justify-content: start; }
+            .cb-init { justify-self: start; }
+            .cb-bar { flex-wrap: wrap; justify-content: flex-start; padding-top: 3rem; }
+            .cb-counts { left: 0; transform: none; }
+            .cb-steps { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 560px) {
+            .cb-init-bar { gap: .5rem; padding: .4rem .6rem; } .cb-init ol { gap: .3rem; } .cb-init small { font-size: 9px; }
+            .cb-party { grid-auto-flow: row; }
+            .cb-slot { width: 54px; height: 54px; } .cb-hotbar { gap: .3rem; padding: .4rem; } .cb-end { width: 76px; height: 76px; }
+            .cb-tip { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) { .cb-log li, .cb-slot, .cb-end, .cb-steps figure img { transition: none !important; } }
+    </style>
+    <link rel="stylesheet" href="tailwind.css">
+</head>
+<body class="relative selection:bg-aetherna-goldMain selection:text-aetherna-bgMain">
+    <!-- Fondo cósmico + brasas (los anima site.js) -->
+    <canvas id="cosmos-bg" width="128" height="72" aria-hidden="true"></canvas>
+    <canvas id="cosmos-stars" aria-hidden="true"></canvas>
+    <canvas id="ember-canvas" aria-hidden="true"></canvas>
+
+    <div id="page-root">
+    <!-- Portada: la web como la interfaz de combate del juego -->
+    <section id="inicio" class="cb-hero">
+        <div class="cb-bg" aria-hidden="true"><img src="fotos/combate-hero.webp" alt="" fetchpriority="high"></div>
+
+        <aside class="cb-party hud" aria-label="Grupo de ejemplo">
+            <div class="cb-member"><img src="fotos/explorador.webp" alt="" width="36" height="36"><div><b>Explorador</b><span class="cb-hp"><i style="width:100%"></i></span><small>48 / 48</small></div></div>
+            <div class="cb-member"><img src="fotos/hechicero.webp" alt="" width="36" height="36"><div><b>Hechicero</b><span class="cb-hp"><i style="width:100%"></i></span><small>51 / 51</small></div></div>
+        </aside>
+
+        <div class="cb-init" aria-label="Orden de iniciativa de ejemplo">
+            <div class="hud cb-init-bar">
+                <div class="cb-round"><span>Ronda</span><b>1</b></div>
+                <ol>
+                    <li class="on"><img src="fotos/explorador.webp" alt="" width="44" height="44"><small>Explorador · 21</small></li>
+                    <li><img src="fotos/brujo.webp" alt="" width="44" height="44"><small>Brujo · 18</small></li>
+                    <li><img src="fotos/barbaro.webp" alt="" width="44" height="44"><small>Bárbaro · 11</small></li>
+                    <li><img src="fotos/hechicero.webp" alt="" width="44" height="44"><small>Hechicero · 11</small></li>
+                </ol>
+            </div>
+            <p class="cb-turn">Tu turno · Explorador</p>
+        </div>
+
+        <aside class="cb-log hud" aria-label="Registro de combate de ejemplo">
+            <header><h2>Registro</h2><span>Ronda 1</span></header>
+            <ul id="cb-log-list">
+                <li class="mut">Ronda 1 · turno de Explorador</li>
+                <li><b class="vio">Marca del cazador</b> · 80% de éxito</li>
+                <li><b class="ok">No resiste.</b> d20 16 → 22 contra 16</li>
+                <li><span class="mut">Enemigo</span> <b class="bad">PV −39</b> <span class="mut">10d6=36</span></li>
+                <li class="mut">Bárbaro usa su reacción: Bloqueo (+4 CA)</li>
+                <li class="news"><b class="vio">Nuevo</b> · <a id="cb-news-link" href="noticias.html#teaser-aetherna-v2">Teaser de Aetherna V2</a></li>
+            </ul>
+        </aside>
+
+        <div class="cb-title">
+            <h1>AETHERNA V2</h1>
+            <p>Rol d20 con combate táctico por turnos. Crea tu personaje, elige tu senda y pelea en mapas en 3D.</p>
+            <div class="cb-cta">
+                <a href="#combate" class="btn-primary-aetherna gold-btn">Ver cómo se combate</a>
+                <a href="#discord" class="btn-normal gold-btn">Comunidad Discord</a>
+            </div>
+        </div>
+
+        <div class="cb-bar">
+            <div class="cb-hotwrap">
+            <div class="cb-counts hud" aria-label="Contenido del códice"><span><i class="bl"></i>12 clases</span><span><i class="bl"></i>11 razas</span><span><i class="or"></i>9 oficios</span></div>
+            <div class="cb-hotbar hud" role="navigation" aria-label="Secciones del códice">
+                <a href="lore.html" class="cb-slot" data-hk="1" aria-label="Lore">
+                    <span class="k">1</span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 6.5c3-1.4 6.5-1.4 10 .6 3.500-2 7-2 10-.6V25c-3-1.400-6.500-1.400-10 .6-3.500-2-7-2-10-.6z"/><path d="M16 7.100V25.600"/></svg>
+                    <span class="cb-tip"><b>Lore</b><span>Las eras, los dioses y la Nada.</span><em>Tecla 1</em></span>
+                </a>
+                <a href="razas.html" class="cb-slot" data-hk="2" aria-label="Razas">
+                    <span class="k">2</span><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="11" r="4"/><circle cx="22" cy="12" r="3.200"/><path d="M3.500 26c.6-5 3.500-8 7.500-8s6.900 3 7.500 8M18 26c.4-3.600 2.200-5.800 5-5.800s4.600 2.200 5 5.800"/></svg>
+                    <span class="cb-tip"><b>Razas</b><span>Elige tu linaje.</span><em>Tecla 2</em></span>
+                </a>
+                <a href="clases.html" class="cb-slot" data-hk="3" aria-label="Clases">
+                    <span class="k">3</span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M23.500 5.500l3 3L13 22l-4 1 1-4z"/><path d="M8 24l-3 3M20.500 8.500l3 3"/></svg>
+                    <span class="cb-tip"><b>Clases</b><span>Doce sendas de combate y magia.</span><em>Tecla 3</em></span>
+                </a>
+                <a href="oficios.html" class="cb-slot" data-hk="4" aria-label="Oficios">
+                    <span class="k">4</span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 12h14l3-4h3v4h-3v3H11l-1 3H6z"/><path d="M12 15v10h8V15"/></svg>
+                    <span class="cb-tip"><b>Oficios</b><span>Forja, cocina, caza y más.</span><em>Tecla 4</em></span>
+                </a>
+                <a href="manual.html" class="cb-slot" data-hk="5" aria-label="Manual">
+                    <span class="k">5</span><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="7" y="4.500" width="18" height="23" rx="1.500"/><path d="M11 10h10M11 14.500h10M11 19h6"/></svg>
+                    <span class="cb-tip"><b>Manual</b><span>Reglas, niveles y tiradas.</span><em>Tecla 5</em></span>
+                </a>
+            </div>
+            </div>
+            <a href="#combate" class="cb-end" aria-label="Bajar a la siguiente sección"><b>Bajar</b><small>Espacio</small></a>
+        </div>
+    </section>
+
+    <!-- Cómo se combate -->
+    <section id="combate" class="cb-how">
+        <div class="cb-how-head">
+            <h2>Así se combate en Aetherna</h2>
+            <p>Cada turno es una decisión. Capturas de las pruebas internas del juego, que sigue en desarrollo.</p>
+        </div>
+        <ol class="cb-steps">
+            <li>
+                <figure class="hud"><img src="fotos/combate-turno.webp" alt="Barra de iniciativa y registro de combate" loading="lazy" decoding="async"></figure>
+                <div><span class="n">1</span><h3>Iniciativa y turno</h3><p>Todos tiran iniciativa y el orden queda fijado arriba. Cada ronda, cada uno juega su turno y el registro anota cada tirada.</p></div>
+            </li>
+            <li>
+                <figure class="hud"><img src="fotos/combate-habilidad.webp" alt="Barra de habilidades con huecos de nivel" loading="lazy" decoding="async"></figure>
+                <div><span class="n">2</span><h3>Acción, movimiento y habilidades</h3><p>En tu turno tienes Acción, Acción adicional y Movimiento. Las habilidades gastan huecos de nivel y los descansos los recuperan.</p></div>
+            </li>
+            <li>
+                <figure class="hud"><img src="fotos/combate-reaccion.webp" alt="Aviso de reacción con cuenta atrás" loading="lazy" decoding="async"></figure>
+                <div><span class="n">3</span><h3>Reacciones</h3><p>Fuera de tu turno también decides. Si te atacan, tienes unos segundos para bloquear o dejar pasar el golpe.</p></div>
+            </li>
+        </ol>
+    </section>
+
+    <!-- Lore (Resumen en Portada) -->
+    <section id="origen" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">CRÓNICAS ASTRALES</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">EL ORIGEN DE LA PENUMBRA</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 stagger-group">
+            <div class="reveal frame-panel gold-card p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-10 h-10 bg-aetherna-field border border-aetherna-goldMain/30 text-aetherna-goldMain flex items-center justify-center mb-6 font-cinzel text-sm">I</div>
+                    <h3 class="font-cinzel text-lg text-aetherna-goldLight font-bold mb-3 tracking-wide">El Mundo que se Perdió</h3>
+                    <p class="font-garamond text-aetherna-textNormal text-base leading-relaxed mb-6">Una guerra divina eterna terminó en un estallido que destruyó el único suelo habitable del cosmos.</p>
+                </div>
+                <a href="lore.html" class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-[0.2em] flex items-center gap-2 hover:text-aetherna-goldHover">Leer Más →</a>
+            </div>
+
+            <div class="reveal frame-panel gold-card p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-10 h-10 bg-aetherna-field border border-aetherna-goldMain/30 text-aetherna-goldMain flex items-center justify-center mb-6 font-cinzel text-sm">II</div>
+                    <h3 class="font-cinzel text-lg text-aetherna-goldLight font-bold mb-3 tracking-wide">El Mundo Nuevo</h3>
+                    <p class="font-garamond text-aetherna-textNormal text-base leading-relaxed mb-6">Los dioses crearon nuevas razas y se retiraron a sus planos, dejando un mundo virgen sin su influencia.</p>
+                </div>
+                <a href="lore.html" class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-[0.2em] flex items-center gap-2 hover:text-aetherna-goldHover">Leer Más →</a>
+            </div>
+
+            <div class="reveal frame-panel gold-card p-8 flex flex-col justify-between">
+                <div>
+                    <div class="w-10 h-10 bg-aetherna-field border border-aetherna-goldMain/30 text-aetherna-goldMain flex items-center justify-center mb-6 font-cinzel text-sm">III</div>
+                    <h3 class="font-cinzel text-lg text-aetherna-goldLight font-bold mb-3 tracking-wide">La Nada</h3>
+                    <p class="font-garamond text-aetherna-textNormal text-base leading-relaxed mb-6">Una niebla blanca silenciosa que devora el suelo, el sonido y la existencia allá por donde pasa.</p>
+                </div>
+                <a href="lore.html" class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-[0.2em] flex items-center gap-2 hover:text-aetherna-goldHover">Leer Más →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Razas -->
+    <section id="razas" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">LINAJES DEL FIRMAMENTO</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">RAZAS PRINCIPALES</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+
+        <div id="razas-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger-group">
+            <a href="razas.html#humano" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Humano</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Versatilidad incansable</p>
+            </a>
+            <a href="razas.html#elfo" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Elfo</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Elegancia milenaria y arquería</p>
+            </a>
+            <a href="razas.html#enanos" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Enanos</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Maestros de la piedra y forja</p>
+            </a>
+            <a href="razas.html#infernal" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Infernal</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Parias con cornamentas</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Clases -->
+    <section id="clases" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">DISCIPLINAS DE COMBATE</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">CLASES DISPONIBLES</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+
+        <div id="clases-grid" class="grid md:grid-cols-3 gap-x-8 gap-y-28 pt-20 stagger-group">
+            <a href="clases.html#luchador" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/luchador.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <h3 class="sr-only">Luchador</h3>
+                <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">Defensor Marcial</p>
+                <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
+            </a>
+            <a href="clases.html#hechicero" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/hechicero.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <h3 class="sr-only">Hechicero</h3>
+                <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">Artillería de Magia Innata</p>
+                <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
+            </a>
+            <a href="clases.html#picaro" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/picaro.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <h3 class="sr-only">Pícaro</h3>
+                <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">Asesino de un solo objetivo</p>
+                <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Oficios -->
+    <section id="oficios" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">ARTES Y SUSTENTO</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">OFICIOS DE AETHERNA</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+
+        <div id="oficios-grid" class="grid md:grid-cols-3 gap-x-8 gap-y-28 pt-20 stagger-group"></div>
+    </section>
+
+    <!-- Noticias -->
+    <section id="noticias" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">NOVEDADES DEL CÓDICE</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">ÚLTIMOS ANUNCIOS</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+
+        <div class="stagger-group" id="news-home">
+            <a href="noticias.html#teaser-aetherna-v2" class="reveal frame-panel gold-card home-news">
+                <span class="home-news-media">
+                    <img src="fotos/noticia-teaser-aetherna-v2.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+                    <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="rgba(11,8,36,.55)" stroke="#D9B46A" stroke-width="2"/><path d="M26 20l20 12-20 12z" fill="#F0D79E"/></svg>
+                </span>
+                <span class="block p-6 sm:p-8">
+                    <span class="home-news-meta"><span class="home-news-tag">Teaser</span><time datetime="2026-10-28">28 de octubre de 2026</time></span>
+                    <h3 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight mb-2">Teaser de Aetherna V2</h3>
+                    <span class="font-garamond text-aetherna-textNormal text-base block leading-relaxed">El Códice se abre al mundo: contempla el teaser oficial de Aetherna V2.</span>
+                    <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Ver el teaser &rarr;</span>
+                </span>
+            </a>
+        </div>
+        <div class="text-center mt-10 reveal">
+            <a href="noticias.html" class="gold-btn btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs font-cinzel">Ver todas las noticias</a>
+        </div>
+    </section>
+
+    <!-- Discord CTA -->
+    <section id="discord" class="py-24 px-4 relative z-10 border-t border-aetherna-goldMain/20 bg-aetherna-bgSec">
+        <div class="max-w-4xl mx-auto text-center reveal">
+            <h2 class="font-title-deco text-2xl md:text-3xl text-aetherna-goldLight mb-6 tracking-wide">
+                ¿Listo para pertenecer al nuevo mundo?
+            </h2>
+            <a href="https://discord.gg/gWMFjzKaPe" target="_blank" rel="noopener noreferrer"
+               class="btn-primary-aetherna gold-btn inline-flex items-center gap-3 px-10 py-4 text-xs tracking-[0.25em]">
+                <span>Unirse a Discord</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+
+    <footer class="py-8 px-4 border-t border-aetherna-goldMain/15 text-center text-xs text-aetherna-textMuted relative z-10">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 font-garamond">
+            <div>&copy; Aetherna V2 &bull; Códice de Fantasía Oscura</div>
+        </div>
+    </footer>
+    </div>
+
+    <script src="site.js"></script>
+    <script data-page>
+        (function () {
+            // ---- Selección al azar: cada visita a la portada enseña otras razas y otras clases ----
+            // Para añadir una raza o clase nueva a este sorteo, añádela a su lista (id = el del enlace: razas.html#id / clases.html#id).
+            // Para cambiar cuántas salen, cambia el número de cada pintar(...). Los oficios (oficios.html#id) funcionan igual.
+            const RAZAS = [{"id": "engendro", "name": "Engendro", "tag": "Formas libres y exóticas"}, {"id": "mecarionte", "name": "Mecarionte", "tag": "Carne y metal antiguo"}, {"id": "bestia", "name": "Bestia", "tag": "Híbridos salvajes"}, {"id": "abisal", "name": "Abisal", "tag": "Tentáculos y ojos insondables"}, {"id": "profundos", "name": "Profundos", "tag": "Señores de las mareas"}, {"id": "celestial", "name": "Celestial", "tag": "Esencia de luz y sabiduría"}, {"id": "trasgoide", "name": "Trasgoide", "tag": "Fuerza bruta y robustez"}, {"id": "enanos", "name": "Enanos", "tag": "Maestros de la piedra y forja"}, {"id": "infernal", "name": "Infernal", "tag": "Parias con cornamentas"}, {"id": "elfo", "name": "Elfo", "tag": "Elegancia milenaria y arquería"}, {"id": "humano", "name": "Humano", "tag": "Versatilidad incansable"}];
+            const CLASES = [{"id": "barbaro", "name": "Bárbaro", "sub": "Luchador de Vanguardia"}, {"id": "bardo", "name": "Bardo", "sub": "Sonomancia"}, {"id": "luchador", "name": "Luchador", "sub": "Defensor Marcial"}, {"id": "monje", "name": "Monje", "sub": "Artista Marcial"}, {"id": "explorador", "name": "Explorador", "sub": "Tirador y Cazador"}, {"id": "artificiero", "name": "Artificiero", "sub": "Inventor y Apoyo Técnico"}, {"id": "picaro", "name": "Pícaro", "sub": "Asesino de un solo objetivo"}, {"id": "hechicero", "name": "Hechicero", "sub": "Artillería de Magia Innata"}, {"id": "brujo", "name": "Brujo", "sub": "Pactos y Maldiciones"}, {"id": "clerigo", "name": "Clérigo", "sub": "Sanador y Castigador Divino"}, {"id": "paladin", "name": "Paladín", "sub": "Defensor Sagrado y Sanador"}, {"id": "psionico", "name": "Psiónico", "sub": "Mente sobre Materia"}];
+            const OFICIOS = [{"id": "alquimista", "name": "Alquimista", "sub": "Maestro de químicos y pócimas"}, {"id": "cocinero", "name": "Cocineros", "sub": "Artista culinario"}, {"id": "herrero", "name": "Herreros", "sub": "Maestro del metal y el fuego"}, {"id": "joyero", "name": "Joyeros", "sub": "Artista de las piedras preciosas"}, {"id": "herborista", "name": "Herboristas", "sub": "Recolector de plantas"}, {"id": "cazador", "name": "Cazadores", "sub": "Rastreador y depredador"}, {"id": "minero", "name": "Mineros", "sub": "Explorador del subsuelo"}, {"id": "pescador", "name": "Pescador", "sub": "Señor de ríos y mares"}, {"id": "lenador", "name": "Leñador", "sub": "Talador de bosques"}];
+            const barajar = lista => {
+                const a = lista.slice();
+                for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+                return a;
+            };
+            const pintar = (idGrid, lista, cuantas, tarjeta) => {
+                const grid = document.getElementById(idGrid);
+                if (grid) grid.innerHTML = barajar(lista).slice(0, cuantas).map(tarjeta).join('');
+            };
+            pintar('razas-grid', RAZAS, 4, r => `
+            <a href="razas.html#${r.id}" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">${r.name}</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">${r.tag}</p>
+            </a>`);
+            pintar('clases-grid', CLASES, 3, c => `
+            <a href="clases.html#${c.id}" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/${c.id}.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <h3 class="sr-only">${c.name}</h3>
+                <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">${c.sub}</p>
+                <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
+            </a>`);
+
+            pintar('oficios-grid', OFICIOS, 3, o => `
+            <a href="oficios.html#${o.id}" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/${o.id}.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <h3 class="of-name font-cinzel text-base font-bold text-aetherna-goldLight">${o.name}</h3>
+                <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">${o.sub}</p>
+                <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
+            </a>`);
+
+            // Aplicar retrasos escalonados a los elementos dentro de filas/grillas
+            document.querySelectorAll('.stagger-group').forEach(group => {
+                const items = group.querySelectorAll('.reveal');
+                items.forEach((item, index) => {
+                    item.style.transitionDelay = `${index * 55}ms`;
+                });
+            });
+
+            // IntersectionObserver con control bidireccional estricto (Aparecer al bajar, Desaparecer al subir)
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -10% 0px',
+                threshold: 0.08
+            };
+
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    } else {
+                        entry.target.classList.remove('active');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal').forEach(el => {
+                scrollObserver.observe(el);
+            });
+
+            // Efecto dorado: la luz sigue al cursor y el retardo escalonado del reveal no frena el hover
+            document.querySelectorAll('.gold-card').forEach(c => {
+                c.addEventListener('pointermove', ev => {
+                    const r = c.getBoundingClientRect();
+                    c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+                    c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+                });
+                c.addEventListener('pointerenter', () => { c.style.transitionDelay = '0s'; }, { once: true });
+            });
+
+            // ---- Últimos anuncios: las 3 noticias más recientes de noticias.json (la misma lista que usa noticias.html) ----
+            const escH = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            fetch('noticias.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(list => {
+                const N = list.slice().sort((a, b) => (b.iso || '').localeCompare(a.iso || '')).slice(0, 3);
+                const box = document.getElementById('news-home');
+                if (!box || !N.length) return;
+                const card = (n, i) => `
+                <a href="noticias.html#${escH(n.id)}" class="reveal frame-panel gold-card home-news${i ? ' home-news-sm' : ''}">
+                    <span class="home-news-media">
+                        <img src="fotos/noticia-${escH(n.id)}.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+                        ${n.video ? '<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="rgba(11,8,36,.55)" stroke="#D9B46A" stroke-width="2"/><path d="M26 20l20 12-20 12z" fill="#F0D79E"/></svg>' : ''}
+                    </span>
+                    <span class="block p-6 sm:p-8">
+                        <span class="home-news-meta"><span class="home-news-tag">${escH(n.tag)}</span><time datetime="${escH(n.iso)}">${escH(n.date)}</time></span>
+                        <h3 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight mb-2">${escH(n.title)}</h3>
+                        <span class="font-garamond text-aetherna-textNormal text-base block leading-relaxed">${escH(n.summary)}</span>
+                        <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Leer noticia &rarr;</span>
+                    </span>
+                </a>`;
+                box.innerHTML = card(N[0], 0) + (N.length > 1 ? '<div class="home-news-more">' + N.slice(1).map(n => card(n, 1)).join('') + '</div>' : '');
+                box.querySelectorAll('.reveal').forEach(el => scrollObserver.observe(el));
+                box.querySelectorAll('.gold-card').forEach(c => {
+                    c.addEventListener('pointermove', ev => {
+                        const r = c.getBoundingClientRect();
+                        c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+                        c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+                    });
+                });
+            }).catch(() => { /* si falla, se queda la noticia que ya está escrita en el HTML */ });
+
+            // ---- Portada de combate: registro que se escribe solo, teclas 1-5 y última noticia ----
+            (function () {
+                const log = document.getElementById('cb-log-list');
+                if (log) {
+                    const items = [...log.children];
+                    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { /* se ve todo de golpe */ }
+                    else {
+                        log.parentElement.classList.add('is-typing');
+                        items.forEach((li, i) => setTimeout(() => li.classList.add('shown'), 500 + i * 650));
+                        setTimeout(() => log.parentElement.classList.remove('is-typing'), 500 + items.length * 650 + 600);
+                    }
+                }
+                window.addEventListener('keydown', e => {
+                    if (e.ctrlKey || e.metaKey || e.altKey || /input|textarea|select/i.test((e.target && e.target.tagName) || '')) return;
+                    const a = document.querySelector('.cb-slot[data-hk="' + e.key + '"]');
+                    if (a) { e.preventDefault(); a.click(); }
+                });
+                fetch('noticias.json').then(r => r.ok ? r.json() : Promise.reject()).then(list => {
+                    const n = list.slice().sort((a, b) => (b.iso || '').localeCompare(a.iso || ''))[0];
+                    const l = document.getElementById('cb-news-link');
+                    if (n && l) { l.textContent = n.title; l.href = 'noticias.html#' + n.id; }
+                }).catch(() => {});
+            })();
+        })();
+    </script>
+</body>
+</html>

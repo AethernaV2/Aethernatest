@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetherna V2 · Las Épocas de Aetherna</title>
+    <meta name="description" content="Las épocas de Aetherna V2: lo que ya existe y lo que está por llegar.">
+    <meta name="theme-color" content="#07051A">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Aetherna V2">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:title" content="Aetherna V2 · Las Épocas de Aetherna">
+    <meta property="og:description" content="Las épocas de Aetherna V2: lo que ya existe y lo que está por llegar.">
+    <meta property="og:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <meta property="og:url" content="https://aetherna-cyan.vercel.app/epoca">
+    <link rel="canonical" href="https://aetherna-cyan.vercel.app/epoca">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <link rel="icon" type="image/png" href="fotos/Logo.png">
+
+    <!-- Google Fonts: Cinzel Decorative, Cinzel & EB Garamond -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+    <!-- Estilos comunes + estilos propios de esta página + Tailwind compilado (ver LEEME.md) -->
+    <link rel="stylesheet" href="styles.css">
+    <style id="page-style">
+        .unreadable-interior {
+            filter: blur(12px);
+            opacity: 0.35;
+            user-select: none;
+            pointer-events: none;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+
+        /* Fase I · Era de la Piedra */
+        .era-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1rem; margin-bottom: .9rem; }
+        .era-title { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.5rem; line-height: 1.2; color: #F0D79E; }
+        .era-sub { font-family: 'EB Garamond', serif; font-style: italic; color: #9C8865; }
+        .era-badge { font-family: 'Cinzel', serif; font-weight: 700; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; padding: .2rem .65rem; color: #B48CFF; border: 1px solid rgba(157,108,240,.7); background: rgba(157,108,240,.10); }
+        .era-fase { margin-left: auto; }
+        .era-desc { font-family: 'EB Garamond', serif; color: #E9D7B0; font-size: 1.1rem; line-height: 1.6; max-width: 42rem; margin-bottom: 1.1rem; }
+        .era-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem 2.5rem; }
+        @media (min-width: 768px) { .era-cols { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } }
+        .era-label { display: block; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: .25em; text-transform: uppercase; color: #9C8865; margin-bottom: .55rem; }
+        .era-chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+        .era-chip { padding: .28rem .75rem; font-family: 'EB Garamond', serif; font-size: .95rem; color: #E9D7B0; background: #0B0824; border: 1px solid rgba(217,180,106,.25); }
+        .era-chip.oficio { color: #F6E2B3; font-weight: 600; border-color: rgba(134,201,138,.55); }
+    </style>
+    <link rel="stylesheet" href="tailwind.css">
+</head>
+<body class="relative selection:bg-aetherna-goldMain selection:text-aetherna-bgMain">
+    <!-- Fondo cósmico + brasas (los anima site.js) -->
+    <canvas id="cosmos-bg" width="128" height="72" aria-hidden="true"></canvas>
+    <canvas id="cosmos-stars" aria-hidden="true"></canvas>
+    <canvas id="ember-canvas" aria-hidden="true"></canvas>
+
+    <div id="page-root">
+    <main class="pt-32 pb-24 px-4 max-w-5xl mx-auto relative z-10">
+        <div class="text-center mb-16 reveal active">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">EVOLUCIÓN DE LAS ERAS &bull; CÓDICE</span>
+            <h1 class="font-title-deco text-4xl sm:text-6xl text-aetherna-goldLight tracking-wider mb-4">
+                LAS ÉPOCAS DE AETHERNA
+            </h1>
+            <div class="w-24 h-[1px] bg-aetherna-goldMain mx-auto mb-6"></div>
+            <p class="font-garamond italic text-aetherna-parchment text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                Las siguientes eras de la civilización se encuentran totalmente ocultas bajo la bruma del destino. Conoce el progreso del mundo.
+            </p>
+        </div>
+
+        <div class="relative border-l-2 border-aetherna-goldMain/30 ml-4 sm:ml-32 space-y-12 pl-6 sm:pl-10">
+            
+            <!-- Era 1: Era de la Piedra -->
+            <div class="reveal relative group">
+                <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 w-6 h-6 rounded-full bg-aetherna-panel border-2 border-aetherna-goldMain flex items-center justify-center transition-all duration-300 shadow-[0_0_15px_rgba(157,108,240,0.6)]">
+                    <div class="w-2 h-2 rounded-full bg-aetherna-ember animate-ping"></div>
+                </div>
+                <div class="absolute -left-28 sm:-left-36 top-1.5 hidden sm:block font-cinzel text-xs text-aetherna-goldMain tracking-widest font-bold">FASE I</div>
+
+                <div class="frame-panel p-6 border-aetherna-goldMain/60">
+                    <div class="era-head">
+                        <h3 class="era-title">Era de la Piedra</h3>
+                        <span class="era-sub">Prehistoria</span>
+                        <span class="era-badge">Época actual</span>
+                        <span class="sm:hidden era-fase font-cinzel text-xs text-aetherna-goldMain tracking-widest font-bold">FASE I</span>
+                    </div>
+                    <p class="era-desc">Piedra, pieles y plantas. Se sobrevive con lo que da el entorno: se caza, se recolecta y se aprende qué hierbas curan y cuáles matan.</p>
+                    <div class="era-cols">
+                        <div>
+                            <span class="era-label">Saberes</span>
+                            <div class="era-chips"><span class="era-chip">Fuego</span><span class="era-chip">Piedra tallada</span><span class="era-chip">Hueso y asta</span><span class="era-chip">Pieles sin curtir</span><span class="era-chip">Fibras y cuerdas vegetales</span><span class="era-chip">Chozas de ramas y barro</span><span class="era-chip">Remedios de hierbas</span></div>
+                        </div>
+                        <div>
+                            <span class="era-label">Oficios que se abren</span>
+                            <div class="era-chips"><span class="era-chip oficio">Cazador</span><span class="era-chip oficio">Leñador</span><span class="era-chip oficio">Pescador</span><span class="era-chip oficio">Recolector</span><span class="era-chip oficio">Alquimista</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Era 2 -->
+            <div class="reveal relative group">
+                <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 w-6 h-6 rounded-full bg-aetherna-panel border-2 border-aetherna-bronzeDark flex items-center justify-center">
+                    <div class="w-2 h-2 rounded-full bg-aetherna-locked"></div>
+                </div>
+                <div class="absolute -left-28 sm:-left-36 top-1.5 hidden sm:block font-cinzel text-xs text-aetherna-goldMain/80 tracking-widest font-bold">FASE II</div>
+                
+                <div class="frame-panel p-6 overflow-hidden">
+                    <div class="flex items-center justify-between mb-3 relative z-10">
+                        <span class="text-[11px] font-cinzel px-2.5 py-0.5 bg-aetherna-field text-aetherna-locked border border-aetherna-bronzeDark uppercase tracking-widest flex items-center gap-1.5">
+                            🔒 Bloqueado
+                        </span>
+                        <span class="sm:hidden font-cinzel text-xs text-aetherna-goldMain/80 tracking-widest font-bold">FASE II</span>
+                    </div>
+
+                    <div class="unreadable-interior">
+                        <h3 class="font-cinzel text-xl text-aetherna-goldLight font-bold mt-1 mb-2">El Despertar de los Metales Antiguos</h3>
+                        <p class="font-garamond text-aetherna-textNormal text-base mb-4">Los clanes comienzan a desenterrar minerales raros y a comprender los primeros secretos de la forja en las cavernas.</p>
+                        <div class="border-t border-aetherna-goldMain/20 pt-3">
+                            <span class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-wider block mb-1">Desbloqueos Ocultos:</span>
+                            <ul class="font-garamond text-sm text-aetherna-textSoft space-y-1 list-disc list-inside">
+                                <li>Forja rudimentaria y aleaciones con fragmentos de Untali.</li>
+                                <li>Construcción de los primeros bastiones amurallados.</li>
+                                <li>Rutas comerciales y caravanas entre asentamientos.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Era 3 -->
+            <div class="reveal relative group">
+                <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 w-6 h-6 rounded-full bg-aetherna-panel border-2 border-aetherna-bronzeDark flex items-center justify-center">
+                    <div class="w-2 h-2 rounded-full bg-aetherna-locked"></div>
+                </div>
+                <div class="absolute -left-28 sm:-left-36 top-1.5 hidden sm:block font-cinzel text-xs text-aetherna-goldMain/80 tracking-widest font-bold">FASE III</div>
+                
+                <div class="frame-panel p-6 overflow-hidden">
+                    <div class="flex items-center justify-between mb-3 relative z-10">
+                        <span class="text-[11px] font-cinzel px-2.5 py-0.5 bg-aetherna-field text-aetherna-locked border border-aetherna-bronzeDark uppercase tracking-widest flex items-center gap-1.5">
+                            🔒 Bloqueado
+                        </span>
+                        <span class="sm:hidden font-cinzel text-xs text-aetherna-goldMain/80 tracking-widest font-bold">FASE III</span>
+                    </div>
+
+                    <div class="unreadable-interior">
+                        <h3 class="font-cinzel text-xl text-aetherna-goldLight font-bold mt-1 mb-2">La Era del Cosmirit y el Firmamento</h3>
+                        <p class="font-garamond text-aetherna-textNormal text-base mb-4">El misterioso material caído del cielo abre portales dimensionales y despierta vestigios de los antiguos planos divinos.</p>
+                        <div class="border-t border-aetherna-goldMain/20 pt-3">
+                            <span class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-wider block mb-1">Desbloqueos Ocultos:</span>
+                            <ul class="font-garamond text-sm text-aetherna-textSoft space-y-1 list-disc list-inside">
+                                <li>Manipulación arcana del mineral legendario Cosmirit.</li>
+                                <li>Incursiones en las fisuras de La Nada y reliquias astrales.</li>
+                                <li>Ascensión de facciones y contacto con los planos exteriores.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Botón para volver al inicio -->
+        <div class="text-center mt-16 reveal">
+            <a href="index.html" class="btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs font-cinzel">
+                &larr; Volver al Códice Principal
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+
+    <footer class="py-8 border-t border-aetherna-goldMain/15 text-center text-xs text-aetherna-textMuted relative z-10 font-garamond">
+        <div class="max-w-6xl mx-auto">&copy; Aetherna V2 &bull; Archivos de Épocas Oficiales</div>
+    </footer>
+    </div>
+
+    <script src="site.js"></script>
+    <script data-page>
+        (function () {
+            function revealOnScroll() {
+                const reveals = document.querySelectorAll('.reveal');
+                for (let i = 0; i < reveals.length; i++) {
+                    if (reveals[i].getBoundingClientRect().top < window.innerHeight - 60) {
+                        reveals[i].classList.add('active');
+                    }
+                }
+            }
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll();
+        })();
+    </script>
+</body>
+</html>

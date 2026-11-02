@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetherna V2 · Oficios del Códice</title>
+    <meta name="description" content="Oficios de Aetherna V2: alquimistas, cocineros, herreros, joyeros y los oficios secundarios que sostienen el mundo.">
+    <meta name="theme-color" content="#07051A">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Aetherna V2">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:title" content="Aetherna V2 · Oficios del Códice">
+    <meta property="og:description" content="Oficios de Aetherna V2: alquimistas, cocineros, herreros, joyeros y los oficios secundarios que sostienen el mundo.">
+    <meta property="og:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <meta property="og:url" content="https://aetherna-cyan.vercel.app/oficios">
+    <link rel="canonical" href="https://aetherna-cyan.vercel.app/oficios">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <link rel="icon" type="image/png" href="fotos/Logo.png">
+
+    <!-- Google Fonts: Cinzel Decorative, Cinzel & EB Garamond -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+    <!-- Estilos comunes + estilos propios de esta página + Tailwind compilado (ver LEEME.md) -->
+    <link rel="stylesheet" href="styles.css">
+    <style id="page-style">
+        .reveal {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .of-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 7rem 1rem; padding-top: 5rem; }
+        .of-grid + h2 { margin-top: 7rem; }
+        .of-grid > a { flex: 0 0 100%; }
+        @media (min-width: 640px) { .of-grid > a { flex-basis: calc(50% - .5rem); } }
+        @media (min-width: 1024px) { .of-grid > a { flex-basis: calc(25% - .75rem); } }
+        @media (min-width: 1280px) { .of-grid { margin-left: -3.5rem; margin-right: -3.5rem; } }
+        .clase-card { overflow: hidden; transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .35s; }
+        .clase-card > * { position: relative; z-index: 2; }
+        .clase-card::before { content: ""; position: absolute; inset: 0; z-index: 1; opacity: 0; pointer-events: none; transition: opacity .35s;
+            background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(157,108,240,.28), rgba(217,180,106,.10) 45%, transparent 70%); }
+        .clase-card::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%; z-index: 1; pointer-events: none;
+            background: linear-gradient(100deg, transparent, rgba(255,242,207,.13), transparent); transform: skewX(-18deg); }
+        .clase-card h3 { transition: color .3s, text-shadow .3s, letter-spacing .35s; }
+        .clase-card .abrir { opacity: 0; transform: translateX(-10px); transition: opacity .3s, transform .3s; }
+        .clase-card:hover, .clase-card:focus-visible { transform: translateY(-7px); border-color: rgba(217,180,106,.85);
+            box-shadow: 0 16px 34px rgba(0,0,0,.55), 0 0 26px rgba(157,108,240,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
+        .clase-card:hover::before, .clase-card:focus-visible::before { opacity: 1; }
+        .clase-card:hover::after { left: 130%; transition: left .8s ease; }
+        .clase-card:hover h3, .clase-card:focus-visible h3 { color: #FFF2CF; text-shadow: 0 0 14px rgba(196,160,255,.55); letter-spacing: .04em; }
+        .clase-card:hover .abrir, .clase-card:focus-visible .abrir { opacity: 1; transform: translateX(0); }
+        @media (hover: none) { .clase-card .abrir { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: reduce) { .clase-card, .clase-card * { transition: none !important; } .clase-card:hover { transform: none; } .clase-card::after { display: none; } }
+    </style>
+    <link rel="stylesheet" href="tailwind.css">
+</head>
+<body class="relative selection:bg-aetherna-goldMain selection:text-aetherna-bgMain">
+    <!-- Fondo cósmico + brasas (los anima site.js) -->
+    <canvas id="cosmos-bg" width="128" height="72" aria-hidden="true"></canvas>
+    <canvas id="cosmos-stars" aria-hidden="true"></canvas>
+    <canvas id="ember-canvas" aria-hidden="true"></canvas>
+
+    <div id="page-root">
+    <main class="pt-32 pb-24 px-4 max-w-5xl mx-auto relative z-10">
+        
+        <!-- Cabecera -->
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">ARTES Y SUSTENTO &bull; CÓDICE</span>
+            <h1 class="font-title-deco text-4xl sm:text-6xl text-aetherna-goldLight tracking-wider mb-4">
+                OFICIOS DE AETHERNA
+            </h1>
+            <div class="w-24 h-[1px] bg-aetherna-goldMain mx-auto mb-6"></div>
+            <p class="font-garamond italic text-aetherna-parchment text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                No todo en Aetherna se resuelve con acero y magia: los oficios forjan, curan, alimentan y adornan el mundo. Descubre los principales y los secundarios.
+            </p>
+        </div>
+
+        <!-- Contenedor de Clases -->
+        <div id="clsList">
+            <p class="font-garamond text-center text-aetherna-textSoft mb-8">Pulsa un oficio para abrir su ficha completa.</p>
+            <h2 class="font-cinzel text-lg sm:text-xl text-aetherna-goldLight font-bold uppercase tracking-[0.2em] text-center">Oficios principales</h2>
+            <div class="of-grid">
+                <a href="#alquimista" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/alquimista.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Principal</span>
+                    <h3 class="sr-only">Alquimista</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Maestro de químicos y pócimas</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">Alquimista</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#cocinero" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/cocinero.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Principal</span>
+                    <h3 class="sr-only">Cocineros</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Artista culinario</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">Cocineros</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#herrero" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/herrero.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Principal</span>
+                    <h3 class="sr-only">Herreros</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Maestro del metal y el fuego</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">Herreros</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#joyero" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/joyero.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Principal</span>
+                    <h3 class="sr-only">Joyeros</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Artista de las piedras preciosas</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">Joyeros</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+            </div>
+            <h2 class="font-cinzel text-lg sm:text-xl text-aetherna-goldLight font-bold uppercase tracking-[0.2em] text-center">Oficios secundarios</h2>
+            <div class="of-grid">
+                <a href="#herborista" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/herborista.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Secundario</span>
+                    <h3 class="sr-only">Herboristas</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Recolector de plantas</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">Herboristas</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#cazador" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/cazador.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Secundario</span>
+                    <h3 class="sr-only">Cazadores</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Rastreador y depredador</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">Cazadores</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#minero" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/minero.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Secundario</span>
+                    <h3 class="sr-only">Mineros</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Explorador del subsuelo</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">Mineros</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#pescador" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/pescador.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Secundario</span>
+                    <h3 class="sr-only">Pescador</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Señor de ríos y mares</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">Pescador</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#lenador" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/lenador.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Secundario</span>
+                    <h3 class="sr-only">Leñador</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Talador de bosques</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">Leñador</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+            </div>
+        </div>
+        <div id="clsDetail">
+            <div id="det-alquimista" class="clase-det space-y-8" hidden data-frag="fragments/oficios/alquimista.htm"></div>
+            <div id="det-cocinero" class="clase-det space-y-8" hidden data-frag="fragments/oficios/cocinero.htm"></div>
+            <div id="det-herrero" class="clase-det space-y-8" hidden data-frag="fragments/oficios/herrero.htm"></div>
+            <div id="det-joyero" class="clase-det space-y-8" hidden data-frag="fragments/oficios/joyero.htm"></div>
+            <div id="det-herborista" class="clase-det space-y-8" hidden data-frag="fragments/oficios/herborista.htm"></div>
+            <div id="det-cazador" class="clase-det space-y-8" hidden data-frag="fragments/oficios/cazador.htm"></div>
+            <div id="det-minero" class="clase-det space-y-8" hidden data-frag="fragments/oficios/minero.htm"></div>
+            <div id="det-pescador" class="clase-det space-y-8" hidden data-frag="fragments/oficios/pescador.htm"></div>
+            <div id="det-lenador" class="clase-det space-y-8" hidden data-frag="fragments/oficios/lenador.htm"></div>
+        </div>
+
+        <!-- Botón para volver al inicio -->
+        <div class="text-center mt-16 reveal">
+            <a href="index.html" class="btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs font-cinzel">
+                ← Volver al Códice Principal
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+
+    <footer class="py-8 border-t border-aetherna-goldMain/15 text-center text-xs text-aetherna-textMuted relative z-10 font-garamond">
+        <div class="max-w-6xl mx-auto">&copy; Aetherna V2 &bull; Archivos de Oficios Oficiales</div>
+    </footer>
+    </div>
+
+    <script src="site.js"></script>
+    <script data-page>
+        (function () {
+            function revealOnScroll() {
+                const reveals = document.querySelectorAll('.reveal');
+                for (let i = 0; i < reveals.length; i++) {
+                    if (reveals[i].getBoundingClientRect().top < window.innerHeight - 60) {
+                        reveals[i].classList.add('active');
+                    }
+                }
+            }
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll();
+
+            // Carga bajo demanda del detalle (fragments/...): la página pesa poco y cada sección se descarga al abrirla
+            const frags = {};
+            function fetchFrag(url) {
+                return frags[url] || (frags[url] = fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); }));
+            }
+            function loadFrag(el) {
+                if (el.dataset.loaded) return Promise.resolve();
+                return fetchFrag(el.dataset.frag)
+                    .then(h => { el.innerHTML = h; el.dataset.loaded = '1'; })
+                    .catch(() => {
+                        delete frags[el.dataset.frag];
+                        el.innerHTML = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">No se pudo cargar esta sección. <a href="#" class="text-aetherna-goldMain underline">Volver</a></p>';
+                    });
+            }
+            const LOADING = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">Abriendo el códice…</p>';
+
+            const CLASES = ["alquimista", "cocinero", "herrero", "joyero", "herborista", "cazador", "minero", "pescador", "lenador"];
+            function route() {
+                const k = location.hash.slice(1);
+                const ok = CLASES.includes(k);
+                document.getElementById('clsList').hidden = ok;
+                document.querySelectorAll('.clase-det').forEach(d => { d.hidden = !(ok && d.id === 'det-' + k); });
+                if (ok) { const el = document.getElementById('det-' + k); if (!el.dataset.loaded) { el.innerHTML = LOADING; loadFrag(el).then(revealOnScroll); } }
+                window.scrollTo({ top: 0 });
+                revealOnScroll();
+            }
+            document.querySelectorAll('.clase-card').forEach(c => c.addEventListener('pointermove', ev => {
+                const r = c.getBoundingClientRect();
+                c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+                c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+            }));
+            window.addEventListener('hashchange', route);
+            route();
+
+            document.querySelectorAll('.clase-card').forEach(c => c.addEventListener('pointerenter', () => {
+                const el = document.getElementById('det-' + (c.getAttribute('href') || '').slice(1));
+                if (el && el.dataset.frag && !el.dataset.loaded) fetchFrag(el.dataset.frag).catch(() => { delete frags[el.dataset.frag]; });
+            }, { once: true }));
+        })();
+    </script>
+</body>
+</html>

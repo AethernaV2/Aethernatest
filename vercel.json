@@ -1,0 +1,10 @@
+{
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/Clases", "destination": "/clases", "permanent": true },
+    { "source": "/Razas", "destination": "/razas", "permanent": true },
+    { "source": "/Oficios", "destination": "/oficios", "permanent": true },
+    { "source": "/Noticias", "destination": "/noticias", "permanent": true },
+    { "source": "/inicio", "destination": "/", "permanent": true }
+  ]
+}

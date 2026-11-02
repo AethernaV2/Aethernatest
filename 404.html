@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetherna V2 · Página no encontrada</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#07051A">
+    <link rel="icon" type="image/png" href="fotos/Logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style id="page-style">
+        .nf-code { font-size: clamp(5rem, 22vw, 11rem); line-height: 1; letter-spacing: .08em; background: linear-gradient(180deg,#FFF2CF 10%,#F0D79E 45%,#C99A4A 100%); -webkit-background-clip: text; background-clip: text; color: transparent;
+            filter: drop-shadow(0 4px 24px rgba(0,0,0,.6)) drop-shadow(0 0 22px rgba(157,108,240,.45)); }
+        .nf-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: 2rem; }
+    </style>
+    <link rel="stylesheet" href="tailwind.css">
+</head>
+<body class="relative selection:bg-aetherna-goldMain selection:text-aetherna-bgMain">
+    <canvas id="cosmos-bg" width="128" height="72" aria-hidden="true"></canvas>
+    <canvas id="cosmos-stars" aria-hidden="true"></canvas>
+    <canvas id="ember-canvas" aria-hidden="true"></canvas>
+
+    <div id="page-root">
+    <main class="pt-32 pb-24 px-4 mx-auto relative z-10 text-center" style="max-width:48rem;min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">PÁGINA NO ENCONTRADA</span>
+        <p class="nf-code font-title-deco" aria-hidden="true">404</p>
+        <h1 class="font-title-deco text-2xl sm:text-4xl text-aetherna-goldLight tracking-wider mt-4 mb-4">ESTE CAMINO SE PERDIÓ EN EL VACÍO</h1>
+        <div class="w-24 h-[1px] bg-aetherna-goldMain mx-auto mb-6"></div>
+        <p class="font-garamond italic text-aetherna-parchment text-base sm:text-lg max-w-xl mx-auto leading-relaxed">La página que buscas no existe o ha cambiado de lugar. Vuelve al Códice y sigue explorando Aetherna.</p>
+        <div class="nf-links">
+            <a href="index.html" class="btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs font-cinzel">← Volver al Códice Principal</a>
+            <a href="clases.html" class="btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs font-cinzel">Ver las clases</a>
+        </div>
+    </main>
+    <footer class="py-8 border-t border-aetherna-goldMain/15 text-center text-xs text-aetherna-textMuted relative z-10 font-garamond">
+        <div class="max-w-6xl mx-auto">&copy; Aetherna V2 &bull; Códice de Fantasía Oscura</div>
+    </footer>
+    </div>
+
+    <script src="site.js"></script>
+</body>
+</html>

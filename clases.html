@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetherna V2 · Clases y Disciplinas del Códice</title>
+    <meta name="description" content="Clases y disciplinas de Aetherna V2: rasgos, técnicas y conjuros de cada senda de combate y magia.">
+    <meta name="theme-color" content="#07051A">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Aetherna V2">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:title" content="Aetherna V2 · Clases y Disciplinas del Códice">
+    <meta property="og:description" content="Clases y disciplinas de Aetherna V2: rasgos, técnicas y conjuros de cada senda de combate y magia.">
+    <meta property="og:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <meta property="og:url" content="https://aetherna-cyan.vercel.app/clases">
+    <link rel="canonical" href="https://aetherna-cyan.vercel.app/clases">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <link rel="icon" type="image/png" href="fotos/Logo.png">
+
+    <!-- Google Fonts: Cinzel Decorative, Cinzel & EB Garamond -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+    <!-- Estilos comunes + estilos propios de esta página + Tailwind compilado (ver LEEME.md) -->
+    <link rel="stylesheet" href="styles.css">
+    <style id="page-style">
+        .reveal {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .clase-card { overflow: hidden; transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .35s; }
+        .clase-card > * { position: relative; z-index: 2; }
+        .clase-card::before { content: ""; position: absolute; inset: 0; z-index: 1; opacity: 0; pointer-events: none; transition: opacity .35s;
+            background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(157,108,240,.28), rgba(217,180,106,.10) 45%, transparent 70%); }
+        .clase-card::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%; z-index: 1; pointer-events: none;
+            background: linear-gradient(100deg, transparent, rgba(255,242,207,.13), transparent); transform: skewX(-18deg); }
+        .clase-card h3 { transition: color .3s, text-shadow .3s, letter-spacing .35s; }
+        .clase-card .abrir { opacity: 0; transform: translateX(-10px); transition: opacity .3s, transform .3s; }
+        .clase-card:hover, .clase-card:focus-visible { transform: translateY(-7px); border-color: rgba(217,180,106,.85);
+            box-shadow: 0 16px 34px rgba(0,0,0,.55), 0 0 26px rgba(157,108,240,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
+        .clase-card:hover::before, .clase-card:focus-visible::before { opacity: 1; }
+        .clase-card:hover::after { left: 130%; transition: left .8s ease; }
+        .clase-card:hover h3, .clase-card:focus-visible h3 { color: #FFF2CF; text-shadow: 0 0 14px rgba(196,160,255,.55); letter-spacing: .04em; }
+        .clase-card:hover .abrir, .clase-card:focus-visible .abrir { opacity: 1; transform: translateX(0); }
+        @media (hover: none) { .clase-card .abrir { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: reduce) { .clase-card, .clase-card * { transition: none !important; } .clase-card:hover { transform: none; } .clase-card::after { display: none; } }
+    </style>
+    <link rel="stylesheet" href="tailwind.css">
+</head>
+<body class="relative selection:bg-aetherna-goldMain selection:text-aetherna-bgMain">
+    <!-- Fondo cósmico + brasas (los anima site.js) -->
+    <canvas id="cosmos-bg" width="128" height="72" aria-hidden="true"></canvas>
+    <canvas id="cosmos-stars" aria-hidden="true"></canvas>
+    <canvas id="ember-canvas" aria-hidden="true"></canvas>
+
+    <div id="page-root">
+    <main class="pt-32 pb-24 px-4 max-w-5xl mx-auto relative z-10">
+        
+        <!-- Cabecera -->
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">DISCIPLINAS DE COMBATE &bull; CÓDICE</span>
+            <h1 class="font-title-deco text-4xl sm:text-6xl text-aetherna-goldLight tracking-wider mb-4">
+                CLASES Y DOCTRINAS
+            </h1>
+            <div class="w-24 h-[1px] bg-aetherna-goldMain mx-auto mb-6"></div>
+            <p class="font-garamond italic text-aetherna-parchment text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                Explora las naturalezas, trasfondos y capacidades de las distintas sendas que marcan el destino en Aetherna.
+            </p>
+        </div>
+
+        <!-- Contenedor de Clases -->
+        <div id="clsList">
+            <p class="font-garamond text-center text-aetherna-textSoft mb-8">Pulsa una clase para abrir su ficha completa.</p>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-28 pt-20 xl:-mx-14">
+                <a href="#barbaro" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/barbaro.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 1</span>
+                    <h3 class="sr-only">Bárbaro</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Luchador de Vanguardia</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">FUE</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">FUE, CON</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#bardo" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/bardo.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 2</span>
+                    <h3 class="sr-only">Bardo</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Sonomancia</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">CAR</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">DES, CAR</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#luchador" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/luchador.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 3</span>
+                    <h3 class="sr-only">Luchador</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Defensor Marcial</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">FUE</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">FUE, CON</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#monje" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/monje.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 4</span>
+                    <h3 class="sr-only">Monje</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Artista Marcial</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">DES</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">FUE, DES</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#explorador" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/explorador.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 5</span>
+                    <h3 class="sr-only">Explorador</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Tirador y Cazador</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">DES</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">FUE, DES</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#artificiero" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/artificiero.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 6</span>
+                    <h3 class="sr-only">Artificiero</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Inventor y Apoyo Técnico</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">INT</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">CON, INT</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#picaro" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/picaro.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 7</span>
+                    <h3 class="sr-only">Pícaro</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Asesino de un solo objetivo</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">DES</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">DES, INT</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#hechicero" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/hechicero.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 8</span>
+                    <h3 class="sr-only">Hechicero</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Artillería de Magia Innata</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">CAR</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">CON, CAR</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#brujo" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/brujo.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 9</span>
+                    <h3 class="sr-only">Brujo</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Pactos y Maldiciones</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">CAR</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">SAB, CAR</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#clerigo" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/clerigo.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 10</span>
+                    <h3 class="sr-only">Clérigo</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Sanador y Castigador Divino</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">SAB</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">SAB, CAR</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#paladin" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/paladin.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 11</span>
+                    <h3 class="sr-only">Paladín</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Defensor Sagrado y Sanador</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">FUE</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">SAB, CAR</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+                <a href="#psionico" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
+                    <span class="emblem-stage" aria-hidden="true"><img src="fotos/psionico.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                    <span class="font-cinzel text-[11px] tracking-[0.24em] text-aetherna-textMuted uppercase block mb-1">Capítulo 12</span>
+                    <h3 class="sr-only">Psiónico</h3>
+                    <span class="font-garamond italic text-aetherna-textSoft block">Mente sobre Materia</span>
+                    <span class="peek-more flex flex-wrap justify-center gap-2 mt-3"><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain">INT</span><span class="px-2 py-0.5 border border-aetherna-goldMain/30 text-[11px] font-cinzel tracking-wider text-aetherna-goldMain" title="Salvaciones">INT, SAB</span></span>
+                    <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Abrir ficha &rarr;</span>
+                </a>
+            </div>
+        </div>
+        <div id="clsDetail">
+            <div id="det-barbaro" class="clase-det space-y-8" hidden data-frag="fragments/clases/barbaro.htm"></div>
+            <div id="det-bardo" class="clase-det space-y-8" hidden data-frag="fragments/clases/bardo.htm"></div>
+            <div id="det-luchador" class="clase-det space-y-8" hidden data-frag="fragments/clases/luchador.htm"></div>
+            <div id="det-monje" class="clase-det space-y-8" hidden data-frag="fragments/clases/monje.htm"></div>
+            <div id="det-explorador" class="clase-det space-y-8" hidden data-frag="fragments/clases/explorador.htm"></div>
+            <div id="det-artificiero" class="clase-det space-y-8" hidden data-frag="fragments/clases/artificiero.htm"></div>
+            <div id="det-picaro" class="clase-det space-y-8" hidden data-frag="fragments/clases/picaro.htm"></div>
+            <div id="det-hechicero" class="clase-det space-y-8" hidden data-frag="fragments/clases/hechicero.htm"></div>
+            <div id="det-brujo" class="clase-det space-y-8" hidden data-frag="fragments/clases/brujo.htm"></div>
+            <div id="det-clerigo" class="clase-det space-y-8" hidden data-frag="fragments/clases/clerigo.htm"></div>
+            <div id="det-paladin" class="clase-det space-y-8" hidden data-frag="fragments/clases/paladin.htm"></div>
+            <div id="det-psionico" class="clase-det space-y-8" hidden data-frag="fragments/clases/psionico.htm"></div>
+        </div>
+
+        <!-- Botón para volver al inicio -->
+        <div class="text-center mt-16 reveal">
+            <a href="index.html" class="btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs font-cinzel">
+                ← Volver al Códice Principal
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+
+    <footer class="py-8 border-t border-aetherna-goldMain/15 text-center text-xs text-aetherna-textMuted relative z-10 font-garamond">
+        <div class="max-w-6xl mx-auto">&copy; Aetherna V2 &bull; Archivos de Clases Oficiales</div>
+    </footer>
+    </div>
+
+    <script src="site.js"></script>
+    <script data-page>
+        (function () {
+            function revealOnScroll() {
+                const reveals = document.querySelectorAll('.reveal');
+                for (let i = 0; i < reveals.length; i++) {
+                    if (reveals[i].getBoundingClientRect().top < window.innerHeight - 60) {
+                        reveals[i].classList.add('active');
+                    }
+                }
+            }
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll();
+
+            // Carga bajo demanda del detalle (fragments/...): la página pesa poco y cada sección se descarga al abrirla
+            const frags = {};
+            function fetchFrag(url) {
+                return frags[url] || (frags[url] = fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); }));
+            }
+            function loadFrag(el) {
+                if (el.dataset.loaded) return Promise.resolve();
+                return fetchFrag(el.dataset.frag)
+                    .then(h => { el.innerHTML = h; el.dataset.loaded = '1'; })
+                    .catch(() => {
+                        delete frags[el.dataset.frag];
+                        el.innerHTML = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">No se pudo cargar esta sección. <a href="#" class="text-aetherna-goldMain underline">Volver</a></p>';
+                    });
+            }
+            const LOADING = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">Abriendo el códice…</p>';
+
+            const CLASES = ["barbaro", "bardo", "luchador", "monje", "explorador", "artificiero", "picaro", "hechicero", "brujo", "clerigo", "paladin", "psionico"];
+            function route() {
+                const k = location.hash.slice(1);
+                const ok = CLASES.includes(k);
+                document.getElementById('clsList').hidden = ok;
+                document.querySelectorAll('.clase-det').forEach(d => { d.hidden = !(ok && d.id === 'det-' + k); });
+                if (ok) { const el = document.getElementById('det-' + k); if (!el.dataset.loaded) { el.innerHTML = LOADING; loadFrag(el).then(revealOnScroll); } }
+                window.scrollTo({ top: 0 });
+                revealOnScroll();
+            }
+            document.querySelectorAll('.clase-card').forEach(c => c.addEventListener('pointermove', ev => {
+                const r = c.getBoundingClientRect();
+                c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+                c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+            }));
+            window.addEventListener('hashchange', route);
+            route();
+
+            document.querySelectorAll('.clase-card').forEach(c => c.addEventListener('pointerenter', () => {
+                const el = document.getElementById('det-' + (c.getAttribute('href') || '').slice(1));
+                if (el && el.dataset.frag && !el.dataset.loaded) fetchFrag(el.dataset.frag).catch(() => { delete frags[el.dataset.frag]; });
+            }, { once: true }));
+        })();
+    </script>
+</body>
+</html>
