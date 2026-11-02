@@ -234,4 +234,3 @@ body { background-color: #05030C;
 .frame-panel.emblem-card:hover .font-cinzel:last-child, .frame-panel.emblem-card:focus-visible .font-cinzel:last-child { color: #FFF2CF; text-shadow: 0 0 14px rgba(217,180,106,.8); transform: translateY(-2px); }
 .frame-panel.emblem-card:focus-visible .emblem { outline: 2px solid #F0D79E; outline-offset: 6px; border-radius: 12px; }
 @media (prefers-reduced-motion: reduce) { .frame-panel.emblem-card .font-cinzel:last-child { transition: none; } }
-
