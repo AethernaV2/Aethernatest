@@ -41,6 +41,16 @@
         html[data-theme="grimorio"] .of-snd { background: rgba(18,11,6,.8); }
         .of-snd:hover, .of-snd:focus-visible { color: #FFF2CF; box-shadow: 0 0 14px rgba(217,180,106,.35); }
         .of-snd[aria-pressed="false"] { opacity: .6; }
+        .of-vid { position: relative; aspect-ratio: 16 / 9; width: 100%; overflow: hidden; background: #07051A; border: 1px solid rgba(217,180,106,.3); }
+        html[data-theme="grimorio"] .of-vid { background: #0C0704; }
+        .of-vid video, .of-vid iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+        .of-vid-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .7rem; color: #9C8865; font: italic 1.05rem 'EB Garamond', serif;
+            background: repeating-linear-gradient(135deg, rgba(217,180,106,.05) 0 12px, transparent 12px 24px); }
+        .of-vid-empty svg { color: rgba(217,180,106,.7); }
+        .of-vid-yt { position: absolute; inset: 0; width: 100%; padding: 0; border: 0; cursor: pointer; background: #000; }
+        .of-vid-yt img { width: 100%; height: 100%; object-fit: cover; opacity: .8; }
+        .of-vid-yt i { position: absolute; left: 50%; top: 50%; width: 68px; height: 68px; margin: -34px 0 0 -34px; border-radius: 50%; background: rgba(14,9,26,.8); border: 2px solid #D9B46A; }
+        .of-vid-yt i::after { content: ''; position: absolute; left: 27px; top: 21px; border-left: 20px solid #F6E2B3; border-top: 12px solid transparent; border-bottom: 12px solid transparent; }
         .clase-det:not([hidden]) { animation: of-in .7s ease-out both; }
         @keyframes of-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
         .clase-card { overflow: hidden; transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .35s; }
@@ -467,9 +477,9 @@
                 const SND = {};
                 const nbuf = a => a._nb || (a._nb = (() => { const b = a.createBuffer(1, a.sampleRate * 2, a.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return b; })());
                 // ruido filtrado con barrido de frecuencia y envolvente
-                function nz(A, t, dur, type, f0, f1, g, att, q) { const a = A.a, s = a.createBufferSource(); s.buffer = nbuf(a); s.loop = true; const f = a.createBiquadFilter(); f.type = type; f.Q.value = q || .9; f.frequency.setValueAtTime(f0, t); if (f1 && f1 !== f0) f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+                function nz(A, t, dur, type, f0, f1, g, att, q) { t = A.t0 + (t - A.t0) * A.k; const a = A.a, s = a.createBufferSource(); s.buffer = nbuf(a); s.loop = true; const f = a.createBiquadFilter(); f.type = type; f.Q.value = q || .9; f.frequency.setValueAtTime(f0, t); if (f1 && f1 !== f0) f.frequency.exponentialRampToValueAtTime(f1, t + dur);
                     const e = a.createGain(); att = att === undefined ? .02 : att; e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + Math.min(att, dur * .8)); e.gain.exponentialRampToValueAtTime(.0001, t + dur); s.connect(f); f.connect(e); e.connect(A.bus); s.start(t, Math.random()); s.stop(t + dur + .05); }
-                function tn(A, t, type, f0, f1, dur, g, att) { const a = A.a, o = a.createOscillator(), e = a.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur); att = att === undefined ? .008 : att;
+                function tn(A, t, type, f0, f1, dur, g, att) { t = A.t0 + (t - A.t0) * A.k; const a = A.a, o = a.createOscillator(), e = a.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur); att = att === undefined ? .008 : att;
                     e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + att); e.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(e); e.connect(A.bus); o.start(t); o.stop(t + dur + .05); }
                 const bell = (A, t, f, g, dur) => [[1, 1], [2.76, .35], [5.4, .15]].forEach(p => tn(A, t, 'sine', f * p[0], 0, dur / p[0] ** .3, g * p[1], .004));
                 const metal = (A, t, f, g, dur) => [[1, 1], [2.32, .7], [4.25, .5], [6.63, .35], [9.38, .22]].forEach((p, i) => tn(A, t, 'sine', f * p[0], 0, dur * (1 - i * .13), g * p[1], .002));
@@ -480,7 +490,7 @@
                 function crackle(A, t, dur, n, g, f) { const r = R(Math.floor(t * 1000) + n); for (let i = 0; i < n; i++) nz(A, t + r() * dur, .02 + r() * .03, 'bandpass', (f || 2500) * (.6 + r() * 1.4), 0, g * (.4 + r() * .6), .001, 1.2); }
                 const shim = (A, t, n, g, f0, span) => { const r = R(Math.floor(t * 777) + n); for (let i = 0; i < n; i++) bell(A, t + i * .07 + r() * .04, f0 * (1 + r() * span), g * (.5 + r() * .5), 1.1); };
                 // ruido continuo con modulación de volumen (fuego, agua, viento)
-                function bed(A, t, dur, type, f, g, lfoHz, lfoDepth) { const a = A.a, s = a.createBufferSource(); s.buffer = nbuf(a); s.loop = true; const fl = a.createBiquadFilter(); fl.type = type; fl.frequency.value = f; const e = a.createGain(); e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + Math.min(.35, dur / 3)); e.gain.setValueAtTime(g, t + dur - .4); e.gain.exponentialRampToValueAtTime(.0001, t + dur);
+                function bed(A, t, dur, type, f, g, lfoHz, lfoDepth) { dur *= A.k; t = A.t0 + (t - A.t0) * A.k; const a = A.a, s = a.createBufferSource(); s.buffer = nbuf(a); s.loop = true; const fl = a.createBiquadFilter(); fl.type = type; fl.frequency.value = f; const e = a.createGain(); e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + Math.min(.35, dur / 3)); e.gain.setValueAtTime(g, t + dur - .4); e.gain.exponentialRampToValueAtTime(.0001, t + dur);
                     if (lfoHz) { const l = a.createOscillator(), lg = a.createGain(); l.frequency.value = lfoHz; lg.gain.value = g * lfoDepth; l.connect(lg); lg.connect(e.gain); l.start(t); l.stop(t + dur + .05); } s.connect(fl); fl.connect(e); e.connect(A.bus); s.start(t, Math.random()); s.stop(t + dur + .05); }
                 const magic = (A, t, g) => { [1046.5, 1318.5, 1568, 2093, 2637, 3136].forEach((f, k) => tn(A, t + k * .07, 'sine', f, 0, 1.6, g / (1 + k * .25), .006)); };
 
@@ -551,7 +561,7 @@
                 };
 
                 /* ===== motor: lienzo a pantalla completa, fundido, nombre y entrega ===== */
-                let cv, ctx, raf = 0, running = false;
+                let cv, ctx, raf = 0, running = false, HINT = false;
                 function title(c, txt, W, H, u, a, color) {
                     if (a <= 0) return; c.save(); c.globalAlpha = a; c.font = '700 ' + Math.max(18, 4.2 * u) + 'px Cinzel, "Times New Roman", serif'; c.textBaseline = 'middle';
                     const sp = 1.3 * u, ws = [...txt].map(ch => c.measureText(ch).width), tot = ws.reduce((x, y) => x + y, 0) + sp * (txt.length - 1); let x = W / 2 - tot / 2, y = H * .8 + (1 - a) * 2 * u;
@@ -563,12 +573,13 @@
                     c.setTransform(Math.min(2, devicePixelRatio || 1), 0, 0, Math.min(2, devicePixelRatio || 1), 0, 0); c.clearRect(0, 0, W, H);
                     const bg = c.createRadialGradient(W / 2, H * .46, 0, W / 2, H * .46, Math.max(W, H) * .7); bg.addColorStop(0, gr ? '#1A0F07' : '#120B30'); bg.addColorStop(1, gr ? '#080503' : '#05030F'); c.fillStyle = bg; c.fillRect(0, 0, W, H);
                     setPal(); backdrop(c, t, W, H, u); sc.draw(c, t, state, W, H, u); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+                    if (HINT) { c.save(); c.globalAlpha = ss(.5, 1, t) * (1 - ss(sc.D * .82, sc.D, t)) * .7; c.font = '600 ' + Math.max(11, 1.7 * u) + 'px Cinzel, serif'; c.textAlign = 'center'; c.fillStyle = '#CDBB95'; c.fillText('TOCA PARA SALTAR', W / 2, H - 3.2 * u); c.restore(); }
                     title(c, sc.title, W, H, u, ss(sc.D * .55, sc.D * .78, t), gr ? 'rgb(224,170,90)' : 'rgb(157,108,240)');
                 }
                 const SND_G = { alquimista: 1.9, cocinero: 2.6, herrero: .8, joyero: 2.2, herborista: 2.8, cazador: 1.4, minero: .85, pescador: 1.5, lenador: .55 };   // iguala el volumen entre escenas
                 function audioOn(key) {
                     try { if (!fxSound) return null; const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
-                        const a = new AC(); if (a.state === 'suspended') a.resume(); const cp = a.createDynamicsCompressor(), bus = a.createGain(); bus.gain.value = .55 * (SND_G[key] || 1); bus.connect(cp); cp.connect(a.destination); return { a, bus }; } catch (e) { return null; }
+                        const a = new AC(); if (a.state === 'suspended') a.resume(); const cp = a.createDynamicsCompressor(), bus = a.createGain(); bus.gain.value = .55 * (SND_G[key] || 1); bus.connect(cp); cp.connect(a.destination); return { a, bus, k: 1, t0: 0 }; } catch (e) { return null; }
                 }
                 function play(key, done) {
                     if (running || !S[key]) { done(); return; } running = true;
@@ -576,16 +587,29 @@
                     const dpr = Math.min(2, devicePixelRatio || 1), W = innerWidth, H = innerHeight, u = Math.min(W, H) / 100 * (W > 900 ? 1.15 : 1);
                     cv.width = W * dpr; cv.height = H * dpr; cv.style.display = 'block'; void cv.offsetWidth; cv.style.opacity = '1';
                     const sc = S[key], st = sc.init(u), t0 = performance.now(); let fin = false, A = audioOn(key);
-                    if (A) { try { SND[key](A, A.a.currentTime + .05); } catch (e) { A = null; } }
+                    let seen = false; try { seen = sessionStorage.getItem('aetherna_ofx_seen') === '1'; sessionStorage.setItem('aetherna_ofx_seen', '1'); } catch (e) {}
+                    const k = seen ? .5 : 1; HINT = !seen;
+                    if (A) { try { A.k = k; A.t0 = A.a.currentTime + .05; SND[key](A, A.t0); } catch (e) { A = null; } }
                     const end = () => { if (fin) return; fin = true; cancelAnimationFrame(raf); done(); if (A) { const a = A.a, g = A.bus.gain; try { g.setValueAtTime(g.value, a.currentTime); g.linearRampToValueAtTime(0, a.currentTime + .25); } catch (e) {} setTimeout(() => { try { a.close(); } catch (e) {} }, 500); } cv.style.opacity = '0'; setTimeout(() => { cv.style.display = 'none'; running = false; }, 330); };
                     cv.onclick = () => { end(); };
-                    const loop = now => { if (fin) return; const t = (now - t0) / 1000; frame(key, Math.min(t, sc.D), st, W, H, u); if (t >= sc.D + .08) end(); else raf = requestAnimationFrame(loop); };
+                    const loop = now => { if (fin) return; const t = (now - t0) / 1000 / k; frame(key, Math.min(t, sc.D), st, W, H, u); if (t >= sc.D + .08 / k) end(); else raf = requestAnimationFrame(loop); };
                     raf = requestAnimationFrame(loop);
                 }
                 const ping = () => { const A = audioOn('herborista'); if (!A) return; const t = A.a.currentTime + .03; bell(A, t, 1318.5, .07, 1); bell(A, t + .09, 1760, .06, 1); setTimeout(() => { try { A.a.close(); } catch (e) {} }, 1600); };
                 return { ping, play, S, SND, frame, _init: (c, w, h) => { ctx = c; }, setCtx: c => { ctx = c; } };
             })();
 
+            // Vídeos de «cómo funciona el oficio en el juego». Pon aquí el archivo (fotos/videos/herrero.mp4) o un enlace de YouTube; mientras esté vacío se ve «Vídeo en preparación».
+            const VIDEOS = { alquimista: '', cocinero: '', herrero: '', joyero: '', herborista: '', cazador: '', minero: '', pescador: '', lenador: '' };
+            function addVideo(el) {
+                const k = el.id.replace('det-', ''), src = VIDEOS[k] || '', sec = document.createElement('section');
+                sec.className = 'frame-panel p-6 of-video'; sec.innerHTML = '<h3 class="font-cinzel text-aetherna-goldLight font-bold" style="font-size:1.25rem;margin-bottom:1rem">Cómo funciona en el juego</h3><div class="of-vid"></div>';
+                const box = sec.querySelector('.of-vid'), yt = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/.exec(src);
+                if (!src) box.innerHTML = '<div class="of-vid-empty"><svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M10 8.5l6 3.5-6 3.5z"/></svg><span>Vídeo en preparación</span></div>';
+                else if (yt) { box.innerHTML = '<button type="button" class="of-vid-yt" aria-label="Reproducir el vídeo"><img src="https://img.youtube.com/vi/' + yt[1] + '/hqdefault.jpg" alt="" loading="lazy"><i></i></button>'; box.firstChild.addEventListener('click', () => { box.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + yt[1] + '?autoplay=1&rel=0" title="Cómo funciona el oficio" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>'; }); }
+                else box.innerHTML = '<video controls preload="metadata" playsinline src="' + src.replace(/"/g, '') + '"></video>';
+                el.appendChild(sec);
+            }
             // Carga bajo demanda del detalle (fragments/...): la página pesa poco y cada sección se descarga al abrirla
             const frags = {};
             function fetchFrag(url) {
@@ -594,7 +618,7 @@
             function loadFrag(el) {
                 if (el.dataset.loaded) return Promise.resolve();
                 return fetchFrag(el.dataset.frag)
-                    .then(h => { el.innerHTML = h; el.dataset.loaded = '1'; })
+                    .then(h => { el.innerHTML = h; el.dataset.loaded = '1'; addVideo(el); })
                     .catch(() => {
                         delete frags[el.dataset.frag];
                         el.innerHTML = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">No se pudo cargar esta sección. <a href="#" class="text-aetherna-goldMain underline">Volver</a></p>';
