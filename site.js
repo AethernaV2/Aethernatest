@@ -37,7 +37,7 @@
     // 1) Cabecera + buscador
     // ------------------------------------------------------------------
     // [clave de página, texto, enlace]   (los enlaces son relativos: funcionan también abriendo los archivos en local)
-    const NAV = [
+    const NAV = [ // orden del menú: Inicio, Lore, Época, Razas, Clases, Oficios, Manual, Noticias
         ['inicio',   'Inicio',   './'],
         ['lore',     'Lore',     'lore.html'],
         ['epoca',    'Época',    'epoca.html'],
@@ -425,6 +425,150 @@
     })();
 
     // ------------------------------------------------------------------
+    // 2b) Intro de la entrada: tirada de iniciativa con un d20 (20 natural). Se salta con un clic o con una tecla.
+    // ------------------------------------------------------------------
+    function playDice(gate, done) {
+        const NS = 'http://www.w3.org/2000/svg';
+        if (!$('dice-style')) {
+            const st = document.createElement('style'); st.id = 'dice-style';
+            st.textContent = `
+#entry-gate.dice { background: #05030C; backdrop-filter: none; cursor: pointer; }
+.dice-stage { position: relative; width: min(74vmin, 420px); aspect-ratio: 1; }
+.dice-stage svg { position: relative; width: 100%; height: 100%; overflow: visible; }
+.dice-glow { position: absolute; inset: -30%; background: radial-gradient(circle, rgba(224,150,50,.34), rgba(157,108,240,.10) 46%, transparent 68%); opacity: 0; animation: dice-in 1.2s ease forwards; }
+.dice-ring { transform-box: view-box; transform-origin: 200px 200px; animation: dice-spin 60s linear infinite; }
+.dice-ring path { fill: none; stroke: #D9B46A; stroke-width: 1; opacity: .6; stroke-linecap: round; }
+.dice-fade { opacity: 0; animation: dice-in .9s ease .15s forwards; }
+.dice-label { margin-top: 1.4rem; font: 700 .8rem Cinzel, serif; letter-spacing: .38em; text-transform: uppercase; color: #D9B46A; text-align: center; transition: color .3s, text-shadow .3s; }
+.dice-label.crit { color: #FFF2CF; text-shadow: 0 0 16px rgba(255,190,90,.9); }
+.dice-pips { display: flex; gap: .55rem; margin-top: .9rem; }
+.dice-pips i { width: 9px; height: 9px; transform: rotate(45deg); border: 1px solid rgba(217,180,106,.5); transition: background .2s, box-shadow .2s; }
+.dice-pips i.on { background: #E0902F; border-color: #F0B35A; box-shadow: 0 0 8px rgba(224,144,47,.7); }
+.dice-pips i.cur { background: #FFF2CF; }
+.dice-quote { position: absolute; left: 0; right: 0; bottom: 9vh; padding: 0 1.5rem; text-align: center; font: italic 1.05rem 'EB Garamond', serif; color: #B9A98A; opacity: 0; transition: opacity 1s; }
+.dice-skip { position: absolute; top: 1rem; right: 1.25rem; font: 600 .62rem Cinzel, serif; letter-spacing: .25em; text-transform: uppercase; color: #6f6450; }
+.dice-flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 46%, rgba(255,236,190,.85), rgba(255,200,110,.25) 40%, transparent 70%); }
+.dice-ring-x { fill: none; stroke: #F0B35A; stroke-width: 1.2; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.dice-shadow, #dice { transform-box: view-box; transform-origin: 200px 200px; }
+#dice { filter: drop-shadow(0 0 10px rgba(240,170,70,.65)); }
+@keyframes dice-in { to { opacity: 1; } }
+@keyframes dice-spin { to { transform: rotate(360deg); } }`;
+            document.head.appendChild(st);
+        }
+        // runas: trazos inventados (no dependen de ninguna fuente)
+        let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+        let runes = '';
+        for (let i = 0; i < 84; i++) {
+            const k = (rnd() * 4) | 0;
+            const d = 'M0 -7V7' + (k === 0 ? 'M0 -7L5 -2' : k === 1 ? 'M0 -7L-5 -2M0 0L5 5' : k === 2 ? 'M0 -3L5 -8M0 3L5 -2' : 'M-5 -4L5 4');
+            runes += '<path d="' + d + '" transform="rotate(' + (i / 84 * 360).toFixed(1) + ' 200 200) translate(200 32)"/>';
+        }
+        // d20 de frente: hexágono + triángulo central + aristas
+        const P = (r, deg) => [200 + r * Math.cos(deg * Math.PI / 180), 200 + r * Math.sin(deg * Math.PI / 180)];
+        const V = [-90, -30, 30, 90, 150, 210].map(a => P(84, a)), T = [-90, 30, 150].map(a => P(44, a));
+        const pt = p => p[0].toFixed(1) + ',' + p[1].toFixed(1);
+        const edges = [[T[0], V[1]], [T[0], V[5]], [T[0], V[0]], [T[1], V[1]], [T[1], V[3]], [T[1], V[2]], [T[2], V[3]], [T[2], V[5]], [T[2], V[4]]]
+            .map(e => 'M' + pt(e[0]) + 'L' + pt(e[1])).join('');
+        const small = [P(66, -30), P(66, 90), P(66, 210)];
+        gate.classList.add('dice');
+        gate.setAttribute('aria-label', 'Tirando iniciativa');
+        gate.innerHTML = `
+        <span class="dice-skip">Pulsa para saltar</span>
+        <div class="dice-stage">
+            <div class="dice-glow"></div>
+            <svg viewBox="0 0 400 400" aria-hidden="true">
+                <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#24150A"/><stop offset="1" stop-color="#090503"/></linearGradient></defs>
+                <g class="dice-fade">
+                    <circle cx="200" cy="200" r="118" fill="none" stroke="#D9B46A" stroke-opacity=".22"/>
+                    <circle cx="200" cy="200" r="100" fill="none" stroke="#D9B46A" stroke-opacity=".16"/>
+                    <g class="dice-ring">${runes}</g>
+                    <circle cx="200" cy="32" r="21" fill="#05030C"/>
+                    <g transform="translate(200 34) scale(.17) translate(-100 -100)" fill="none" stroke="#F0D79E" stroke-width="9" stroke-linejoin="miter">
+                        <polygon points="100,6 181.4,53 181.4,147 100,194 18.6,147 18.6,53"/><path d="M68 146 L100 62 L132 146 M81 122 H119"/>
+                    </g>
+                </g>
+                <ellipse class="dice-shadow" id="dice-shadow" cx="200" cy="304" rx="62" ry="9" fill="#000" opacity="0"/>
+                <circle class="dice-ring-x" cx="200" cy="200" r="100"/><circle class="dice-ring-x" cx="200" cy="200" r="100"/>
+                <g id="dice" opacity="0">
+                    <polygon points="${V.map(pt).join(' ')}" fill="url(#dg)" stroke="#F0B35A" stroke-width="2.2" stroke-linejoin="round"/>
+                    <polygon points="${T.map(pt).join(' ')}" fill="none" stroke="#F0B35A" stroke-width="1.8" stroke-linejoin="round"/>
+                    <path d="${edges}" stroke="#F0B35A" stroke-width="1.5" stroke-opacity=".85" fill="none"/>
+                    <g fill="#FFE9B8" font-family="Cinzel, serif" font-weight="700" text-anchor="middle">
+                        <text id="dn" x="200" y="${(T[1][1] - 12).toFixed(1)}" font-size="30">7</text>
+                        ${small.map((p, i) => '<text class="ds" x="' + p[0].toFixed(1) + '" y="' + (p[1] + 5).toFixed(1) + '" font-size="14" fill-opacity=".8">' + (i + 3) + '</text>').join('')}
+                    </g>
+                </g>
+                <g id="dice-sparks"></g>
+            </svg>
+        </div>
+        <div class="dice-label dice-fade" id="dice-label">Tirando iniciativa</div>
+        <div class="dice-pips dice-fade" id="dice-pips">${'<i></i>'.repeat(10)}</div>
+        <p class="dice-quote" id="dice-quote">«Un 20 natural no garantiza la victoria… pero ayuda.»</p>
+        <div class="dice-flash" id="dice-flash"></div>`;
+        gate.tabIndex = -1; gate.focus({ preventScroll: true });
+
+        const dice = $('dice'), shadow = $('dice-shadow'), dn = $('dn'), smalls = gate.querySelectorAll('.ds'), sparks = $('dice-sparks'), label = $('dice-label');
+        const pips = [].slice.call($('dice-pips').children), timers = [];
+        const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+        const burst = (x, y, n, spd, up) => {
+            for (let i = 0; i < n; i++) {
+                const c = document.createElementNS(NS, 'circle');
+                c.setAttribute('r', (1 + Math.random() * 1.8).toFixed(1)); c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('fill', '#F0B35A');
+                sparks.appendChild(c);
+                const a = up ? -Math.PI / 2 + (Math.random() - .5) * 2.4 : Math.random() * 6.283, d = spd * (.45 + Math.random() * .75);
+                const an = c.animate([{ transform: 'translate(0,0)', opacity: 1 }, { transform: 'translate(' + Math.cos(a) * d + 'px,' + Math.sin(a) * d + 'px)', opacity: 0 }],
+                    { duration: 650 + Math.random() * 550, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'forwards' });
+                an.onfinish = () => c.remove();
+            }
+        };
+        // caída y rebotes
+        dice.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: 350, fill: 'forwards' });
+        dice.animate([
+            { transform: 'translateY(-320px) rotate(0deg)', offset: 0 },
+            { transform: 'translateY(0) rotate(560deg)', offset: .38, easing: 'ease-out' },
+            { transform: 'translateY(-48px) rotate(770deg)', offset: .55, easing: 'ease-in' },
+            { transform: 'translateY(0) rotate(910deg)', offset: .7, easing: 'ease-out' },
+            { transform: 'translateY(-14px) rotate(1000deg)', offset: .84, easing: 'ease-in' },
+            { transform: 'translateY(0) rotate(1080deg)', offset: 1 }
+        ], { duration: 2600, delay: 350, easing: 'ease-in', fill: 'forwards' });
+        shadow.animate([
+            { transform: 'scale(.25)', opacity: .1, offset: 0 }, { transform: 'scale(1)', opacity: .55, offset: .38 }, { transform: 'scale(.65)', opacity: .3, offset: .55 },
+            { transform: 'scale(1)', opacity: .55, offset: .7 }, { transform: 'scale(.88)', opacity: .45, offset: .84 }, { transform: 'scale(1)', opacity: .55, offset: 1 }
+        ], { duration: 2600, delay: 350, fill: 'forwards' });
+        [1000, 1600, 1950, 2330].forEach((t, i) => at(t, () => burst(200, 292, i < 2 ? 9 : 5, i < 2 ? 70 : 40, true)));
+        // números que cambian cada vez más despacio
+        let t = 450, step = 70, last = 0;
+        while (t < 2950) {
+            at(t, () => {
+                let n; do { n = 1 + ((Math.random() * 19) | 0); } while (n === last); last = n; dn.textContent = n;
+                smalls.forEach(s => { s.textContent = 1 + ((Math.random() * 19) | 0); });
+            });
+            t += step; step *= 1.07;
+        }
+        // barra de diamantes
+        pips.forEach((p, i) => at(650 + i * 240, () => { pips.forEach(q => q.classList.remove('cur')); p.classList.add('on', 'cur'); }));
+        // 20 natural
+        at(3050, () => {
+            dn.textContent = '20'; [15, 16, 14].forEach((n, i) => { smalls[i].textContent = n; });
+            pips.forEach(p => { p.classList.remove('cur'); p.classList.add('on'); });
+            label.textContent = '20 natural · ¡Crítico!'; label.classList.add('crit');
+            $('dice-flash').animate([{ opacity: 0 }, { opacity: .85, offset: .18 }, { opacity: 0 }], { duration: 1000, easing: 'ease-out' });
+            gate.querySelectorAll('.dice-ring-x').forEach((c, i) => c.animate([{ transform: 'scale(1)', opacity: .8 }, { transform: 'scale(' + (1.55 + i * .35) + ')', opacity: 0 }], { duration: 1200 + i * 300, easing: 'ease-out' }));
+            burst(200, 200, 24, 150, false);
+        });
+        at(3600, () => { $('dice-quote').style.opacity = '1'; });
+        let ended = false;
+        const finish = () => {
+            if (ended) return; ended = true;
+            timers.forEach(clearTimeout);
+            gate.removeEventListener('pointerdown', finish); document.removeEventListener('keydown', finish);
+            done();
+        };
+        at(4900, finish);
+        gate.addEventListener('pointerdown', finish); document.addEventListener('keydown', finish);
+    }
+
+    // ------------------------------------------------------------------
     // 3) Pantalla de entrada (una vez por sesión del navegador)
     // ------------------------------------------------------------------
     if (gateOpen) {
@@ -442,18 +586,22 @@
         inertTargets().forEach(el => { el.inert = true; });
         document.documentElement.style.overflow = 'hidden';
         $('gate-enter').focus();
-        const closeGate = withMusic => {
-            if (!$('entry-gate')) return;
-            store.set('aetherna_entered', '1', 'session');
-            if (window.__aethernaPlayer) window.__aethernaPlayer.enter(withMusic);
+        const release = () => {
             inertTargets().forEach(el => { el.inert = false; });
             document.documentElement.style.overflow = '';
             gate.classList.add('opacity-0', 'pointer-events-none');
             setTimeout(() => { if (gate.parentNode) gate.remove(); }, reduceMotion ? 0 : 520);
         };
+        const closeGate = (withMusic, skipIntro) => {
+            if (!$('entry-gate') || gate.dataset.busy) return;
+            store.set('aetherna_entered', '1', 'session');
+            if (window.__aethernaPlayer) window.__aethernaPlayer.enter(withMusic);
+            if (reduceMotion || skipIntro) release();
+            else { gate.dataset.busy = '1'; playDice(gate, release); }
+        };
         $('gate-enter').addEventListener('click', () => closeGate(true));
         $('gate-silent').addEventListener('click', () => closeGate(false));
-        document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('entry-gate')) closeGate(false); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('entry-gate') && !gate.dataset.busy) closeGate(false, true); });
     }
 
     // ------------------------------------------------------------------
@@ -762,4 +910,3 @@
         go(location.href, { push: false });
     });
 })();
-
