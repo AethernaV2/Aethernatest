@@ -37,6 +37,10 @@
         @media (min-width: 640px) { .of-grid > a { flex-basis: calc(50% - .5rem); } }
         @media (min-width: 1024px) { .of-grid > a { flex-basis: calc(25% - .75rem); } }
         @media (min-width: 1280px) { .of-grid { margin-left: -3.5rem; margin-right: -3.5rem; } }
+        .of-snd { display: inline-flex; align-items: center; gap: .55rem; padding: .45rem 1rem; font: 600 11px 'Cinzel', serif; letter-spacing: .18em; text-transform: uppercase; color: #D9B46A; background: rgba(14,9,26,.7); border: 1px solid rgba(217,180,106,.45); cursor: pointer; transition: color .2s, box-shadow .2s, opacity .2s; }
+        html[data-theme="grimorio"] .of-snd { background: rgba(18,11,6,.8); }
+        .of-snd:hover, .of-snd:focus-visible { color: #FFF2CF; box-shadow: 0 0 14px rgba(217,180,106,.35); }
+        .of-snd[aria-pressed="false"] { opacity: .6; }
         .clase-det:not([hidden]) { animation: of-in .7s ease-out both; }
         @keyframes of-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
         .clase-card { overflow: hidden; transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .35s; }
@@ -81,7 +85,8 @@
 
         <!-- Contenedor de Clases -->
         <div id="clsList">
-            <p class="font-garamond text-center text-aetherna-textSoft mb-8">Pulsa un oficio para abrir su ficha completa.</p>
+            <p class="font-garamond text-center text-aetherna-textSoft" style="margin-bottom:.9rem">Pulsa un oficio para abrir su ficha completa.</p>
+            <div class="text-center" style="margin-bottom:2rem"><button type="button" id="ofSnd" class="of-snd"></button></div>
             <h2 class="font-cinzel text-lg sm:text-xl text-aetherna-goldLight font-bold uppercase tracking-[0.2em] text-center">Oficios principales</h2>
             <div class="of-grid">
                 <a href="#alquimista" class="clase-card emblem-card emblem-peek block frame-panel p-5 text-center">
@@ -204,6 +209,8 @@
             revealOnScroll();
 
 
+            // sonido de las animaciones: se puede silenciar (se recuerda) y respeta «entrar en silencio»
+            let fxSound = (() => { try { const v = localStorage.getItem('aetherna_oficios_sound'); if (v !== null) return v === '1'; return sessionStorage.getItem('aetherna_sound') !== '0'; } catch (e) { return true; } })();
             /* ===== Animaciones de entrada de cada oficio (canvas, una escena por oficio) ===== */
             const OFX = (function () {
                 const TAU = Math.PI * 2, cl = (v, a, b) => Math.max(a === undefined ? 0 : a, Math.min(b === undefined ? 1 : b, v));
@@ -560,8 +567,8 @@
                 }
                 const SND_G = { alquimista: 1.9, cocinero: 2.6, herrero: .8, joyero: 2.2, herborista: 2.8, cazador: 1.4, minero: .85, pescador: 1.5, lenador: .55 };   // iguala el volumen entre escenas
                 function audioOn(key) {
-                    try { if (sessionStorage.getItem('aetherna_sound') === '0') return null; const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
-                        const a = new AC(); if (a.state === 'suspended') a.resume(); const cp = a.createDynamicsCompressor(), bus = a.createGain(); bus.gain.value = .95 * (SND_G[key] || 1); bus.connect(cp); cp.connect(a.destination); return { a, bus }; } catch (e) { return null; }
+                    try { if (!fxSound) return null; const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+                        const a = new AC(); if (a.state === 'suspended') a.resume(); const cp = a.createDynamicsCompressor(), bus = a.createGain(); bus.gain.value = .55 * (SND_G[key] || 1); bus.connect(cp); cp.connect(a.destination); return { a, bus }; } catch (e) { return null; }
                 }
                 function play(key, done) {
                     if (running || !S[key]) { done(); return; } running = true;
@@ -575,7 +582,8 @@
                     const loop = now => { if (fin) return; const t = (now - t0) / 1000; frame(key, Math.min(t, sc.D), st, W, H, u); if (t >= sc.D + .08) end(); else raf = requestAnimationFrame(loop); };
                     raf = requestAnimationFrame(loop);
                 }
-                return { play, S, SND, frame, _init: (c, w, h) => { ctx = c; }, setCtx: c => { ctx = c; } };
+                const ping = () => { const A = audioOn('herborista'); if (!A) return; const t = A.a.currentTime + .03; bell(A, t, 1318.5, .07, 1); bell(A, t + .09, 1760, .06, 1); setTimeout(() => { try { A.a.close(); } catch (e) {} }, 1600); };
+                return { ping, play, S, SND, frame, _init: (c, w, h) => { ctx = c; }, setCtx: c => { ctx = c; } };
             })();
 
             // Carga bajo demanda del detalle (fragments/...): la página pesa poco y cada sección se descarga al abrirla
@@ -594,6 +602,11 @@
             }
             const LOADING = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">Abriendo el códice…</p>';
 
+            const sndBtn = document.getElementById('ofSnd');
+            const paintSnd = () => { sndBtn.setAttribute('aria-pressed', fxSound ? 'true' : 'false'); sndBtn.title = fxSound ? 'Silenciar el sonido de los oficios' : 'Activar el sonido de los oficios';
+                sndBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/>' + (fxSound ? '<path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/>' : '<path d="M17 9l5 6M22 9l-5 6"/>') + '</svg><span>Sonido: ' + (fxSound ? 'activado' : 'silenciado') + '</span>'; };
+            paintSnd();
+            sndBtn.addEventListener('click', () => { fxSound = !fxSound; try { localStorage.setItem('aetherna_oficios_sound', fxSound ? '1' : '0'); } catch (e) {} paintSnd(); if (fxSound) OFX.ping(); });
             const reduceFx = matchMedia('(prefers-reduced-motion: reduce)').matches;
             // al pulsar un oficio: animación propia y, al terminar, se abre su texto
             document.querySelectorAll('.clase-card').forEach(c => c.addEventListener('click', ev => {
