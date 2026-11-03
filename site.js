@@ -435,22 +435,22 @@
 #entry-gate.dice { background: #05030C; backdrop-filter: none; cursor: pointer; }
 .dice-stage { position: relative; width: min(74vmin, 420px); aspect-ratio: 1; }
 .dice-stage svg { position: relative; width: 100%; height: 100%; overflow: visible; }
-.dice-glow { position: absolute; inset: -30%; background: radial-gradient(circle, rgba(224,150,50,.34), rgba(157,108,240,.10) 46%, transparent 68%); opacity: 0; animation: dice-in 1.2s ease forwards; }
+.dice-glow { position: absolute; inset: -30%; background: radial-gradient(circle, rgba(110,60,210,.38), rgba(70,32,127,.14) 46%, transparent 68%); opacity: 0; animation: dice-in 1.2s ease forwards; }
 .dice-ring { transform-box: view-box; transform-origin: 200px 200px; animation: dice-spin 60s linear infinite; }
 .dice-ring path { fill: none; stroke: #D9B46A; stroke-width: 1; opacity: .6; stroke-linecap: round; }
 .dice-fade { opacity: 0; animation: dice-in .9s ease .15s forwards; }
 .dice-label { margin-top: 1.4rem; font: 700 .8rem Cinzel, serif; letter-spacing: .38em; text-transform: uppercase; color: #D9B46A; text-align: center; transition: color .3s, text-shadow .3s; }
-.dice-label.crit { color: #FFF2CF; text-shadow: 0 0 16px rgba(255,190,90,.9); }
+.dice-label.crit { color: #FFF2CF; text-shadow: 0 0 16px rgba(190,150,255,.95); }
 .dice-pips { display: flex; gap: .55rem; margin-top: .9rem; }
 .dice-pips i { width: 9px; height: 9px; transform: rotate(45deg); border: 1px solid rgba(217,180,106,.5); transition: background .2s, box-shadow .2s; }
-.dice-pips i.on { background: #E0902F; border-color: #F0B35A; box-shadow: 0 0 8px rgba(224,144,47,.7); }
-.dice-pips i.cur { background: #FFF2CF; }
+.dice-pips i.on { background: #7B4FD8; border-color: #B79CFF; box-shadow: 0 0 8px rgba(130,80,230,.8); }
+.dice-pips i.cur { background: #EBDDFF; }
 .dice-quote { position: absolute; left: 0; right: 0; bottom: 9vh; padding: 0 1.5rem; text-align: center; font: italic 1.05rem 'EB Garamond', serif; color: #B9A98A; opacity: 0; transition: opacity 1s; }
 .dice-skip { position: absolute; top: 1rem; right: 1.25rem; font: 600 .62rem Cinzel, serif; letter-spacing: .25em; text-transform: uppercase; color: #6f6450; }
-.dice-flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 46%, rgba(255,236,190,.85), rgba(255,200,110,.25) 40%, transparent 70%); }
-.dice-ring-x { fill: none; stroke: #F0B35A; stroke-width: 1.2; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.dice-flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 46%, rgba(225,205,255,.85), rgba(150,100,240,.28) 40%, transparent 70%); }
+.dice-ring-x { fill: none; stroke: #B79CFF; stroke-width: 1.2; opacity: 0; transform-box: fill-box; transform-origin: center; }
 .dice-shadow, #dice { transform-box: view-box; transform-origin: 200px 200px; }
-#dice { filter: drop-shadow(0 0 10px rgba(240,170,70,.65)); }
+#dice { filter: drop-shadow(0 0 12px rgba(125,75,230,.75)); }
 @keyframes dice-in { to { opacity: 1; } }
 @keyframes dice-spin { to { transform: rotate(360deg); } }`;
             document.head.appendChild(st);
@@ -477,7 +477,7 @@
         <div class="dice-stage">
             <div class="dice-glow"></div>
             <svg viewBox="0 0 400 400" aria-hidden="true">
-                <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#24150A"/><stop offset="1" stop-color="#090503"/></linearGradient></defs>
+                <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B1A5C"/><stop offset="1" stop-color="#0A0722"/></linearGradient></defs>
                 <g class="dice-fade">
                     <circle cx="200" cy="200" r="118" fill="none" stroke="#D9B46A" stroke-opacity=".22"/>
                     <circle cx="200" cy="200" r="100" fill="none" stroke="#D9B46A" stroke-opacity=".16"/>
@@ -490,10 +490,10 @@
                 <ellipse class="dice-shadow" id="dice-shadow" cx="200" cy="304" rx="62" ry="9" fill="#000" opacity="0"/>
                 <circle class="dice-ring-x" cx="200" cy="200" r="100"/><circle class="dice-ring-x" cx="200" cy="200" r="100"/>
                 <g id="dice" opacity="0">
-                    <polygon points="${V.map(pt).join(' ')}" fill="url(#dg)" stroke="#F0B35A" stroke-width="2.2" stroke-linejoin="round"/>
-                    <polygon points="${T.map(pt).join(' ')}" fill="none" stroke="#F0B35A" stroke-width="1.8" stroke-linejoin="round"/>
-                    <path d="${edges}" stroke="#F0B35A" stroke-width="1.5" stroke-opacity=".85" fill="none"/>
-                    <g fill="#FFE9B8" font-family="Cinzel, serif" font-weight="700" text-anchor="middle">
+                    <polygon points="${V.map(pt).join(' ')}" fill="url(#dg)" stroke="#8B5CE6" stroke-width="2.2" stroke-linejoin="round"/>
+                    <polygon points="${T.map(pt).join(' ')}" fill="none" stroke="#8B5CE6" stroke-width="1.8" stroke-linejoin="round"/>
+                    <path d="${edges}" stroke="#8B5CE6" stroke-width="1.5" stroke-opacity=".85" fill="none"/>
+                    <g fill="#E6D9FF" font-family="Cinzel, serif" font-weight="700" text-anchor="middle">
                         <text id="dn" x="200" y="${(T[1][1] - 12).toFixed(1)}" font-size="30">7</text>
                         ${small.map((p, i) => '<text class="ds" x="' + p[0].toFixed(1) + '" y="' + (p[1] + 5).toFixed(1) + '" font-size="14" fill-opacity=".8">' + (i + 3) + '</text>').join('')}
                     </g>
@@ -513,7 +513,7 @@
         const burst = (x, y, n, spd, up) => {
             for (let i = 0; i < n; i++) {
                 const c = document.createElementNS(NS, 'circle');
-                c.setAttribute('r', (1 + Math.random() * 1.8).toFixed(1)); c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('fill', '#F0B35A');
+                c.setAttribute('r', (1 + Math.random() * 1.8).toFixed(1)); c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('fill', '#B79CFF');
                 sparks.appendChild(c);
                 const a = up ? -Math.PI / 2 + (Math.random() - .5) * 2.4 : Math.random() * 6.283, d = spd * (.45 + Math.random() * .75);
                 const an = c.animate([{ transform: 'translate(0,0)', opacity: 1 }, { transform: 'translate(' + Math.cos(a) * d + 'px,' + Math.sin(a) * d + 'px)', opacity: 0 }],
@@ -957,3 +957,4 @@
         go(location.href, { push: false });
     });
 })();
+
