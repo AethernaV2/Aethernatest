@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetherna V2 · Los Dioses de Aetherna</title>
+    <meta name="description" content="Tablero de los dioses de Aetherna V2: Chassaria, Iasis, Irion, Lothshi, Baraka, Mushalee, Serathovah, Zark, Luminae, Vilza y Zenelithca.">
+    <meta name="theme-color" content="#07051A">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Aetherna V2">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:title" content="Aetherna V2 · Los Dioses de Aetherna">
+    <meta property="og:description" content="Tablero de los dioses de Aetherna V2: Chassaria, Iasis, Irion, Lothshi, Baraka, Mushalee, Serathovah, Zark, Luminae, Vilza y Zenelithca.">
+    <meta property="og:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <meta property="og:url" content="https://aetherna-cyan.vercel.app/dioses">
+    <link rel="canonical" href="https://aetherna-cyan.vercel.app/dioses">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <link rel="icon" type="image/png" href="fotos/Logo.png">
+
+    <!-- Google Fonts: Cinzel Decorative, Cinzel & EB Garamond -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+    <!-- Estilos comunes + estilos propios de esta página + Tailwind compilado (ver LEEME.md) -->
+    <link rel="stylesheet" href="styles.css?v=3">
+    <style id="page-style">
+        .reveal { opacity: 0; translate: 0 40px; transition: opacity .8s cubic-bezier(.16,1,.3,1), translate .8s cubic-bezier(.16,1,.3,1); }
+        .reveal.active { opacity: 1; translate: 0 0; }
+        @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1 !important; translate: none !important; transition: none !important; } }
+
+        /* colores de cada estilo */
+        :root { --dz-t1: #1B1546; --dz-t2: #0C0926; --dz-line: rgba(217,180,106,.55); --dz-glow: 157,108,240; --dz-d20a: #2B1A5C; --dz-d20b: #0A0722; --dz-stroke: #C4A0FF; --dz-num: #FFF2CF; --dz-frame: rgba(14,11,38,.88); --dz-accent: #C4A0FF; }
+        html[data-theme="grimorio"] { --dz-t1: #25160A; --dz-t2: #0E0804; --dz-line: rgba(201,150,70,.6); --dz-glow: 224,144,47; --dz-d20a: #24150A; --dz-d20b: #090503; --dz-stroke: #F0B35A; --dz-num: #FFE9B8; --dz-frame: rgba(18,11,6,.9); --dz-accent: #F0B35A; }
+
+        .dz-layout { display: grid; gap: 2rem; align-items: start; }
+        @media (min-width: 1024px) { .dz-layout { grid-template-columns: minmax(0, 640px) minmax(0, 1fr); gap: 2.5rem; } .dz-panel { position: sticky; top: 7.5rem; } }
+
+        /* ===== Mapa de combate: suelo de mazmorra con cuadrícula ===== */
+        :root { --dz-stone1: #232044; --dz-stone2: #15122E; --dz-wall: #0B0922; --dz-grid: rgba(196,160,255,.16); --dz-torch: 157,108,240; }
+        html[data-theme="grimorio"] { --dz-stone1: #3A2A19; --dz-stone2: #1E140A; --dz-wall: #0C0703; --dz-grid: rgba(240,179,90,.15); --dz-torch: 255,150,50; }
+
+        .dz-board { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 0; aspect-ratio: 1; width: 100%; padding: 14px;
+            background:
+              repeating-linear-gradient(0deg, transparent 0 calc(100% / var(--side, 6) - 1px), var(--dz-grid) calc(100% / var(--side, 6) - 1px) calc(100% / var(--side, 6))),
+              repeating-linear-gradient(90deg, transparent 0 calc(100% / var(--side, 6) - 1px), var(--dz-grid) calc(100% / var(--side, 6) - 1px) calc(100% / var(--side, 6))),
+              radial-gradient(ellipse at 50% 50%, var(--dz-stone1), var(--dz-stone2) 80%);
+            border: 10px solid var(--dz-wall); outline: 2px solid var(--dz-line); outline-offset: -3px; overflow: hidden;
+            box-shadow: inset 0 0 60px rgba(0,0,0,.75), 0 22px 50px rgba(0,0,0,.6); }
+        /* antorchas en las esquinas */
+        .dz-torch { position: absolute; width: 38%; height: 38%; pointer-events: none; z-index: 0; opacity: .85; animation: dz-flick 3.2s ease-in-out infinite alternate; }
+        .dz-torch.a { left: -6%; top: -6%; background: radial-gradient(circle at 20% 20%, rgba(var(--dz-torch), .42), transparent 62%); }
+        .dz-torch.b { right: -6%; top: -6%; background: radial-gradient(circle at 80% 20%, rgba(var(--dz-torch), .42), transparent 62%); animation-delay: -1.1s; }
+        .dz-torch.c { left: -6%; bottom: -6%; background: radial-gradient(circle at 20% 80%, rgba(var(--dz-torch), .42), transparent 62%); animation-delay: -2s; }
+        .dz-torch.d { right: -6%; bottom: -6%; background: radial-gradient(circle at 80% 80%, rgba(var(--dz-torch), .42), transparent 62%); animation-delay: -.5s; }
+        @keyframes dz-flick { from { opacity: .55; } to { opacity: 1; } }
+        @media (prefers-reduced-motion: reduce) { .dz-torch { animation: none; } }
+
+        .dz-tile { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 4px; cursor: pointer; overflow: hidden; margin: 2px;
+            font-family: 'Cinzel', serif; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: clamp(6px, 1.45vw, 11.5px); line-height: 1.15; color: #D9CDB4; letter-spacing: .04em;
+            background: linear-gradient(145deg, rgba(255,255,255,.07), rgba(0,0,0,.18)), var(--dz-stone1);
+            border: 1px solid rgba(0,0,0,.55); box-shadow: inset 1px 1px 0 rgba(255,255,255,.14), inset -2px -2px 5px rgba(0,0,0,.5), 0 2px 4px rgba(0,0,0,.4);
+            text-shadow: 0 -1px 0 rgba(0,0,0,.7), 0 1px 0 rgba(255,255,255,.12); transition: transform .2s, box-shadow .25s, color .25s, background .25s; }
+        .dz-tile .n { position: absolute; left: 4px; top: 3px; font: 700 .85em 'Cinzel', serif; color: var(--dz-accent); opacity: .65; letter-spacing: 0; }
+        .dz-tile:hover:not(:disabled), .dz-tile:focus-visible { transform: translateY(-2px); color: #FFF2CF; box-shadow: inset 1px 1px 0 rgba(255,255,255,.2), inset -2px -2px 5px rgba(0,0,0,.4), 0 0 16px rgba(var(--dz-glow), .5); outline: none; }
+        .dz-tile.pass { color: #FFF2CF; background: linear-gradient(145deg, rgba(var(--dz-glow), .35), rgba(0,0,0,.2)), var(--dz-stone1); box-shadow: inset 0 0 12px rgba(var(--dz-glow), .5), 0 0 14px rgba(var(--dz-glow), .6); }
+        .dz-tile.on { color: #FFF2CF; background: linear-gradient(145deg, rgba(var(--dz-glow), .5), rgba(0,0,0,.2)), var(--dz-stone1);
+            box-shadow: inset 0 0 0 2px #E8C77D, inset 0 0 20px rgba(var(--dz-glow), .6), 0 0 24px rgba(var(--dz-glow), .75); }
+        .dz-tile:disabled { cursor: progress; }
+        .dz-fill { cursor: default; flex-direction: column; gap: 2px; color: #8F8466; font-weight: 600; background: linear-gradient(145deg, rgba(255,255,255,.03), rgba(0,0,0,.2)), var(--dz-stone2); }
+        .dz-fill::after { content: "\25C6"; font-size: .9em; color: var(--dz-accent); opacity: .45; }
+        .dz-start { cursor: default; flex-direction: column; gap: 4px; }
+        .dz-start img { width: 46%; height: auto; opacity: .9; }
+        .dz-start span:not(.n) { font-size: .78em; letter-spacing: .2em; color: var(--dz-accent); }
+
+        /* centro: círculo de invocación con el dado */
+        .dz-center { grid-area: 2 / 2 / 4 / 4; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5rem; text-align: center; padding: 8px; margin: 2px; }
+        .dz-center .dz-d20 { width: clamp(70px, 19vw, 130px); height: clamp(70px, 19vw, 130px); }
+        .dz-center::before { content: ""; position: absolute; inset: 4%; border-radius: 50%; pointer-events: none;
+            background: radial-gradient(circle, rgba(var(--dz-glow), .22), transparent 66%), radial-gradient(circle, transparent 69%, rgba(var(--dz-glow), .5) 69.5%, transparent 70.5%), radial-gradient(circle, transparent 61%, rgba(var(--dz-glow), .3) 61.5%, transparent 62.5%);
+            box-shadow: 0 0 0 1px rgba(var(--dz-glow), .15) inset; }
+        .dz-center::after { content: ""; position: absolute; inset: 4%; border-radius: 50%; border: 1px dashed rgba(var(--dz-glow), .35); pointer-events: none; }
+        .dz-center .dz-ring { display: none; position: absolute; inset: 0; margin: auto; width: 100%; max-width: none; height: auto; opacity: .3; pointer-events: none; }
+        .dz-center .dz-ring path[fill] { display: none; }
+        html[data-theme="grimorio"] .dz-center .dz-ring { display: block; }
+        .dz-d20, .dz-say { position: relative; z-index: 1; }
+        .dz-d20 { width: clamp(60px, 15vw, 112px); height: clamp(60px, 15vw, 112px); overflow: visible; filter: none; }
+        .dz-d20 svg { width: 100%; height: 100%; overflow: visible; transform-style: preserve-3d; }
+        .dz-num { font: 700 25px 'Cinzel', serif; fill: var(--dz-num); text-anchor: middle; }
+        .dz-d20.crit svg polygon:first-child { stroke: #FFF2CF; }
+        .dz-halo { position: absolute; inset: -22%; background: radial-gradient(circle, rgba(var(--dz-glow), .5), transparent 65%); opacity: 0; transition: opacity .3s; pointer-events: none; }
+        .dz-d20.go .dz-halo { opacity: 1; }
+        .dz-say { font-family: 'EB Garamond', serif; font-style: italic; color: #E9D8B4; font-size: clamp(10px, 2.4vw, 16px); line-height: 1.25; min-height: 2.5em; max-width: 78%; text-shadow: 0 1px 4px rgba(0,0,0,.8); }
+        .dz-say b { font-style: normal; font-family: 'Cinzel', serif; color: var(--dz-accent); letter-spacing: .1em; }
+
+        /* miniatura sobre peana redonda */
+        .dz-token { position: absolute; left: 0; top: 0; z-index: 4; width: 21px; height: 28px; margin: -24px 0 0 -10.5px; pointer-events: none; }
+        .dz-token .base { position: absolute; left: 0; right: 0; bottom: 0; height: 11px; border-radius: 50%; background: radial-gradient(ellipse at 50% 35%, #8A6A35, #2A1A0C 75%); box-shadow: 0 0 0 1px rgba(0,0,0,.7), 0 3px 4px rgba(0,0,0,.6), 0 0 12px rgba(var(--dz-glow), .7); }
+        .dz-token .body { position: absolute; left: 6px; right: 6px; bottom: 6px; top: 6px; clip-path: polygon(50% 0, 100% 100%, 0 100%); background: linear-gradient(180deg, #FFF2CF, #D9B46A 55%, #7A5524); }
+        .dz-token .head { position: absolute; left: 50%; top: 0; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FFF2CF, #D9B46A 60%, #7A5524); }
+
+        /* ficha del dios: bloque de estadísticas */
+        .dz-panel { position: relative; min-height: 420px; padding: 2.2rem 1.8rem; background: linear-gradient(180deg, rgba(255,255,255,.03), transparent), var(--dz-frame); border: 1px solid var(--dz-line); text-align: left;
+            box-shadow: 0 18px 44px rgba(0,0,0,.5); display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: .55rem; }
+        .dz-panel::before, .dz-panel::after { content: ""; position: absolute; left: -1px; right: -1px; height: 6px; background: linear-gradient(90deg, #4A1209, #A5311B 50%, #4A1209); border-block: 1px solid #E8C77D; }
+        .dz-panel::before { top: -1px; } .dz-panel::after { bottom: -1px; }
+        .dz-mono { position: relative; width: 84px; height: 84px; align-self: flex-start; display: flex; align-items: center; justify-content: center; margin-bottom: .2rem; }
+        .dz-mono svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .75; }
+        .dz-mono svg * { stroke: var(--dz-accent) !important; }
+        .dz-mono svg path[fill] { display: none; }
+        .dz-mono span { position: relative; font: 900 34px 'Cinzel Decorative', serif; background: linear-gradient(180deg, #FFF2CF, var(--dz-accent)); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+        .dz-name { font: 700 clamp(26px, 3.6vw, 36px)/1.05 'Cinzel', serif; letter-spacing: .06em; color: #F3D9A0; text-shadow: 0 0 20px rgba(var(--dz-glow), .35); }
+        .dz-title { font: italic 400 1.1rem 'EB Garamond', serif; color: #CDBB98; }
+        .dz-rule { height: 3px; margin: .35rem 0; background: linear-gradient(90deg, #A5311B, rgba(165,49,27,.1)); clip-path: polygon(0 50%, 100% 0, 100% 100%); }
+        .dz-kv { font-family: 'EB Garamond', serif; font-size: 1.05rem; line-height: 1.5; color: #E3D2B0; }
+        .dz-kv b { color: #D9644B; font-weight: 700; margin-right: .35rem; }
+        .dz-desc { font-family: 'EB Garamond', serif; font-size: 1.12rem; line-height: 1.7; color: #E3D2B0; }
+        .dz-desc.empty { font-style: italic; opacity: .75; }
+        .dz-count { font: 600 10px 'Cinzel', serif; letter-spacing: .3em; text-transform: uppercase; color: #9C8865; margin-top: auto; padding-top: .8rem; }
+        .dz-btn { align-self: flex-start; margin-top: .4rem; padding: .7rem 1.4rem; font: 700 11px 'Cinzel', serif; letter-spacing: .22em; text-transform: uppercase; color: #FFF2CF; cursor: pointer;
+            background: linear-gradient(135deg, rgba(165,49,27,.75), rgba(90,24,12,.6)); border: 1px solid #E8C77D; transition: box-shadow .2s, transform .2s; }
+        .dz-btn:hover:not(:disabled) { box-shadow: 0 0 18px rgba(var(--dz-glow), .55); transform: translateY(-1px); }
+        .dz-btn:disabled { opacity: .5; cursor: progress; }
+        .dz-panel.swap > * { animation: dz-in .55s cubic-bezier(.16,1,.3,1) both; }
+        .dz-panel.swap > *:nth-child(2) { animation-delay: .05s; } .dz-panel.swap > *:nth-child(3) { animation-delay: .1s; } .dz-panel.swap > *:nth-child(4) { animation-delay: .15s; } .dz-panel.swap > *:nth-child(5) { animation-delay: .2s; } .dz-panel.swap > *:nth-child(6) { animation-delay: .25s; }
+        @keyframes dz-in { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+        @media (prefers-reduced-motion: reduce) { .dz-panel.swap > * { animation: none; } }
+        @media (max-width: 1023px) { .dz-tile { padding: 2px; letter-spacing: 0; font-size: 5.9px; } .dz-tile .n { font-size: 6px; left: 2px; top: 1px; } .dz-center::after { display: none; } .dz-panel { min-height: 0; padding: 1.8rem 1.1rem 1.4rem; } .dz-board { padding: 8px; border-width: 6px; } .dz-token { transform-origin: 50% 100%; } }
+    </style>
+    <link rel="stylesheet" href="tailwind.css">
+</head>
+<body class="relative selection:bg-aetherna-goldMain selection:text-aetherna-bgMain">
+    <!-- Fondo cósmico + brasas (los anima site.js) -->
+    <canvas id="cosmos-bg" width="128" height="72" aria-hidden="true"></canvas>
+    <canvas id="cosmos-stars" aria-hidden="true"></canvas>
+    <canvas id="ember-canvas" aria-hidden="true"></canvas>
+
+    <div id="page-root">
+    <main class="pt-32 pb-24 px-4 max-w-6xl mx-auto relative z-10">
+
+        <div class="text-center mb-12 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">PANTEÓN DE AETHERNA</span>
+            <h1 class="font-title-deco text-4xl sm:text-6xl text-aetherna-goldLight tracking-wider mb-4">LOS DIOSES</h1>
+            <div class="w-24 h-[1px] bg-aetherna-goldMain mx-auto mb-6"></div>
+            <p class="font-garamond italic text-aetherna-parchment text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                Elige una casilla y deja que los dados te lleven hasta el dios que quieres conocer.
+            </p>
+        </div>
+
+        <div class="dz-layout reveal">
+            <div class="dz-board" id="dz-board" role="group" aria-label="Mapa de los dioses">
+                <i class="dz-torch a"></i><i class="dz-torch b"></i><i class="dz-torch c"></i><i class="dz-torch d"></i>
+                <div class="dz-tile dz-start" style="grid-area: 1 / 1" aria-hidden="true"><img src="fotos/Logo.png" alt=""><span>Aetherna</span></div>
+                <div class="dz-center" id="dz-center">
+                    <div class="dz-ring-slot"></div>
+                    <div class="dz-d20" id="dz-d20" aria-hidden="true">
+                        <div class="dz-halo"></div>
+                        <svg viewBox="0 0 100 100">
+                            <polygon points="50,4 90,27 90,73 50,96 10,73 10,27" style="fill: url(#dz-g)" stroke="var(--dz-stroke)" stroke-width="2.4" stroke-linejoin="round"/>
+                            <defs><linearGradient id="dz-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color: var(--dz-d20a)"/><stop offset="1" style="stop-color: var(--dz-d20b)"/></linearGradient></defs>
+                            <polygon points="50,24 74,64 26,64" fill="none" stroke="var(--dz-stroke)" stroke-width="1.4" stroke-opacity=".8" stroke-linejoin="round"/>
+                            <path d="M50 4V24M90 27L74 64M10 27L26 64M26 64L10 73M74 64L90 73M50 96L26 64M50 96L74 64" fill="none" stroke="var(--dz-stroke)" stroke-width="1.2" stroke-opacity=".6"/>
+                            <text class="dz-num" id="dz-num" x="50" y="57">20</text>
+                        </svg>
+                    </div>
+                    <p class="dz-say" id="dz-say" aria-live="polite">Pulsa un dios para tirar iniciativa.</p>
+                </div>
+                <div class="dz-token" id="dz-token" aria-hidden="true"><i class="base"></i><i class="body"></i><i class="head"></i></div>
+            </div>
+
+            <aside class="dz-panel" id="dz-panel" aria-live="polite"></aside>
+        </div>
+    </main>
+
+    <footer class="py-8 px-4 border-t border-aetherna-goldMain/15 text-center text-xs text-aetherna-textMuted relative z-10">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 font-garamond">
+            <div>&copy; Aetherna V2 &bull; Archivos de Lore Oficial</div>
+        </div>
+    </footer>
+    </div>
+
+    <script src="site.js?v=3"></script>
+    <script data-page>
+        (function () {
+            /* ============================================================
+               DIOSES: edita aquí los textos. Para cada dios:
+                 n = nombre · t = título (ej. "Diosa de la luz") · d = descripción
+                 a = alineamiento (opcional) · s = símbolo sagrado (opcional)
+               Si dejas t o d vacíos, la ficha muestra un aviso en su lugar.
+               El orden de esta lista es el orden de las casillas (en el sentido del reloj).
+               ============================================================ */
+            const GODS = [
+                { n: 'Chassaria',   t: '', d: '' },
+                { n: 'Iasis',       t: '', d: '' },
+                { n: 'Irion',       t: '', d: '' },
+                { n: 'Lothshi',     t: '', d: '' },
+                { n: 'Baraka',      t: '', d: '' },
+                { n: 'Mushalee',    t: '', d: '' },
+                { n: 'Serathovah',  t: '', d: '' },
+                { n: 'Zark',        t: '', d: '' },
+                { n: 'Luminae',     t: '', d: '' },
+                { n: 'Vilza',       t: '', d: '' },
+                { n: 'Zenelithca',  t: '', d: '' }
+            ];
+
+            const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            const board = document.getElementById('dz-board');
+            if (!board) return;
+            const $ = id => document.getElementById(id);
+            const token = $('dz-token'), say = $('dz-say'), d20 = $('dz-d20'), numEl = $('dz-num'), panel = $('dz-panel');
+            const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const alive = () => !!document.getElementById('dz-board') && document.getElementById('dz-board') === board;
+            const wait = ms => new Promise(r => setTimeout(r, ms));
+
+            /* Recorrido: la casilla 0 es la salida (arriba a la izquierda) y las demás siguen el sentido del reloj.
+               Se adapta al nº de dioses: el lado del tablero crece si hace falta. */
+            // 20 casillas (un d20): la salida vale 20 y las demás llevan su número del 1 al 19.
+            let side = 6; while (side * 4 - 4 < GODS.length + 1) side++;
+            const ringLen = side * 4 - 4;
+            board.style.gridTemplateColumns = 'repeat(' + side + ', 1fr)';
+            board.style.gridTemplateRows = 'repeat(' + side + ', 1fr)';
+            $('dz-center').style.gridArea = '2 / 2 / ' + side + ' / ' + side;
+            board.style.setProperty('--side', side);
+            const cellAt = i => {                       // i en 0..ringLen-1 -> [fila, columna]
+                if (i < side) return [1, 1 + i];
+                if (i < 2 * side - 1) return [1 + (i - side + 1), side];
+                if (i < 3 * side - 2) return [side, side - (i - (2 * side - 2))];
+                return [side - (i - (3 * side - 3)), 1];
+            };
+            const place = (el, i) => { const [r, c] = cellAt(i); el.style.gridArea = r + ' / ' + c; };
+            place(board.querySelector('.dz-start'), 0);
+
+            // Los dioses se reparten por igual a lo largo del recorrido; el resto de casillas son escenario.
+            const FILL = ['Trampa', 'Tesoro', 'Hoguera', 'Cripta', 'Portal', 'Altar', 'Emboscada', 'Santuario', 'Niebla', 'Taberna', 'Ruinas', 'Puente'];
+            const n = GODS.length;
+            const godPos = GODS.map((g, k) => n > 1 ? Math.round(1 + k * (ringLen - 2) / (n - 1)) : 1);
+            const tiles = [];
+            const godAt = {};
+            let fi = 0;
+            board.querySelector('.dz-start').insertAdjacentHTML('afterbegin', '<span class="n">20</span>');
+            for (let pos = 1; pos < ringLen; pos++) {
+                const k = godPos.indexOf(pos);
+                let el;
+                if (k >= 0) {
+                    el = document.createElement('button'); el.type = 'button'; el.className = 'dz-tile';
+                    el.innerHTML = '<span class="n">' + pos + '</span>' + esc(GODS[k].n); el.dataset.i = k + 1;
+                    el.setAttribute('aria-label', 'Ver a ' + GODS[k].n); godAt[pos] = k + 1;
+                } else {
+                    el = document.createElement('div'); el.className = 'dz-tile dz-fill'; el.setAttribute('aria-hidden', 'true');
+                    el.innerHTML = '<span class="n">' + pos + '</span>' + esc(FILL[fi++ % FILL.length]);
+                }
+                place(el, pos); board.appendChild(el); tiles[pos] = el;
+            }
+
+            // anillo rúnico detrás del dado (solo se ve en Grimorio)
+            if (window.__aethernaSigil) $('dz-center').querySelector('.dz-ring-slot').outerHTML = window.__aethernaSigil('dz-ring');
+
+            /* ---------- posición de la ficha ---------- */
+            let cur = 0, curGod = 0, busy = false;
+            const centerOf = i => {
+                const el = i === 0 ? board.querySelector('.dz-start') : tiles[i];
+                return { x: el.offsetLeft + el.offsetWidth / 2, y: el.offsetTop + el.offsetHeight * .94 };
+            };
+            const setToken = i => { const p = centerOf(i); token.style.transform = 'translate(' + p.x + 'px,' + p.y + 'px)'; token.dataset.x = p.x; token.dataset.y = p.y; };
+            setToken(0);
+            addEventListener('resize', () => { if (alive()) setToken(cur); });
+            if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => alive() && setToken(cur));
+
+            /* ---------- sonido (solo si se entró con sonido) ---------- */
+            let actx = null;
+            const soundOn = () => { try { return sessionStorage.getItem('aetherna_sound') === '1'; } catch (e) { return false; } };
+            const ac = () => { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (actx && actx.state === 'suspended') actx.resume().catch(() => {}); return actx; };
+            const tac = (t, vol, f) => {
+                const a = ac(); if (!a) return;
+                const n = a.createBufferSource(), buf = a.createBuffer(1, a.sampleRate * .05, a.sampleRate), d = buf.getChannelData(0);
+                for (let k = 0; k < d.length; k++) d[k] = (Math.random() * 2 - 1) * Math.pow(1 - k / d.length, 3);
+                n.buffer = buf;
+                const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = 1.4;
+                const g = a.createGain(); g.gain.value = vol; n.connect(bp); bp.connect(g); g.connect(a.destination); n.start(t);
+                const o = a.createOscillator(); o.type = 'triangle'; o.frequency.value = f * .45;
+                const g2 = a.createGain(); g2.gain.setValueAtTime(vol * .5, t); g2.gain.exponentialRampToValueAtTime(.001, t + .06);
+                o.connect(g2); g2.connect(a.destination); o.start(t); o.stop(t + .07);
+            };
+            const sndRoll = () => { if (!soundOn()) return; const a = ac(); if (!a) return; let t = a.currentTime + .02, gap = .05, v = .5; for (let k = 0; k < 11; k++) { tac(t, v, 2600 + Math.random() * 2400); t += gap; gap *= 1.2; v *= .9; } };
+            const sndHop = () => { if (!soundOn()) return; const a = ac(); if (a) tac(a.currentTime, .22, 1700); };
+            const sndArrive = () => { if (!soundOn()) return; const a = ac(); if (!a) return; [660, 990].forEach((f, k) => { const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + k * .09; o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.12, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .9); o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 1); }); };
+
+            /* ---------- ficha del dios ---------- */
+                        const emptyPanel = () => {
+                panel.classList.remove('swap'); void panel.offsetWidth; panel.classList.add('swap');
+                panel.innerHTML = '<div class="dz-mono">' + (window.__aethernaSigil ? window.__aethernaSigil('dz-sg') : '') + '<span>?</span></div>' +
+                    '<div class="dz-name">Elige un dios</div><div class="dz-title">Mapa del panteón</div><div class="dz-rule"></div>' +
+                    '<p class="dz-desc">Cada casilla del mapa guarda a uno de los dioses de Aetherna. Pulsa una y tira iniciativa: tu ficha avanzará hasta ella.</p>' +
+                    '<button type="button" class="dz-btn" id="dz-rand">Que decidan los dados</button>';
+            };
+            const showGod = k => {
+                const g = GODS[k - 1];
+                panel.classList.remove('swap'); void panel.offsetWidth; panel.classList.add('swap');
+                panel.innerHTML = '<div class="dz-mono">' + (window.__aethernaSigil ? window.__aethernaSigil('dz-sg') : '') + '<span>' + esc(g.n.charAt(0).toUpperCase()) + '</span></div>' +
+                    '<div class="dz-name">' + esc(g.n) + '</div>' +
+                    (g.t ? '<div class="dz-title">' + esc(g.t) + '</div>' : '') +
+                    '<div class="dz-rule"></div>' +
+                    (g.a ? '<div class="dz-kv"><b>Alineamiento</b>' + esc(g.a) + '</div>' : '') +
+                    (g.s ? '<div class="dz-kv"><b>Símbolo</b>' + esc(g.s) + '</div>' : '') +
+                    ((g.a || g.s) ? '<div class="dz-rule"></div>' : '') +
+                    (g.d ? '<p class="dz-desc">' + esc(g.d) + '</p>' : '<p class="dz-desc empty">Su historia aún no está escrita en el Códice.</p>') +
+                    '<div class="dz-count">Dios ' + k + ' de ' + GODS.length + '</div>' +
+                    '<button type="button" class="dz-btn" id="dz-rand">Tirar iniciativa otra vez</button>';
+                if (matchMedia('(max-width: 1023px)').matches) panel.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+            };
+            emptyPanel();
+
+            /* ---------- la tirada ---------- */
+            const setBusy = b => { busy = b; board.querySelectorAll('button.dz-tile').forEach(t => { t.disabled = b; }); const r = $('dz-rand'); if (r) r.disabled = b; };
+
+            async function rollDice(finalNum, crit) {
+                d20.classList.remove('crit'); d20.classList.add('go');
+                sndRoll();
+                if (reduce) { numEl.textContent = finalNum; await wait(250); return; }
+                const svg = d20.querySelector('svg');
+                svg.animate([
+                    { transform: 'translateY(0) rotate3d(1,1,0,0deg) scale(1)' },
+                    { transform: 'translateY(-34px) rotate3d(1,.7,.3,520deg) scale(1.14)', offset: .3 },
+                    { transform: 'translateY(0) rotate3d(.6,1,0,820deg) scale(1)', offset: .52 },
+                    { transform: 'translateY(-12px) rotate3d(1,.4,.5,1010deg) scale(1.05)', offset: .72 },
+                    { transform: 'translateY(0) rotate3d(1,1,0,1080deg) scale(1)' }
+                ], { duration: 1500, easing: 'ease-out' });
+                let t = 0, gap = 50;
+                while (t < 1400) { numEl.textContent = 1 + ((Math.random() * 20) | 0); await wait(gap); t += gap; gap *= 1.17; }
+                numEl.textContent = finalNum;
+                if (crit) d20.classList.add('crit');
+                await wait(220);
+            }
+
+            let hopMs = 230;
+            async function hop(from, to) {
+                const a = centerOf(from), b = centerOf(to);
+                sndHop();
+                if (!reduce) {
+                    await token.animate([
+                        { transform: 'translate(' + a.x + 'px,' + a.y + 'px) scale(1)' },
+                        { transform: 'translate(' + ((a.x + b.x) / 2) + 'px,' + ((a.y + b.y) / 2 - 16) + 'px) scale(1.25)', offset: .5 },
+                        { transform: 'translate(' + b.x + 'px,' + b.y + 'px) scale(1)' }
+                    ], { duration: hopMs, easing: 'ease-in-out' }).finished.catch(() => {});
+                }
+                token.style.transform = 'translate(' + b.x + 'px,' + b.y + 'px)';
+                const tl = tiles[to] || null;
+                if (tl) { tl.classList.add('pass'); setTimeout(() => tl.classList.remove('pass'), 330); }
+            }
+
+            async function goTo(k) {
+                if (busy) return;
+                setBusy(true);
+                tiles.forEach(t => t && t.classList.remove('on'));
+                const g = GODS[k - 1], target = godPos[k - 1], steps = ((target - cur + ringLen) % ringLen) || ringLen;
+                hopMs = steps > 10 ? 140 : 230;
+                if (false) {
+                    say.innerHTML = 'Ya estás ante <b>' + esc(g.n.toUpperCase()) + '</b>.';
+                } else {
+                    say.innerHTML = '<b>TIRANDO INICIATIVA</b>';
+                    await rollDice(steps, steps === ringLen);
+                    if (!alive()) return;
+                    say.innerHTML = (steps === ringLen ? '<b>¡20 NATURAL!</b> Vuelta completa. ' : 'Sale un <b>' + steps + '</b>. ') + 'Avanzas ' + steps + (steps === 1 ? ' casilla.' : ' casillas.');
+                    await wait(reduce ? 0 : 380);
+                    for (let n = 0; n < steps; n++) {
+                        if (!alive()) return;
+                        const from = (cur + n) % ringLen, to = (cur + n + 1) % ringLen;
+                        await hop(from, to);
+                    }
+                    cur = target; curGod = k;
+                }
+                if (!alive()) return;
+                d20.classList.remove('go');
+                tiles[target].classList.add('on');
+                sndArrive();
+                say.innerHTML = 'Has llegado a <b>' + esc(g.n.toUpperCase()) + '</b>.';
+                showGod(k);
+                setBusy(false);
+            }
+
+            board.addEventListener('click', e => { const t = e.target.closest('button.dz-tile'); if (t && t.dataset.i) goTo(+t.dataset.i); });
+            panel.addEventListener('click', e => {
+                if (!e.target.closest('#dz-rand') || busy) return;
+                let k; do { k = 1 + ((Math.random() * GODS.length) | 0); } while (GODS.length > 1 && k === curGod);
+                goTo(k);
+            });
+
+            // Aparecer al bajar
+            const els = document.querySelectorAll('.reveal');
+            if ('IntersectionObserver' in window) {
+                const io = new IntersectionObserver(en => en.forEach(x => x.target.classList.toggle('active', x.isIntersecting)), { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+                els.forEach(el => io.observe(el));
+            } else els.forEach(el => el.classList.add('active'));
+        })();
+    </script>
+</body>
+</html>
