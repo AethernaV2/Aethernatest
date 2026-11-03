@@ -256,14 +256,18 @@ html[data-theme="grimorio"] body { background-color: #080503; background-image: 
 html[data-theme="grimorio"] body::before, html[data-theme="grimorio"] body::after { display: none; }
 html[data-theme="grimorio"] ::-webkit-scrollbar-track { background: #0B0603; }
 html[data-theme="grimorio"] ::-webkit-scrollbar-thumb { background: #6E4F2A; }
-.gl-smoke { position: absolute; inset: -10%; background:
-    radial-gradient(ellipse 38% 24% at 22% 30%, rgba(255,150,60,.075), transparent 70%),
-    radial-gradient(ellipse 42% 22% at 74% 62%, rgba(255,140,50,.07), transparent 72%),
-    radial-gradient(ellipse 30% 18% at 48% 88%, rgba(255,160,70,.06), transparent 72%);
+.gl-smoke { position: absolute; inset: -12%; filter: blur(24px); background:
+    radial-gradient(ellipse 34% 22% at 18% 24%, rgba(224,120,40,.20), transparent 70%),
+    radial-gradient(ellipse 26% 16% at 30% 34%, rgba(255,160,70,.11), transparent 70%),
+    radial-gradient(ellipse 40% 24% at 78% 60%, rgba(214,110,34,.19), transparent 72%),
+    radial-gradient(ellipse 24% 15% at 66% 70%, rgba(255,150,60,.10), transparent 70%),
+    radial-gradient(ellipse 32% 18% at 46% 92%, rgba(224,125,45,.17), transparent 72%);
     animation: gl-drift 46s ease-in-out infinite alternate; }
 .gl-smoke2 { background:
-    radial-gradient(ellipse 34% 20% at 82% 16%, rgba(255,150,60,.065), transparent 72%),
-    radial-gradient(ellipse 40% 22% at 10% 70%, rgba(255,135,45,.06), transparent 72%);
+    radial-gradient(ellipse 30% 18% at 86% 14%, rgba(224,120,40,.17), transparent 72%),
+    radial-gradient(ellipse 22% 13% at 74% 22%, rgba(255,160,70,.09), transparent 70%),
+    radial-gradient(ellipse 36% 20% at 8% 70%, rgba(214,105,32,.17), transparent 72%),
+    radial-gradient(ellipse 26% 14% at 50% 52%, rgba(200,95,30,.08), transparent 72%);
     animation-duration: 62s; animation-direction: alternate-reverse; }
 @keyframes gl-drift { from { transform: translate3d(-2%, 1%, 0) scale(1); } to { transform: translate3d(2%, -1%, 0) scale(1.06); } }
 .gs-ring, .gs-inner { transform-box: view-box; transform-origin: 400px 400px; }
@@ -366,3 +370,4 @@ html[data-theme="grimorio"] .lore-lift:hover, html[data-theme="grimorio"] .rz-li
     box-shadow: 0 16px 34px rgba(0,0,0,.6), 0 0 26px rgba(224,144,47,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
 html[data-theme="grimorio"] .lore-hover::before, html[data-theme="grimorio"] .lore-lift::before, html[data-theme="grimorio"] .rz-hover::before, html[data-theme="grimorio"] .rz-lift::before,
 html[data-theme="grimorio"] .mn-card::before, html[data-theme="grimorio"] .nw-item::before { background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(224,144,47,.24), rgba(217,180,106,.10) 45%, transparent 70%); }
+
