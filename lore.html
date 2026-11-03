@@ -190,6 +190,27 @@
         .bk-toc:hover { color: #FFF2CF; padding-left: .8rem; }
         .bk-fin-in { text-align: center; max-width: 24rem; }
         .bk-orn { color: rgb(var(--bk-a)); font-size: 1.4rem; letter-spacing: .6em; margin-bottom: 1rem; }
+
+        /* contraportada: al acabar, el libro se cierra */
+        #book.sp.closed-end { transform: translateX(25%); }
+        #book.sp.closed-end .bk-board { clip-path: inset(-8px 50% -8px -40px); }
+        #book.sp.closed-end .bk-edge-r { display: none; }
+        #book.sp.closed-end .bk-gl, #book.sp.closed-end .bk-gr { opacity: 0; }
+        #book.sp .bk-edge-b { transition: left 1.5s cubic-bezier(.5,.05,.25,1), right 1.5s cubic-bezier(.5,.05,.25,1); }
+        #book.sp.closed-end .bk-edge-b { right: 50%; }
+        #book.sp .fc.back.bcv { inset: calc(var(--by) * -1) 0 calc(var(--by) * -1) calc(var(--by) * -1); background: transparent; }
+        #book.sp .fc > .pg.bk-backc { border-radius: 8px 0 0 8px; box-shadow: 0 22px 44px rgba(0,0,0,.6), inset 0 0 0 1px rgba(var(--gold), .22), inset 0 2px 0 rgba(255,255,255,.08), inset -10px 0 16px rgba(0,0,0,.45); }
+        #book.sp .bk-backc > .bk-frame { inset: 26px 38px 26px 26px; }
+        #book.sp .bk-backc > .bk-groove { left: auto; right: 22px; }
+        #book.sp .bk-backc .bk-cover-in { margin: 0 14px 0 0; }
+        .bk-backc .bk-cover-in { text-align: center; }
+        .bk-backc .bk-emblem { width: 92px; height: auto; margin: 0 auto 1.1rem; opacity: .9; filter: drop-shadow(0 2px 6px rgba(0,0,0,.6)); }
+        .bk-backc .bk-fin-t { font: 700 1.05rem 'Cinzel', serif; letter-spacing: .3em; color: #F3D9A0; text-shadow: 0 -1px 0 rgba(0,0,0,.7), 0 1px 0 rgba(255,235,180,.18); }
+        .bk-backc p { margin: .9rem 0 1.4rem; font: italic 1rem 'EB Garamond', serif; color: rgba(var(--gold), .9); }
+        .bk-blank { display: flex; align-items: center; justify-content: center; }
+        .bk-blank .bk-orn { opacity: .35; }
+        .bk-fin-in .bk-closebtn { margin-top: .9rem; background: none; border: 0; cursor: pointer; font: 600 10px 'Cinzel', serif; letter-spacing: .2em; text-transform: uppercase; color: rgba(var(--bk-a), .85); }
+        .bk-fin-in .bk-closebtn:hover { color: #FFF2CF; }
         @media (prefers-reduced-motion: reduce) {
             .reveal, .rv { opacity: 1 !important; translate: none !important; transition: none !important; }
             .lore-lift:hover { transform: none; }
@@ -518,9 +539,16 @@
             const slot = cover.querySelector('.bk-sigil-slot');
             if (slot && window.__aethernaSigil) slot.outerHTML = window.__aethernaSigil('bk-sigil');
 
-            // Marco, ranura y esquineras de la tapa
-            cover.prepend(mk('bk-groove'), mk('bk-frame'));
-            cover.insertAdjacentHTML('beforeend', '<span class="bk-corner tr"></span><span class="bk-corner br"></span><span class="bk-corner tl"></span><span class="bk-corner bl"></span>');
+            // Contraportada (el libro se cierra al acabar)
+            const backc = mk('pg bk-cover bk-backc frame-panel', '<div class="bk-cover-in"><img class="bk-emblem" src="fotos/Logo.png" alt=""><div class="bk-fin-t">AETHERNA</div><p>Aquí terminan las crónicas.</p><button type="button" class="btn-normal px-8 py-4 text-xs" id="bk-reread">Releer desde el principio</button></div>', 'section');
+            book.appendChild(backc);
+            backc.querySelector('#bk-reread').addEventListener('click', () => goChapter(0));
+
+            // Marco, ranura y esquineras de las tapas
+            [cover, backc].forEach(c => {
+                c.prepend(mk('bk-groove'), mk('bk-frame'));
+                c.insertAdjacentHTML('beforeend', '<span class="bk-corner tr"></span><span class="bk-corner br"></span><span class="bk-corner tl"></span><span class="bk-corner bl"></span>');
+            });
 
             // Cinta de «continuar»: solo en la portada y solo si ya habías leído
             const ribbon = mk('bk-ribbon', '<span></span>', 'button'); ribbon.type = 'button';
@@ -554,7 +582,7 @@
             let goChapter, step;   // goChapter(0..NC): portada o capítulo · step(+1/-1)
 
             const hashChap = () => { const m = /^#cap-(\d+)$/.exec(location.hash); return m ? Math.min(NC, +m[1]) : 0; };
-            const setHash = c => { try { history.replaceState(null, '', c ? '#cap-' + c : location.pathname + location.search); } catch (e) {} };
+            const setHash = c => { c = Math.min(NC, c); try { history.replaceState(null, '', c ? '#cap-' + c : location.pathname + location.search); } catch (e) {} };
 
             // Rueda / teclado / dedo, comunes a los dos modos
             let lock = 0, acc = 0, accT = 0, gTurned = false, lockUntil = t => { lock = t; };
@@ -593,7 +621,7 @@
                MODO 1 · una sola página (móvil y pantallas pequeñas)
                =================================================================== */
             function initSingle() {
-                const pages = [cover].concat(arts), N = pages.length;
+                const pages = [cover].concat(arts, [backc]), N = pages.length;
                 const board = mk('bk-board', '<span class="bk-corner tr"></span><span class="bk-corner br"></span>');
                 const spine = mk('bk-spine', '<i style="top:11%"></i><i style="top:17%"></i><i style="top:83%"></i><i style="top:89%"></i>');
                 book.prepend(board, spine, mk('bk-edge-r'), mk('bk-edge-b'));
@@ -620,7 +648,7 @@
                     const c = pages[i]; c.scrollTop = 0; c.classList.remove('enter'); void c.offsetWidth;
                     if (!dir) c.classList.add('enter');
                     setDots([i]); prev.disabled = i === 0; next.disabled = i === N - 1;
-                    if (i) save(i);
+                    if (i) save(Math.min(i, NC));
                     updateMark(i === 0); setHash(i);
                 }
                 function go(i) {
@@ -646,15 +674,17 @@
                     arts.map((a, i) => '<li><button type="button" class="bk-toc" data-c="' + (i + 1) + '"><b>' + roman[i] + '</b><span>' + titles[i] + '</span></button></li>').join('') + '</ol></div>', 'section');
                 const fin = mk('pg bk-fin lore-hover frame-panel', '<div class="bk-fin-in"><div class="bk-orn">✦ ✦ ✦</div><h2 class="font-cinzel font-bold text-aetherna-goldLight">FIN DEL CÓDICE</h2>' +
                     '<p class="font-garamond italic text-aetherna-parchment" style="margin:1rem 0 1.8rem">Hasta aquí llega lo que se sabe. Lo que venga después lo escribirán los mortales... y los dioses.</p>' +
-                    '<a href="dioses.html" class="btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs" style="padding:1rem 2rem">Conocer a los dioses</a></div>', 'section');
+                    '<a href="dioses.html" class="btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs" style="padding:1rem 2rem">Conocer a los dioses</a><br><button type="button" class="bk-closebtn">Cerrar el libro</button></div>', 'section');
+                fin.querySelector('.bk-closebtn').addEventListener('click', () => setS(NL));
                 idx.addEventListener('click', e => { const b = e.target.closest('.bk-toc'); if (b) goChapter(+b.dataset.c); });
                 [idx, fin].forEach(c => c.addEventListener('pointermove', ev => { const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (ev.clientX - r.left) + 'px'); c.style.setProperty('--my', (ev.clientY - r.top) + 'px'); }));
 
                 const board = mk('bk-board', '<span class="bk-corner tr"></span><span class="bk-corner br"></span><span class="bk-corner tl"></span><span class="bk-corner bl"></span>');
                 const wrap = mk('bk-leaves');
-                const pairs = [[cover, idx], [arts[0], arts[1]], [arts[2], arts[3]], [arts[4], fin]];
+                const blank = mk('pg bk-blank lore-hover frame-panel', '<div class="bk-orn">\u2726</div>', 'section');
+                const pairs = [[cover, idx], [arts[0], arts[1]], [arts[2], arts[3]], [arts[4], fin], [blank, backc]];
                 const leaves = pairs.map(([f, b], k) => {
-                    const el = mk('lf'), ff = mk('fc front' + (k === 0 ? ' cvf' : '')), bf = mk('fc back');
+                    const el = mk('lf'), ff = mk('fc front' + (k === 0 ? ' cvf' : '')), bf = mk('fc back' + (k === 4 ? ' bcv' : ''));
                     ff.append(f, mk('sh')); bf.append(b, mk('sh')); el.append(ff, bf); wrap.append(el);
                     return { el, f: ff.querySelector('.sh'), b: bf.querySelector('.sh') };
                 });
@@ -665,15 +695,15 @@
 
                 const NL = leaves.length;            // 4 hojas: tapa + 3
                 const SP_OF = [0, 1, 2, 2, 3, 3];     // capítulo → doble página
-                const CH_OF = [[0], [1], [2, 3], [4, 5], [5]];
+                const CH_OF = [[0], [1], [2, 3], [4, 5], [5], []];
                 let s = 0;
                 const clamp = v => Math.max(0, Math.min(NL, v));
                 function stat() {
                     leaves.forEach((l, k) => { l.el.classList.toggle('flipped', k < s); l.el.style.zIndex = k < s ? 10 + k : 50 - k; });
-                    book.classList.toggle('closed', s === 0);
+                    book.classList.toggle('closed', s === 0); book.classList.toggle('closed-end', s === NL);
                     book.style.setProperty('--r', NL - s); book.style.setProperty('--l', s);
                     setDots(CH_OF[s]); prev.disabled = s === 0; next.disabled = s === NL;
-                    const c = s === 0 ? 0 : CH_OF[s][0]; if (c) save(CH_OF[s][CH_OF[s].length - 1] === 5 && s === 4 ? 5 : CH_OF[s][0]);
+                    const c = s === 0 ? 0 : (s >= 4 ? 5 : CH_OF[s][0]); if (c) save(c);
                     updateMark(s === 0); setHash(c);
                 }
                 const FW0 = [{ transform: 'rotateY(0deg) skewY(0deg)' }, { transform: 'rotateY(-7deg) skewY(-.4deg)', offset: .13 }, { transform: 'rotateY(-72deg) skewY(-1.2deg)', offset: .5 }, { transform: 'rotateY(-150deg) skewY(.9deg)', offset: .84 }, { transform: 'rotateY(-180deg) skewY(0deg)' }];
@@ -713,4 +743,4 @@
         })();
     </script>
 </body>
-</html>>
+</html>
