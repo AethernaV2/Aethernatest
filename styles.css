@@ -438,8 +438,8 @@ html:not([data-theme="grimorio"]) #page-root main > .reveal:first-child .w-24::b
 /* Grimorio · marca de agua de fondo (círculo rúnico + logo) en todas las páginas menos el inicio */
 .gl-mark { display: none; }
 @media (min-width: 1024px) {
-  html[data-theme="grimorio"] .gl-mark { display: block; position: absolute; top: 50%; right: -230px; width: 760px; height: 760px; transform: translateY(-50%); opacity: .13; }
-  html[data-theme="grimorio"] body:has(.home-hero) .gl-mark { display: none; }
+  .gl-mark { display: block; position: absolute; top: 50%; right: -230px; width: 760px; height: 760px; transform: translateY(-50%); opacity: .13; }
+  body:has(.home-hero) .gl-mark { display: none; }
   .gl-mark svg { position: absolute; inset: 0; width: 100%; height: 100%; }
   .gl-mark svg polygon, .gl-mark svg > path, .gl-mark svg > g > circle:last-child { display: none; }
   .gl-mark::before, .gl-mark::after { content: ""; position: absolute; left: 50%; top: 50%; translate: -50% -50%; border-radius: 50%; border: 1px solid rgba(201,138,60,.75); }
@@ -447,3 +447,15 @@ html:not([data-theme="grimorio"]) #page-root main > .reveal:first-child .w-24::b
   .gl-mark::after { width: 60%; height: 60%; border-style: dashed; border-color: rgba(201,138,60,.5); }
   .gl-mark img { position: absolute; left: 50%; top: 50%; width: 34%; height: auto; translate: -50% -50%; }
 }
+
+/* Círculo rúnico también en Nebulosa (mismo dibujo, colores de cielo: lila y blanco estelar) */
+html:not([data-theme="grimorio"]) #grim-layer { display: block; z-index: 0; }
+html:not([data-theme="grimorio"]) .gl-smoke { display: none; }
+@media (min-width: 1024px) {
+  html:not([data-theme="grimorio"]) body::before, html:not([data-theme="grimorio"]) body::after { display: none; }
+  html:not([data-theme="grimorio"]) .gl-mark { opacity: .2; }
+  html:not([data-theme="grimorio"]) .gl-mark svg g { stroke: #B898FF; }
+  html:not([data-theme="grimorio"]) .gl-mark::before { border-color: rgba(184,152,255,.8); }
+  html:not([data-theme="grimorio"]) .gl-mark::after { border-color: rgba(184,152,255,.55); }
+}
+
