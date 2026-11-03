@@ -440,6 +440,10 @@ html:not([data-theme="grimorio"]) #page-root main > .reveal:first-child .w-24::b
 @media (min-width: 1024px) {
   html[data-theme="grimorio"] .gl-mark { display: block; position: absolute; top: 50%; right: -230px; width: 760px; height: 760px; transform: translateY(-50%); opacity: .13; }
   html[data-theme="grimorio"] body:has(.home-hero) .gl-mark { display: none; }
-  .gl-mark svg { position: absolute; inset: 0; width: 100%; height: 100%; -webkit-mask-image: radial-gradient(closest-side, transparent 77%, #000 79%); mask-image: radial-gradient(closest-side, transparent 77%, #000 79%); }
+  .gl-mark svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .gl-mark svg polygon, .gl-mark svg > path, .gl-mark svg > g > circle:last-child { display: none; }
+  .gl-mark::before, .gl-mark::after { content: ""; position: absolute; left: 50%; top: 50%; translate: -50% -50%; border-radius: 50%; border: 1px solid rgba(201,138,60,.75); }
+  .gl-mark::before { width: 50%; height: 50%; }
+  .gl-mark::after { width: 60%; height: 60%; border-style: dashed; border-color: rgba(201,138,60,.5); }
   .gl-mark img { position: absolute; left: 50%; top: 50%; width: 34%; height: auto; translate: -50% -50%; }
 }
