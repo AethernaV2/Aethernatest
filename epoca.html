@@ -217,12 +217,34 @@
             window.addEventListener('scroll', revealOnScroll);
             revealOnScroll();
 
+
+            // sonido mágico del desbloqueo (respeta «entrar en silencio»)
+            function magic() {
+                try {
+                    if (sessionStorage.getItem('aetherna_sound') === '0') return;
+                    var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+                    var a = new AC(); if (a.state === 'suspended') { a.resume(); }
+                    var t = a.currentTime + .03, bus = a.createGain(), cp = a.createDynamicsCompressor(); bus.gain.value = .9; bus.connect(cp); cp.connect(a.destination);
+                    function osc(type, f0, f1, t0, d, g, att) { var o = a.createOscillator(), e = a.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t0); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t0 + d);
+                        e.gain.setValueAtTime(.0001, t0); e.gain.exponentialRampToValueAtTime(g, t0 + (att || .02)); e.gain.exponentialRampToValueAtTime(.0001, t0 + d); o.connect(e); e.connect(bus); o.start(t0); o.stop(t0 + d + .05); }
+                    // carga: barrido de cristal que sube mientras el sello tiembla
+                    osc('triangle', 220, 880, t, .75, .06, .6); osc('sine', 440, 1760, t, .75, .035, .6);
+                    // ruptura del sello: soplo de aire
+                    var n = a.createBufferSource(), nb = a.createBuffer(1, a.sampleRate * 1.2, a.sampleRate), d = nb.getChannelData(0); for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+                    n.buffer = nb; var bf = a.createBiquadFilter(), ng = a.createGain(); bf.type = 'bandpass'; bf.Q.value = 1.1; bf.frequency.setValueAtTime(600, t + .65); bf.frequency.exponentialRampToValueAtTime(5000, t + 1.5);
+                    ng.gain.setValueAtTime(.0001, t + .65); ng.gain.exponentialRampToValueAtTime(.09, t + .8); ng.gain.exponentialRampToValueAtTime(.0001, t + 1.7); n.connect(bf); bf.connect(ng); ng.connect(bus); n.start(t + .65); n.stop(t + 1.8);
+                    // destellos: arpegio ascendente de campanillas
+                    [1046.5, 1318.5, 1568, 2093, 2637, 3136].forEach(function (f, k) { osc('sine', f, 0, t + .7 + k * .07, 1.6, .075 / (1 + k * .25), .006); });
+                    osc('sine', 130.8, 65, t + .7, .6, .1, .01);
+                    setTimeout(function () { try { a.close(); } catch (e) {} }, 4500);
+                } catch (e) {}
+            }
             // desbloqueo de la fase actual: se ve sellada un instante y el sello se rompe al entrar en pantalla
             var now = document.querySelector('.ep-item.now');
             if (now && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                 var t = now.querySelector('[data-t]'); now.classList.add('sealed');
                 var go = function () {
-                    setTimeout(function () { now.classList.add('unlocking'); setTimeout(function () { if (t) t.textContent = 'Desbloqueada'; }, 450); }, 500);
+                    setTimeout(function () { magic(); now.classList.add('unlocking'); setTimeout(function () { if (t) t.textContent = 'Desbloqueada'; }, 450); }, 500);
                     setTimeout(function () { now.classList.remove('sealed', 'unlocking'); }, 2700);
                 };
                 if ('IntersectionObserver' in window) {
