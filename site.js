@@ -839,7 +839,7 @@
             x: Math.random() * canvas.width, y: Math.random() * canvas.height,
             size: Math.random() * 2 + 1, speedY: Math.random() * 0.4 + 0.2, speedX: (Math.random() - 0.5) * 0.2
         });
-        const embers = Array.from({ length: 110 }, mkEmber);
+        const embers = Array.from({ length: 60 }, mkEmber);
         // runas que caen despacio (trazos dibujados, sin depender de ninguna fuente)
         const mkRune = (top) => {
             const strokes = [[0, -1, 0, 1]];
@@ -852,7 +852,7 @@
                 size: 7 + Math.random() * 9, speed: 0.25 + Math.random() * 0.45, drift: (Math.random() - 0.5) * 0.15,
                 a: 0.18 + Math.random() * 0.32, strokes };
         };
-        const runes = Array.from({ length: 34 }, () => mkRune(false));
+        const runes = Array.from({ length: 16 }, () => mkRune(false));
         function animateEmbers() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const warm = warmNow();
@@ -862,11 +862,11 @@
                 e.y -= e.speedY;
                 e.x += e.speedX + Math.sin(e.y * 0.02) * 0.2;
                 if (e.y < 0) { e.y = canvas.height + 10; e.x = Math.random() * canvas.width; }
-                ctx.beginPath();
-                ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
-                ctx.fillStyle = (warm ? 'rgba(255,150,60,' : 'rgba(196,160,255,') + (0.6 * Math.sin(e.y * 0.01)) + ')';
-                ctx.shadowBlur = 8; ctx.shadowColor = warm ? '#E0902F' : '#B48CFF';
-                ctx.fill(); ctx.shadowBlur = 0;
+                const al = 0.6 * Math.sin(e.y * 0.01), rgb = warm ? '255,150,60,' : '196,160,255,';
+                ctx.fillStyle = 'rgba(' + rgb + (al * 0.18) + ')';
+                ctx.beginPath(); ctx.arc(e.x, e.y, e.size * 3, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = 'rgba(' + rgb + al + ')';
+                ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fill();
             }
             if (warm) {
                 ctx.lineWidth = 1.4; ctx.lineCap = 'round';
@@ -875,10 +875,9 @@
                     if (r.y > canvas.height + 30) runes[i] = mkRune(true);
                     const fade = Math.min(1, r.y / 120, (canvas.height - r.y) / 160 + 0.2);
                     ctx.strokeStyle = 'rgba(240,170,80,' + (r.a * Math.max(0, fade)) + ')';
-                    ctx.shadowBlur = 6; ctx.shadowColor = '#E0902F';
                     ctx.beginPath();
                     r.strokes.forEach(t => { ctx.moveTo(r.x + t[0] * r.size, r.y + t[1] * r.size); ctx.lineTo(r.x + t[2] * r.size, r.y + t[3] * r.size); });
-                    ctx.stroke(); ctx.shadowBlur = 0;
+                    ctx.stroke();
                 });
             }
             requestAnimationFrame(animateEmbers);
@@ -1033,4 +1032,3 @@
         go(location.href, { push: false });
     });
 })();
-
