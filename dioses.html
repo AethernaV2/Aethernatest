@@ -85,14 +85,15 @@
         /* centro: círculo de invocación con el dado */
         .dz-center { grid-area: 2 / 2 / 4 / 4; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5rem; text-align: center; padding: 8px; margin: 2px; }
         .dz-center .dz-d20 { width: clamp(70px, 19vw, 130px); height: clamp(70px, 19vw, 130px); }
-        .dz-center::before { content: ""; position: absolute; inset: 4%; border-radius: 50%; pointer-events: none;
+        .dz-center::before { display: none; content: ""; position: absolute; inset: 4%; border-radius: 50%; pointer-events: none;
             background: radial-gradient(circle, rgba(var(--dz-glow), .22), transparent 66%), radial-gradient(circle, transparent 69%, rgba(var(--dz-glow), .5) 69.5%, transparent 70.5%), radial-gradient(circle, transparent 61%, rgba(var(--dz-glow), .3) 61.5%, transparent 62.5%);
             box-shadow: 0 0 0 1px rgba(var(--dz-glow), .15) inset; }
-        .dz-center::after { content: ""; position: absolute; inset: 4%; border-radius: 50%; border: 1px dashed rgba(var(--dz-glow), .35); pointer-events: none; }
+        .dz-center::after { display: none; content: ""; position: absolute; inset: 4%; border-radius: 50%; border: 1px dashed rgba(var(--dz-glow), .35); pointer-events: none; }
         .dz-center .dz-ring { display: none; position: absolute; inset: 0; margin: auto; width: 100%; max-width: none; height: auto; opacity: .3; pointer-events: none; }
         .dz-center .dz-ring path[fill] { display: none; }
-        .dz-center .dz-ring { display: block; }
+        .dz-center .dz-ring { display: block; width: auto; height: 94%; max-width: 94%; aspect-ratio: 1; opacity: .65; }
         .dz-center .dz-ring g { stroke: var(--dz-accent); }
+        .dz-center .dz-ring circle[stroke-dasharray], .dz-center .dz-ring .gs-ring, .dz-center .dz-ring .gs-inner, .dz-center .dz-ring g > circle:last-child { display: none; }
         .dz-d20, .dz-say { position: relative; z-index: 1; }
         .dz-d20 { width: clamp(60px, 15vw, 112px); height: clamp(60px, 15vw, 112px); overflow: visible; filter: none; }
         .dz-d20 svg { width: 100%; height: 100%; overflow: visible; transform-style: preserve-3d; }
@@ -658,4 +659,3 @@
     </script>
 </body>
 </html>
-
