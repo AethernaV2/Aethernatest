@@ -36,7 +36,7 @@
 
         .dz-layout[hidden] { display: none !important; }
         .dz-layout { display: grid; gap: 2rem; align-items: start; }
-        @media (min-width: 1024px) { .dz-layout { grid-template-columns: minmax(0, 700px) minmax(0, 1fr); gap: 2.5rem; } .dz-panel { position: sticky; top: 7.5rem; } }
+        @media (min-width: 1024px) { .dz-layout { grid-template-columns: minmax(0, 700px) minmax(0, 1fr); gap: 2.5rem; } .dz-layout { align-items: stretch; margin-top: 2.2rem; } .dz-topbar { position: absolute; right: 0; bottom: 100%; margin-bottom: .45rem; } .dz-panel { position: relative; display: flex; flex-direction: column; justify-content: center; } }
 
         /* ===== Mapa de combate: suelo de mazmorra con cuadrícula ===== */
         :root { --dz-stone1: #232044; --dz-stone2: #15122E; --dz-wall: #0B0922; --dz-grid: rgba(196,160,255,.16); --dz-torch: 157,108,240; }
