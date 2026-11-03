@@ -238,10 +238,8 @@
                 const SKY = (() => { const r = R(77); return { st: Array.from({ length: 80 }, () => ({ x: r(), y: r(), s: .3 + r() * .9, p: r() * 6, f: 1 + r() * 2 })), em: Array.from({ length: 34 }, () => ({ x: r(), d: r(), sp: 4 + r() * 8, s: .3 + r() * .7, ph: r() * 6 })) }; })();
                 function backdrop(c, t, W, H, u) {
                     if (PAL.nb) { glow(c, W * (.18 + Math.sin(t * .5) * .03), H * (.3 + Math.cos(t * .4) * .03), W * .5, [120, 70, 220], .2); glow(c, W * (.86 - Math.sin(t * .45) * .03), H * .78, W * .45, [70, 90, 220], .16); glow(c, W * .6, H * .12, W * .35, [200, 90, 200], .08);
-                        SKY.st.forEach(s => { const sp = .02 + s.s * .07, x = (((s.x - t * sp) % 1) + 1) % 1 * W, y = (((s.y + t * sp * .22 * (s.f - 1.5)) % 1) + 1) % 1 * H;   // las estrellas derivan, las grandes (más cercanas) más rápido
-                            c.globalAlpha = .25 + .55 * (.5 + .5 * Math.sin(t * s.f + s.p)); c.fillStyle = c.strokeStyle = '#EADDFF';
-                            if (s.s > .7) { c.lineWidth = s.s * u * .22; c.beginPath(); c.moveTo(x, y); c.lineTo(x + sp * W * .16, y - sp * t * 0); c.stroke(); }
-                            c.beginPath(); c.arc(x, y, s.s * u * .35, 0, TAU); c.fill(); }); }
+                        SKY.st.forEach(s => { const k = ((s.p / 6 + t * (4 + s.f * 2.5 + s.s * 4) / 100) % 1), y = H * (1.02 - k * 1.05), x = s.x * W + Math.sin(t * 1.4 + s.p) * 3 * u;   // suben y se apagan, igual que las brasas del Grimorio
+                            c.globalAlpha = (1 - Math.abs(k * 2 - 1)) * (.55 + .45 * Math.sin(t * s.f * 2 + s.p)); c.fillStyle = '#EADDFF'; c.beginPath(); c.arc(x, y, s.s * u * .55, 0, TAU); c.fill(); }); }
                     else { glow(c, W * .5, H * 1.02, W * .55, [200, 110, 40], .2); glow(c, W * .12, H * .2, W * .35, [120, 60, 20], .1);
                         SKY.em.forEach(e => { const k = ((e.d + t * e.sp / 100) % 1), y = H * (1.02 - k * 1.05); c.globalAlpha = (1 - Math.abs(k * 2 - 1)) * .75; c.fillStyle = '#F0A24A'; c.beginPath(); c.arc(e.x * W + Math.sin(t * 1.6 + e.ph) * 3 * u, y, e.s * u * .4, 0, TAU); c.fill(); }); }
                     c.globalAlpha = 1; }
