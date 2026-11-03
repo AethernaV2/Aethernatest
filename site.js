@@ -164,7 +164,7 @@
     if (root0) root0.insertAdjacentHTML('beforebegin', HEADER_HTML);
     else document.body.insertAdjacentHTML('afterbegin', HEADER_HTML);
     if (!$('dock')) document.body.insertAdjacentHTML('beforeend', '<nav id="dock" aria-label="Navegación principal"><div id="dock-slots" class="dk-bar"></div></nav>');
-    if (!$('grim-layer')) document.body.insertAdjacentHTML('afterbegin', '<div id="grim-layer" aria-hidden="true"><div class="gl-smoke"></div><div class="gl-smoke gl-smoke2"></div></div>');
+    if (!$('grim-layer')) document.body.insertAdjacentHTML('afterbegin', '<div id="grim-layer" aria-hidden="true"><div class="gl-smoke"></div><div class="gl-smoke gl-smoke2"></div><div class="gl-mark">' + window.__aethernaSigil('gl-mark-sigil') + '<img src="fotos/Logo.png" alt=""></div></div>');
     if (!$('theme-pill')) document.body.insertAdjacentHTML('beforeend', '<button type="button" id="theme-pill" aria-label="Cambiar el estilo de la web" title="Cambiar el estilo de la web"><span class="tp-k">Estilo</span><span data-opt="nebulosa">Nebulosa</span><i>/</i><span data-opt="grimorio">Grimorio</span></button>');
     renderNav(pageKey(location));
 
@@ -1032,3 +1032,4 @@
         go(location.href, { push: false });
     });
 })();
+
