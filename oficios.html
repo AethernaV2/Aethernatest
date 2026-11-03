@@ -587,8 +587,7 @@
                     const dpr = Math.min(2, devicePixelRatio || 1), W = innerWidth, H = innerHeight, u = Math.min(W, H) / 100 * (W > 900 ? 1.15 : 1);
                     cv.width = W * dpr; cv.height = H * dpr; cv.style.display = 'block'; void cv.offsetWidth; cv.style.opacity = '1';
                     const sc = S[key], st = sc.init(u), t0 = performance.now(); let fin = false, A = audioOn(key);
-                    let seen = false; try { seen = sessionStorage.getItem('aetherna_ofx_seen') === '1'; sessionStorage.setItem('aetherna_ofx_seen', '1'); } catch (e) {}
-                    const k = seen ? .5 : 1; HINT = !seen;
+                    const k = 1; HINT = true;   // siempre la animación completa, con el aviso para saltarla
                     if (A) { try { A.k = k; A.t0 = A.a.currentTime + .05; SND[key](A, A.t0); } catch (e) { A = null; } }
                     const end = () => { if (fin) return; fin = true; cancelAnimationFrame(raf); done(); if (A) { const a = A.a, g = A.bus.gain; try { g.setValueAtTime(g.value, a.currentTime); g.linearRampToValueAtTime(0, a.currentTime + .25); } catch (e) {} setTimeout(() => { try { a.close(); } catch (e) {} }, 500); } cv.style.opacity = '0'; setTimeout(() => { cv.style.display = 'none'; running = false; }, 330); };
                     cv.onclick = () => { end(); };
