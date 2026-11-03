@@ -427,7 +427,7 @@
     // ------------------------------------------------------------------
     // 2b) Intro de la entrada: tirada de iniciativa con un d20 (20 natural). Se salta con un clic o con una tecla.
     // ------------------------------------------------------------------
-    function playDice(gate, done) {
+    function playDice(gate, done, sound) {
         const NS = 'http://www.w3.org/2000/svg';
         if (!$('dice-style')) {
             const st = document.createElement('style'); st.id = 'dice-style';
@@ -521,6 +521,40 @@
                 an.onfinish = () => c.remove();
             }
         };
+        // Sonido sintetizado (sin archivos): choques del dado y campanada del 20 natural. Solo si se entra «con sonido».
+        let actx = null, master = null;
+        if (sound) {
+            try {
+                const AC = window.AudioContext || window.webkitAudioContext;
+                actx = new AC(); if (actx.state === 'suspended') { const r = actx.resume(); if (r && r.catch) r.catch(() => {}); }
+                const comp = actx.createDynamicsCompressor(); master = actx.createGain(); master.gain.value = .8;
+                master.connect(comp); comp.connect(actx.destination);
+            } catch (e) { actx = null; }
+        }
+        const noiseBuf = () => { const b = actx.createBuffer(1, actx.sampleRate * .4, actx.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return b; };
+        const env = (g, t, peak, dur) => { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + .004); g.gain.exponentialRampToValueAtTime(0.0001, t + dur); };
+        const tone = (type, f0, f1, t, peak, dur) => {
+            const o = actx.createOscillator(), g = actx.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+            env(g, t, peak, dur); o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .05);
+        };
+        const hit = (t, v) => {
+            const s = actx.createBufferSource(); s.buffer = noiseBuf();
+            const bp = actx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800 + Math.random() * 1400; bp.Q.value = .9;
+            const g = actx.createGain(); env(g, t, v, .075); s.connect(bp); bp.connect(g); g.connect(master); s.start(t); s.stop(t + .1);
+            tone('sine', 150, 55, t, v * .9, .12);
+        };
+        const clatter = (ms, v, n) => { if (!actx) return; const t0 = actx.currentTime + ms / 1000; for (let k = 0; k < n; k++) hit(t0 + k * .05 + Math.random() * .02, v * (1 - k * .22)); };
+        const whoosh = (ms, dur) => {
+            if (!actx) return; const t = actx.currentTime + ms / 1000, s = actx.createBufferSource(); s.buffer = noiseBuf(); s.loop = true;
+            const bp = actx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.2; bp.frequency.setValueAtTime(300, t); bp.frequency.exponentialRampToValueAtTime(1500, t + dur);
+            const g = actx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.07, t + dur * .8); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            s.connect(bp); bp.connect(g); g.connect(master); s.start(t); s.stop(t + dur + .05);
+        };
+        const crit = ms => {
+            if (!actx) return; const t = actx.currentTime + ms / 1000;
+            tone('sine', 85, 42, t, .5, .8);
+            [880, 1318.5, 1760, 2637].forEach((f, i) => tone('sine', f, f, t + i * .04, .16 / (i + 1), 2.2));
+        };
         // caída y rebotes
         dice.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: 350, fill: 'forwards' });
         dice.animate([
@@ -535,7 +569,9 @@
             { transform: 'scale(.25)', opacity: .1, offset: 0 }, { transform: 'scale(1)', opacity: .55, offset: .38 }, { transform: 'scale(.65)', opacity: .3, offset: .55 },
             { transform: 'scale(1)', opacity: .55, offset: .7 }, { transform: 'scale(.88)', opacity: .45, offset: .84 }, { transform: 'scale(1)', opacity: .55, offset: 1 }
         ], { duration: 2600, delay: 350, fill: 'forwards' });
-        [1000, 1600, 1950, 2330].forEach((t, i) => at(t, () => burst(200, 292, i < 2 ? 9 : 5, i < 2 ? 70 : 40, true)));
+        // choques del dado: coinciden con los rebotes de la animación (350 ms de retardo + 2600 ms × desplazamiento)
+        [1338, 2170, 2534, 2950].forEach((t, i) => at(t, () => burst(200, 292, [10, 8, 5, 4][i], [80, 60, 40, 30][i], true)));
+        whoosh(350, 1000); clatter(1338, .5, 4); clatter(2170, .32, 3); clatter(2534, .18, 2); clatter(2950, .1, 2); crit(3050);
         // números que cambian cada vez más despacio
         let t = 450, step = 70, last = 0;
         while (t < 2950) {
@@ -561,10 +597,11 @@
         const finish = () => {
             if (ended) return; ended = true;
             timers.forEach(clearTimeout);
+            if (actx) { try { master.gain.setTargetAtTime(0.0001, actx.currentTime, .08); setTimeout(() => actx.close(), 600); } catch (e) {} }
             gate.removeEventListener('pointerdown', finish); document.removeEventListener('keydown', finish);
             done();
         };
-        at(4900, finish);
+        at(5200, finish);
         gate.addEventListener('pointerdown', finish); document.addEventListener('keydown', finish);
     }
 
@@ -597,7 +634,7 @@
             store.set('aetherna_entered', '1', 'session');
             if (window.__aethernaPlayer) window.__aethernaPlayer.enter(withMusic);
             if (reduceMotion || skipIntro) release();
-            else { gate.dataset.busy = '1'; playDice(gate, release); }
+            else { gate.dataset.busy = '1'; playDice(gate, release, withMusic); }
         };
         $('gate-enter').addEventListener('click', () => closeGate(true));
         $('gate-silent').addEventListener('click', () => closeGate(false));
@@ -910,3 +947,4 @@
         go(location.href, { push: false });
     });
 })();
+
