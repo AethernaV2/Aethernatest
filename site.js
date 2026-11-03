@@ -537,41 +537,51 @@
             const o = actx.createOscillator(), g = actx.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
             env(g, t, peak, dur); o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .05);
         };
-        const hit = (t, v) => {
+        // «tac» seco de dado (hueso/resina): clic de ruido + 3 resonancias agudas que se apagan en milisegundos + un cuerpo corto
+        const tick = (t, v) => {
             const s = actx.createBufferSource(); s.buffer = noiseBuf();
-            const bp = actx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800 + Math.random() * 1400; bp.Q.value = .9;
-            const g = actx.createGain(); env(g, t, v, .075); s.connect(bp); bp.connect(g); g.connect(master); s.start(t); s.stop(t + .1);
-            tone('sine', 150, 55, t, v * .9, .12);
+            const bp = actx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 3200 + Math.random() * 1500; bp.Q.value = 1.4;
+            const g = actx.createGain(); env(g, t, v * .9, .014); s.connect(bp); bp.connect(g); g.connect(master); s.start(t); s.stop(t + .03);
+            const base = 900 + Math.random() * 500;
+            [1, 2.15, 3.6].forEach((m, i) => tone('sine', base * m, base * m * .97, t, v * .55 / (i + 1), .05 / (i + 1) + .012));
+            tone('sine', 480 + Math.random() * 120, 260, t, v * .45, .045);
         };
-        const clatter = (ms, v, n) => { if (!actx) return; const t0 = actx.currentTime + ms / 1000; for (let k = 0; k < n; k++) hit(t0 + k * .05 + Math.random() * .02, v * (1 - k * .22)); };
+        // racimo de tacs con separaciones irregulares (el dado rueda y rebota)
+        const clatter = (ms, v, offs) => { if (!actx) return; const t0 = actx.currentTime + ms / 1000; offs.forEach((o, k) => tick(t0 + o, v * (1 - k * .09))); };
         const whoosh = (ms, dur) => {
             if (!actx) return; const t = actx.currentTime + ms / 1000, s = actx.createBufferSource(); s.buffer = noiseBuf(); s.loop = true;
             const bp = actx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.2; bp.frequency.setValueAtTime(300, t); bp.frequency.exponentialRampToValueAtTime(1500, t + dur);
-            const g = actx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.07, t + dur * .8); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+            const g = actx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(.05, t + dur * .8); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
             s.connect(bp); bp.connect(g); g.connect(master); s.start(t); s.stop(t + dur + .05);
         };
         const crit = ms => {
             if (!actx) return; const t = actx.currentTime + ms / 1000;
-            tone('sine', 85, 42, t, .5, .8);
-            [880, 1318.5, 1760, 2637].forEach((f, i) => tone('sine', f, f, t + i * .04, .16 / (i + 1), 2.2));
+            tone('sine', 110, 70, t, .12, .5);
+            [880, 1318.5, 1760, 2637].forEach((f, i) => tone('sine', f, f, t + i * .04, .13 / (i + 1), 2.2));
         };
         // caída y rebotes
         dice.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: 350, fill: 'forwards' });
+        // OJO: el easing global va en «linear» para que los rebotes caigan justo en 350 ms + 2600 ms × offset (el sonido y las chispas usan esos tiempos)
         dice.animate([
-            { transform: 'translateY(-320px) rotate(0deg)', offset: 0 },
+            { transform: 'translateY(-320px) rotate(0deg)', offset: 0, easing: 'cubic-bezier(.55,0,.9,.55)' },
             { transform: 'translateY(0) rotate(560deg)', offset: .38, easing: 'ease-out' },
             { transform: 'translateY(-48px) rotate(770deg)', offset: .55, easing: 'ease-in' },
             { transform: 'translateY(0) rotate(910deg)', offset: .7, easing: 'ease-out' },
             { transform: 'translateY(-14px) rotate(1000deg)', offset: .84, easing: 'ease-in' },
             { transform: 'translateY(0) rotate(1080deg)', offset: 1 }
-        ], { duration: 2600, delay: 350, easing: 'ease-in', fill: 'forwards' });
+        ], { duration: 2600, delay: 350, easing: 'linear', fill: 'forwards' });
         shadow.animate([
             { transform: 'scale(.25)', opacity: .1, offset: 0 }, { transform: 'scale(1)', opacity: .55, offset: .38 }, { transform: 'scale(.65)', opacity: .3, offset: .55 },
             { transform: 'scale(1)', opacity: .55, offset: .7 }, { transform: 'scale(.88)', opacity: .45, offset: .84 }, { transform: 'scale(1)', opacity: .55, offset: 1 }
         ], { duration: 2600, delay: 350, fill: 'forwards' });
         // choques del dado: coinciden con los rebotes de la animación (350 ms de retardo + 2600 ms × desplazamiento)
         [1338, 2170, 2534, 2950].forEach((t, i) => at(t, () => burst(200, 292, [10, 8, 5, 4][i], [80, 60, 40, 30][i], true)));
-        whoosh(350, 1000); clatter(1338, .5, 4); clatter(2170, .32, 3); clatter(2534, .18, 2); clatter(2950, .1, 2); crit(3050);
+        whoosh(350, 950);
+        clatter(1338, .55, [0, .03, .075, .13, .2, .29]);
+        clatter(2170, .38, [0, .04, .1, .18]);
+        clatter(2534, .26, [0, .05, .12]);
+        clatter(2950, .16, [0, .07]);
+        crit(3050);
         // números que cambian cada vez más despacio
         let t = 450, step = 70, last = 0;
         while (t < 2950) {
@@ -947,4 +957,3 @@
         go(location.href, { push: false });
     });
 })();
-
