@@ -319,14 +319,65 @@
                 o.connect(g2); g2.connect(a.destination); o.start(t); o.stop(t + .07);
             };
             sndBtn.addEventListener('click', () => { sndOn = !sndOn; try { localStorage.setItem('aetherna_dice_sound', sndOn ? '1' : '0'); } catch (e) {} paintSnd(); const a = ac(); if (sndOn && a) tac(a.currentTime, .5, 3200); });
-            // La tirada dura 1500 ms: traqueteo en el aire, golpe al caer (780 ms), segundo rebote y reposo (1500 ms)
-            const sndRoll = () => {
-                if (!sndOn) return; const a = ac(); if (!a) return; const t0 = a.currentTime + .02;
-                const at = (ms, v, f) => tac(t0 + ms / 1000, v, f);
-                for (let ms = 60; ms < 460; ms += 45 + Math.random() * 25) at(ms, .16 + Math.random() * .1, 3000 + Math.random() * 2500);
-                at(470, .38, 2400); at(780, .8, 1900); at(792, .5, 3400); at(812, .35, 2700);
-                for (let ms = 860; ms < 1080; ms += 55 + Math.random() * 30) at(ms, .14 + Math.random() * .08, 3200 + Math.random() * 2000);
-                at(1120, .34, 2500); at(1380, .22, 2100); at(1500, .55, 1800); at(1512, .3, 3000);
+            /* Dado de verdad: cada golpe es un clic seco (transitorio de ruido) + las resonancias de un cuerpo duro y pequeño
+               que se apagan en milisegundos + el golpe sordo de la mesa, con un poco de sala (reverb corta) y paneo. */
+            let bus = null;
+            const getBus = () => {
+                const a = ac(); if (!a) return null;
+                if (bus && bus.ctx === a) return bus;
+                const master = a.createGain(); master.gain.value = .9;
+                const comp = a.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
+                master.connect(comp); comp.connect(a.destination);
+                const len = Math.floor(a.sampleRate * .28), ir = a.createBuffer(2, len, a.sampleRate);
+                for (let c = 0; c < 2; c++) { const d = ir.getChannelData(c); for (let k = 0; k < len; k++) d[k] = (Math.random() * 2 - 1) * Math.pow(1 - k / len, 3.5); }
+                const conv = a.createConvolver(); conv.buffer = ir; const wet = a.createGain(); wet.gain.value = .22;
+                conv.connect(wet); wet.connect(master);
+                const nb = a.createBuffer(1, Math.floor(a.sampleRate * .05), a.sampleRate), nd = nb.getChannelData(0);
+                for (let k = 0; k < nd.length; k++) nd[k] = Math.random() * 2 - 1;
+                bus = { ctx: a, master, conv, nb }; return bus;
+            };
+            // size: 1 = golpe seco normal; <1 más pequeño y agudo (roce, bote diminuto)
+            const hit = (t, v, size) => {
+                const B = getBus(); if (!B) return; const a = B.ctx; size = size || 1;
+                const pan = a.createStereoPanner ? a.createStereoPanner() : null; if (pan) pan.pan.value = (Math.random() - .5) * .5;
+                const out = a.createGain(); out.gain.value = 1;
+                if (pan) { out.connect(pan); pan.connect(B.master); pan.connect(B.conv); } else { out.connect(B.master); out.connect(B.conv); }
+                // transitorio del choque
+                const s = a.createBufferSource(); s.buffer = B.nb; const hp = a.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1400;
+                const g = a.createGain(); g.gain.setValueAtTime(v * .9, t); g.gain.exponentialRampToValueAtTime(.0001, t + .011 + .006 * size);
+                s.connect(hp); hp.connect(g); g.connect(out); s.start(t); s.stop(t + .03);
+                // resonancias del cuerpo (varían un poco en cada golpe, como un dado que cae con otra cara)
+                const jit = .92 + Math.random() * .16;
+                [[2100, .5, .034], [3350, .34, .024], [5200, .22, .017], [7600, .12, .01]].forEach(m => {
+                    const o = a.createOscillator(), gg = a.createGain(), f = m[0] * jit * (size < 1 ? 1.25 : 1);
+                    o.type = 'sine'; o.frequency.value = f; gg.gain.setValueAtTime(v * m[1] * .6, t); gg.gain.exponentialRampToValueAtTime(.0001, t + m[2] * (.7 + .3 * size));
+                    o.connect(gg); gg.connect(out); o.start(t); o.stop(t + .06);
+                });
+                // golpe sordo de la mesa
+                if (size >= .6) {
+                    const o = a.createOscillator(), gg = a.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(210 + Math.random() * 50, t); o.frequency.exponentialRampToValueAtTime(95, t + .06);
+                    gg.gain.setValueAtTime(v * .42 * size, t); gg.gain.exponentialRampToValueAtTime(.0001, t + .07);
+                    o.connect(gg); gg.connect(out); o.start(t); o.stop(t + .09);
+                }
+            };
+            // fanfarria del 20 natural: la misma de la intro (grave + acorde de campanas)
+            const sndCrit = delayS => {
+                const B = getBus(); if (!B) return; const a = B.ctx, t = a.currentTime + delayS;
+                const tone = (f0, f1, t0, peak, dur) => { const o = a.createOscillator(), g = a.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(f0, t0); o.frequency.exponentialRampToValueAtTime(f1, t0 + dur);
+                    g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(peak, t0 + .004); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur); o.connect(g); g.connect(B.master); o.start(t0); o.stop(t0 + dur + .05); };
+                tone(110, 70, t, .12, .5);
+                [880, 1318.5, 1760, 2637].forEach((f, i) => tone(f, f, t + i * .04, .13 / (i + 1), 2.2));
+            };
+            // La tirada dura 1500 ms (igual que la animación): se agita en la mano, cae y rebota (780 ms) y se asienta (1500 ms)
+            const sndRoll = crit => {
+                if (!sndOn) return; const a = ac(); if (!a) return; const t0 = a.currentTime + .03;
+                const at = (ms, v, size) => hit(t0 + ms / 1000, v, size);
+                for (let ms = 40, k = 0; ms < 440; ms += 38 + Math.random() * 30, k++) at(ms, .09 + Math.random() * .1, .45 + Math.random() * .25);   // traqueteo en la mano
+                at(778, .85, 1); at(792, .5, .8); at(815, .34, .6); at(846, .22, .5);                                                                // primer golpe y roce
+                for (let ms = 880, gap = 38; ms < 1060; ms += gap, gap += 14) at(ms, .1 + Math.random() * .08, .5);                                  // rueda sobre las aristas
+                at(1110, .3, .8); at(1330, .24, .7);                                                                                                  // bote pequeño
+                at(1498, .6, .95); at(1512, .34, .7); at(1560, .2, .55); at(1640, .13, .5); at(1760, .08, .45);                                       // se asienta
+                if (crit) sndCrit(1.62);
             };
             const sndHop = () => { if (!sndOn) return; const a = ac(); if (a) tac(a.currentTime, .26, 1500); };
             const sndArrive = () => { if (!sndOn) return; const a = ac(); if (!a) return; [660, 990].forEach((f, k) => { const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + k * .09; o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.12, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .9); o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 1); }); };
@@ -383,7 +434,7 @@
 
             async function rollDice(finalNum, crit) {
                 d20.classList.remove('crit'); d20.classList.add('go');
-                sndRoll();
+                sndRoll(crit);
                 if (reduce) { numEl.textContent = finalNum; await wait(250); return; }
                 const svg = d20.querySelector('svg');
                 svg.animate([
@@ -526,3 +577,4 @@
     </script>
 </body>
 </html>
+
