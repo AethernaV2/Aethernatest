@@ -191,6 +191,23 @@
         .bk-fin-in { text-align: center; max-width: 24rem; }
         .bk-orn { color: rgb(var(--bk-a)); font-size: 1.4rem; letter-spacing: .6em; margin-bottom: 1rem; }
 
+
+        /* página de escritura rúnica en proceso de descifrado */
+        .bk-rune .bk-fin-in { max-width: 27rem; width: 100%; }
+        .bk-rn-chip { display: inline-block; font: 600 11px 'Cinzel', serif; letter-spacing: .22em; text-transform: uppercase; padding: .25rem .8rem; color: rgb(var(--bk-a)); border: 1px solid rgba(var(--bk-a), .4); background: rgba(var(--bk-a), .08); }
+        .bk-rn-text { position: relative; margin: 1.3rem auto 1rem; padding: .9rem .6rem; border-top: 1px solid rgba(var(--bk-a), .25); border-bottom: 1px solid rgba(var(--bk-a), .25); overflow: hidden; user-select: none; }
+        .bk-rn-line { display: flex; justify-content: space-between; font-size: clamp(15px, 2.1vh, 21px); line-height: 1.75; color: rgba(var(--bk-a), .5); }
+        .bk-rn-line span { display: inline-block; width: 1.05em; text-align: center; transition: color .6s, text-shadow .6s; }
+        .bk-rn-line span.ok { color: rgb(var(--bk-a)); text-shadow: 0 0 9px rgba(var(--bk-a), .75); }
+        .bk-rn-line span.fl { color: #FFF2CF; }
+        .bk-rn-scan { position: absolute; left: 0; right: 0; height: 34%; top: -34%; pointer-events: none; background: linear-gradient(transparent, rgba(var(--bk-a), .2) 55%, rgba(var(--bk-a), .5) 92%, transparent); border-bottom: 1px solid rgba(var(--bk-a), .65); animation: bk-scan 4s linear infinite; }
+        @keyframes bk-scan { to { top: 100%; } }
+        .bk-rn-bar { height: 4px; margin: 1rem auto .55rem; max-width: 15rem; background: rgba(var(--bk-a), .16); border: 1px solid rgba(var(--bk-a), .3); overflow: hidden; }
+        .bk-rn-bar i { display: block; height: 100%; width: 38%; background: linear-gradient(90deg, transparent, rgb(var(--bk-a)), transparent); animation: bk-bar 2.4s ease-in-out infinite; }
+        @keyframes bk-bar { 0% { transform: translateX(-100%); } 100% { transform: translateX(270%); } }
+        .bk-rn-note { font: italic 1.02rem 'EB Garamond', serif; color: #CDBB95; margin: 0; }
+        @media (prefers-reduced-motion: reduce) { .bk-rn-scan, .bk-rn-bar i { animation: none; } .bk-rn-bar i { width: 55%; } }
+
         /* contraportada: al acabar, el libro se cierra */
         #book.sp.closed-end { transform: translateX(25%); }
         #book.sp.closed-end .bk-board { clip-path: inset(-8px 50% -8px -40px); }
@@ -635,10 +652,48 @@
             const slot = cover.querySelector('.bk-sigil-slot');
             if (slot && window.__aethernaSigil) slot.outerHTML = window.__aethernaSigil('bk-sigil');
 
+
+            // Página de escritura rúnica «en proceso de descifrado»
+            function runePage(withClose) {
+                const R = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ', rnd = () => R[Math.floor(Math.random() * R.length)];
+                const lines = Array.from({ length: 8 }, () => '<div class="bk-rn-line" aria-hidden="true">' + Array.from({ length: 15 }, () => '<span>' + rnd() + '</span>').join('') + '</div>').join('');
+                const pg = mk('pg bk-fin bk-rune lore-hover frame-panel', '<div class="bk-fin-in"><span class="bk-rn-chip">Escritura antigua</span>' +
+                    '<h2 class="font-cinzel font-bold text-aetherna-goldLight" style="margin-top:1rem">DESCIFRANDO…</h2>' +
+                    '<div class="bk-rn-text">' + lines + '<div class="bk-rn-scan"></div></div>' +
+                    '<div class="bk-rn-bar" role="img" aria-label="Descifrado en curso"><i></i></div>' +
+                    '<p class="bk-rn-note">Esta página aún no se deja leer.</p>' +
+                    (withClose ? '<button type="button" class="bk-closebtn" style="margin-top:1.1rem">Cerrar el libro</button>' : '') + '</div>', 'section');
+                const sp = Array.from(pg.querySelectorAll('.bk-rn-line span'));
+                sp.forEach((s, i) => { if (i % 5 === 0) s.classList.add('ok'); });
+                if (!reduce) setInterval(() => {
+                    if (document.hidden) return;
+                    for (let n = 0; n < 3; n++) { const s = sp[Math.floor(Math.random() * sp.length)]; if (s.classList.contains('ok')) continue; s.textContent = rnd(); s.classList.add('fl'); setTimeout(() => s.classList.remove('fl'), 260); }
+                    if (Math.random() < .12) { const s = sp[Math.floor(Math.random() * sp.length)]; if (!s.classList.contains('ok') && sp.filter(x => x.classList.contains('ok')).length < sp.length * .55) s.classList.add('ok'); }
+                }, 140);
+                return pg;
+            }
+
+            // Girar el libro cerrado y dejarlo de nuevo en la portada, sin pasar páginas hacia atrás
+            let rewinding = false;
+            function rewind(toStart, tr0, tr1, persp) {
+                if (rewinding) return; rewinding = true;
+                if (reduce) { toStart(); rewinding = false; return; }
+                const P = 'perspective(' + persp + 'px) ';
+                sound('page'); sound('page', .42);
+                const a1 = book.animate([{ transform: P + 'rotateY(0deg) ' + tr0 }, { transform: P + 'rotateY(90deg) ' + tr0 }], { duration: 480, easing: 'cubic-bezier(.5, 0, .9, .6)', fill: 'forwards' });
+                a1.onfinish = () => {
+                    book.style.transition = 'none'; toStart(); void book.offsetWidth;
+                    const a2 = book.animate([{ transform: P + 'rotateY(-90deg) ' + tr1 }, { transform: P + 'rotateY(0deg) ' + tr1 }], { duration: 620, easing: 'cubic-bezier(.1, .5, .3, 1)' });
+                    a1.cancel(); book.style.transition = '';
+                    a2.onfinish = () => { a2.cancel(); rewinding = false; };
+                };
+            }
+
             // Contraportada (el libro se cierra al acabar)
-            const backc = mk('pg bk-cover bk-backc frame-panel', '<div class="bk-cover-in"><img class="bk-emblem" src="fotos/Logo.png" alt=""><div class="bk-fin-t">AETHERNA</div><p>Aquí terminan las crónicas.</p><button type="button" class="btn-normal px-8 py-4 text-xs" id="bk-reread">Releer desde el principio</button></div>', 'section');
+            const backc = mk('pg bk-cover bk-backc frame-panel', '<div class="bk-cover-in"><img class="bk-emblem" src="fotos/Logo.png" alt=""><div class="bk-fin-t">AETHERNA</div><p>Aquí terminan las crónicas.</p><button type="button" class="btn-normal px-8 py-4 text-xs" id="bk-reread">Volver al principio</button></div>', 'section');
             book.appendChild(backc);
-            backc.querySelector('#bk-reread').addEventListener('click', () => goChapter(0));
+            backc.querySelector('#bk-reread').addEventListener('click', () => rewindBook());
+            let rewindBook = () => goChapter(0);
 
             // Marco, ranura y esquineras de las tapas
             [cover, backc].forEach(c => {
@@ -717,7 +772,8 @@
                MODO 1 · una sola página (móvil y pantallas pequeñas)
                =================================================================== */
             function initSingle() {
-                const pages = [cover].concat(arts, [backc]), N = pages.length;
+                const runeP = runePage(false); book.appendChild(runeP);
+                const pages = [cover].concat(arts, [runeP, backc]), N = pages.length;
                 const board = mk('bk-board', '<span class="bk-corner tr"></span><span class="bk-corner br"></span>');
                 const spine = mk('bk-spine', '<i style="top:11%"></i><i style="top:17%"></i><i style="top:83%"></i><i style="top:89%"></i>');
                 book.prepend(board, spine, mk('bk-edge-r'), mk('bk-edge-b'));
@@ -756,6 +812,7 @@
                     render(i, dir); cur = i;
                 }
                 goChapter = go; step = d => go(cur + d);
+                rewindBook = () => { if (cur !== N - 1 || Date.now() < lock) return; lockUntil(Date.now() + 1200); rewind(() => { render(0, 0); cur = 0; }, '', '', 2400); };
                 const open = document.getElementById('bk-open'); if (open) open.addEventListener('click', () => go(1));
                 const h0 = hashChap(); render(h0, 0); cur = h0;
             }
@@ -769,9 +826,7 @@
                 const idx = mk('pg bk-index lore-hover frame-panel', '<div class="bk-idx-in"><span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">ÍNDICE</span>' +
                     '<h2 class="font-cinzel font-bold text-aetherna-goldLight mt-4">LAS CRÓNICAS</h2><ol>' +
                     arts.map((a, i) => '<li><button type="button" class="bk-toc" data-c="' + (i + 1) + '"><b>' + roman[i] + '</b><span>' + titles[i] + '</span></button></li>').join('') + '</ol></div>', 'section');
-                const fin = mk('pg bk-fin lore-hover frame-panel', '<div class="bk-fin-in"><div class="bk-orn">✦ ✦ ✦</div><h2 class="font-cinzel font-bold text-aetherna-goldLight">FIN DEL CÓDICE</h2>' +
-                    '<p class="font-garamond italic text-aetherna-parchment" style="margin:1rem 0 1.8rem">Hasta aquí llega lo que se sabe. Lo que venga después lo escribirán los mortales... y los dioses.</p>' +
-                    '<a href="dioses.html" class="btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs" style="padding:1rem 2rem">Conocer a los dioses</a><br><button type="button" class="bk-closebtn">Cerrar el libro</button></div>', 'section');
+                const fin = runePage(true);
                 fin.querySelector('.bk-closebtn').addEventListener('click', () => setS(NL));
                 idx.addEventListener('click', e => { const b = e.target.closest('.bk-toc'); if (b) goChapter(+b.dataset.c); });
                 [idx, fin].forEach(c => c.addEventListener('pointermove', ev => { const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (ev.clientX - r.left) + 'px'); c.style.setProperty('--my', (ev.clientY - r.top) + 'px'); }));
@@ -834,6 +889,7 @@
                     if (opening) setTimeout(() => { burst.classList.remove('on'); void burst.offsetWidth; burst.classList.add('on'); setTimeout(() => burst.classList.remove('on'), 1950); }, SPIN);
                 }
                 goChapter = c => setS(c === 0 ? 0 : SP_OF[Math.min(NC, c)]);
+                rewindBook = () => { if (s !== NL || Date.now() < lock) return; lockUntil(Date.now() + 1200); rewind(() => setS(0, true), 'translateX(25%)', 'translateX(-25%)', 2600); };
                 step = d => setS(s + d);
                 const open = document.getElementById('bk-open'); if (open) open.addEventListener('click', () => setS(1));
                 const h0 = hashChap(); if (h0) { s = SP_OF[h0]; } stat();
