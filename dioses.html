@@ -35,18 +35,18 @@
         html[data-theme="grimorio"] { --dz-t1: #25160A; --dz-t2: #0E0804; --dz-line: rgba(201,150,70,.6); --dz-glow: 224,144,47; --dz-d20a: #24150A; --dz-d20b: #090503; --dz-stroke: #F0B35A; --dz-num: #FFE9B8; --dz-frame: rgba(18,11,6,.9); --dz-accent: #F0B35A; }
 
         .dz-layout { display: grid; gap: 2rem; align-items: start; }
-        @media (min-width: 1024px) { .dz-layout { grid-template-columns: minmax(0, 640px) minmax(0, 1fr); gap: 2.5rem; } .dz-panel { position: sticky; top: 7.5rem; } }
+        @media (min-width: 1024px) { .dz-layout { grid-template-columns: minmax(0, 700px) minmax(0, 1fr); gap: 2.5rem; } .dz-panel { position: sticky; top: 7.5rem; } }
 
         /* ===== Mapa de combate: suelo de mazmorra con cuadrícula ===== */
         :root { --dz-stone1: #232044; --dz-stone2: #15122E; --dz-wall: #0B0922; --dz-grid: rgba(196,160,255,.16); --dz-torch: 157,108,240; }
         html[data-theme="grimorio"] { --dz-stone1: #3A2A19; --dz-stone2: #1E140A; --dz-wall: #0C0703; --dz-grid: rgba(240,179,90,.15); --dz-torch: 255,150,50; }
 
-        .dz-board { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 0; aspect-ratio: 1; width: 100%; padding: 14px;
+        .dz-board { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); gap: 0; aspect-ratio: 7 / 6; width: 100%; padding: 14px;
             background:
-              repeating-linear-gradient(0deg, transparent 0 calc(100% / var(--side, 6) - 1px), var(--dz-grid) calc(100% / var(--side, 6) - 1px) calc(100% / var(--side, 6))),
-              repeating-linear-gradient(90deg, transparent 0 calc(100% / var(--side, 6) - 1px), var(--dz-grid) calc(100% / var(--side, 6) - 1px) calc(100% / var(--side, 6))),
+              repeating-linear-gradient(0deg, transparent 0 calc(100% / var(--rows, 6) - 1px), var(--dz-grid) calc(100% / var(--rows, 6) - 1px) calc(100% / var(--rows, 6))),
+              repeating-linear-gradient(90deg, transparent 0 calc(100% / var(--cols, 7) - 1px), var(--dz-grid) calc(100% / var(--cols, 7) - 1px) calc(100% / var(--cols, 7))),
               radial-gradient(ellipse at 50% 50%, var(--dz-stone1), var(--dz-stone2) 80%);
-            border: 10px solid var(--dz-wall); outline: 2px solid var(--dz-line); outline-offset: -3px; overflow: hidden;
+            border: 10px solid var(--dz-wall); outline: 2px solid var(--dz-line); outline-offset: -3px; overflow: clip;
             box-shadow: inset 0 0 60px rgba(0,0,0,.75), 0 22px 50px rgba(0,0,0,.6); }
         /* antorchas en las esquinas */
         .dz-torch { position: absolute; width: 38%; height: 38%; pointer-events: none; z-index: 0; opacity: .85; animation: dz-flick 3.2s ease-in-out infinite alternate; }
@@ -58,7 +58,7 @@
         @media (prefers-reduced-motion: reduce) { .dz-torch { animation: none; } }
 
         .dz-tile { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 4px; cursor: pointer; overflow: hidden; margin: 2px;
-            font-family: 'Cinzel', serif; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: clamp(6px, 1.45vw, 11.5px); line-height: 1.15; color: #D9CDB4; letter-spacing: .04em;
+            font-family: 'Cinzel', serif; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: clamp(5.4px, 1.05vw, 9.6px); line-height: 1.15; color: #D9CDB4; letter-spacing: .04em;
             background: linear-gradient(145deg, rgba(255,255,255,.07), rgba(0,0,0,.18)), var(--dz-stone1);
             border: 1px solid rgba(0,0,0,.55); box-shadow: inset 1px 1px 0 rgba(255,255,255,.14), inset -2px -2px 5px rgba(0,0,0,.5), 0 2px 4px rgba(0,0,0,.4);
             text-shadow: 0 -1px 0 rgba(0,0,0,.7), 0 1px 0 rgba(255,255,255,.12); transition: transform .2s, box-shadow .25s, color .25s, background .25s; }
@@ -68,11 +68,18 @@
         .dz-tile.on { color: #FFF2CF; background: linear-gradient(145deg, rgba(var(--dz-glow), .5), rgba(0,0,0,.2)), var(--dz-stone1);
             box-shadow: inset 0 0 0 2px #E8C77D, inset 0 0 20px rgba(var(--dz-glow), .6), 0 0 24px rgba(var(--dz-glow), .75); }
         .dz-tile:disabled { cursor: progress; }
-        .dz-fill { cursor: default; flex-direction: column; gap: 2px; color: #8F8466; font-weight: 600; background: linear-gradient(145deg, rgba(255,255,255,.03), rgba(0,0,0,.2)), var(--dz-stone2); }
+        .dz-fill { cursor: pointer; flex-direction: column; gap: 2px; color: #8F8466; font-weight: 600; background: linear-gradient(145deg, rgba(255,255,255,.03), rgba(0,0,0,.2)), var(--dz-stone2); }
+        .dz-fill:hover:not(:disabled) { color: #FFF2CF; }
+        .dz-fill.on { color: #FFF2CF; background: linear-gradient(145deg, rgba(255,140,40,.5), rgba(0,0,0,.25)), var(--dz-stone2); box-shadow: inset 0 0 0 2px #FFB25A, 0 0 24px rgba(255,150,50,.7); }
         .dz-fill::after { content: "\25C6"; font-size: .9em; color: var(--dz-accent); opacity: .45; }
+        .dz-wrap { position: relative; width: 100%; }
+        .dz-topbar { display: flex; align-items: flex-end; justify-content: flex-end; margin-bottom: .6rem; }
+        .dz-snd { padding: .45rem .8rem; font: 700 9.5px 'Cinzel', serif; letter-spacing: .2em; text-transform: uppercase; color: #CDBB98; background: var(--dz-frame); border: 1px solid var(--dz-line); cursor: pointer; transition: color .2s, box-shadow .2s; }
+        .dz-snd:hover { color: #FFF2CF; box-shadow: 0 0 12px rgba(var(--dz-glow), .4); }
+        .dz-snd[aria-pressed="false"] { opacity: .65; }
         .dz-start { cursor: default; flex-direction: column; gap: 4px; }
         .dz-start img { width: 46%; height: auto; opacity: .9; }
-        .dz-start span:not(.n) { font-size: .78em; letter-spacing: .2em; color: var(--dz-accent); }
+        .dz-start span.lb { font-size: .78em; letter-spacing: .2em; color: var(--dz-accent); }
 
         /* centro: círculo de invocación con el dado */
         .dz-center { grid-area: 2 / 2 / 4 / 4; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5rem; text-align: center; padding: 8px; margin: 2px; }
@@ -95,7 +102,7 @@
         .dz-say b { font-style: normal; font-family: 'Cinzel', serif; color: var(--dz-accent); letter-spacing: .1em; }
 
         /* miniatura sobre peana redonda */
-        .dz-token { position: absolute; left: 0; top: 0; z-index: 4; width: 21px; height: 28px; margin: -24px 0 0 -10.5px; pointer-events: none; }
+        .dz-token { position: absolute; left: 0; top: 0; z-index: 6; width: 21px; height: 28px; margin: -24px 0 0 -10.5px; pointer-events: none; }
         .dz-token .base { position: absolute; left: 0; right: 0; bottom: 0; height: 11px; border-radius: 50%; background: radial-gradient(ellipse at 50% 35%, #8A6A35, #2A1A0C 75%); box-shadow: 0 0 0 1px rgba(0,0,0,.7), 0 3px 4px rgba(0,0,0,.6), 0 0 12px rgba(var(--dz-glow), .7); }
         .dz-token .body { position: absolute; left: 6px; right: 6px; bottom: 6px; top: 6px; clip-path: polygon(50% 0, 100% 100%, 0 100%); background: linear-gradient(180deg, #FFF2CF, #D9B46A 55%, #7A5524); }
         .dz-token .head { position: absolute; left: 50%; top: 0; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FFF2CF, #D9B46A 60%, #7A5524); }
@@ -114,6 +121,7 @@
         .dz-title { font: italic 400 1.1rem 'EB Garamond', serif; color: #CDBB98; }
         .dz-rule { height: 3px; margin: .35rem 0; background: linear-gradient(90deg, #A5311B, rgba(165,49,27,.1)); clip-path: polygon(0 50%, 100% 0, 100% 100%); }
         .dz-kv { font-family: 'EB Garamond', serif; font-size: 1.05rem; line-height: 1.5; color: #E3D2B0; }
+        .dz-note { font: italic 400 .95rem 'EB Garamond', serif; color: #B9A67E; }
         .dz-kv b { color: #D9644B; font-weight: 700; margin-right: .35rem; }
         .dz-desc { font-family: 'EB Garamond', serif; font-size: 1.12rem; line-height: 1.7; color: #E3D2B0; }
         .dz-desc.empty { font-style: italic; opacity: .75; }
@@ -126,7 +134,7 @@
         .dz-panel.swap > *:nth-child(2) { animation-delay: .05s; } .dz-panel.swap > *:nth-child(3) { animation-delay: .1s; } .dz-panel.swap > *:nth-child(4) { animation-delay: .15s; } .dz-panel.swap > *:nth-child(5) { animation-delay: .2s; } .dz-panel.swap > *:nth-child(6) { animation-delay: .25s; }
         @keyframes dz-in { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
         @media (prefers-reduced-motion: reduce) { .dz-panel.swap > * { animation: none; } }
-        @media (max-width: 1023px) { .dz-tile { padding: 2px; letter-spacing: 0; font-size: 5.9px; } .dz-tile .n { font-size: 6px; left: 2px; top: 1px; } .dz-center::after { display: none; } .dz-panel { min-height: 0; padding: 1.8rem 1.1rem 1.4rem; } .dz-board { padding: 8px; border-width: 6px; } .dz-token { transform-origin: 50% 100%; } }
+        @media (max-width: 1023px) { .dz-tile { padding: 2px; letter-spacing: 0; font-size: 5.2px; } .dz-tile .n { font-size: 6px; left: 2px; top: 1px; } .dz-center::after { display: none; } .dz-panel { min-height: 0; padding: 1.8rem 1.1rem 1.4rem; } .dz-board { padding: 8px; border-width: 6px; } .dz-token { transform-origin: 50% 100%; } }
     </style>
     <link rel="stylesheet" href="tailwind.css">
 </head>
@@ -149,9 +157,13 @@
         </div>
 
         <div class="dz-layout reveal">
+            <div class="dz-wrap" id="dz-wrap">
+            <div class="dz-topbar">
+                <button type="button" class="dz-snd" id="dz-snd" aria-pressed="true" title="Activar o quitar el sonido del dado"></button>
+            </div>
             <div class="dz-board" id="dz-board" role="group" aria-label="Mapa de los dioses">
+                <div class="dz-tile dz-start" id="dz-pad" aria-hidden="true"><span class="n">0</span><img src="fotos/Logo.png" alt=""><span class="lb">Salida</span></div>
                 <i class="dz-torch a"></i><i class="dz-torch b"></i><i class="dz-torch c"></i><i class="dz-torch d"></i>
-                <div class="dz-tile dz-start" style="grid-area: 1 / 1" aria-hidden="true"><img src="fotos/Logo.png" alt=""><span>Aetherna</span></div>
                 <div class="dz-center" id="dz-center">
                     <div class="dz-ring-slot"></div>
                     <div class="dz-d20" id="dz-d20" aria-hidden="true">
@@ -166,7 +178,8 @@
                     </div>
                     <p class="dz-say" id="dz-say" aria-live="polite">Pulsa un dios para tirar iniciativa.</p>
                 </div>
-                <div class="dz-token" id="dz-token" aria-hidden="true"><i class="base"></i><i class="body"></i><i class="head"></i></div>
+            </div>
+            <div class="dz-token" id="dz-token" aria-hidden="true"><i class="base"></i><i class="body"></i><i class="head"></i></div>
             </div>
 
             <aside class="dz-panel" id="dz-panel" aria-live="polite"></aside>
@@ -204,51 +217,66 @@
                 { n: 'Zenelithca',  t: '', d: '' }
             ];
 
+            /* Casillas especiales (las que no son dioses). Se pulsan igual que un dios y, al llegar, hacen algo:
+               fx = back (retrocede v[0]-v[1]) · fwd (avanza v[0]-v[1]) · bonus (tirada extra) · start (vuelve a la salida)
+                    nextGod (salta al siguiente dios) · randGod (salta a un dios al azar) · tp (a cualquier casilla al azar)
+                    opposite (al lado contrario del tablero) */
+            const SPECIAL = [
+                { n: 'Trampa',    fx: 'back',     v: [3, 3], d: 'Una trampa se activa bajo tus pies: retrocedes 3 casillas.' },
+                { n: 'Tesoro',    fx: 'bonus',               d: 'Encuentras un cofre con una tirada extra: el dado vuelve a rodar y avanzas lo que salga.' },
+                { n: 'Hoguera',   fx: 'start',               d: 'La hoguera del campamento te llama de vuelta: regresas a la salida.' },
+                { n: 'Cripta',    fx: 'nextGod',             d: 'Las sombras de la cripta te empujan hasta el siguiente dios del camino.' },
+                { n: 'Portal',    fx: 'tp',                  d: 'Un portal inestable se abre y te lanza a un lugar al azar del tablero.' },
+                { n: 'Altar',     fx: 'randGod',             d: 'El altar elige por ti: apareces ante un dios cualquiera.' },
+                { n: 'Emboscada', fx: 'back',     v: [1, 5], d: '¡Emboscada! Huyes y retrocedes entre 1 y 5 casillas.' },
+                { n: 'Santuario', fx: 'fwd',      v: [5, 5], d: 'Un santuario te bendice con viento a favor: avanzas 5 casillas.' },
+                { n: 'Niebla',    fx: 'fwd',      v: [1, 6], d: 'La niebla te desorienta y avanzas entre 1 y 6 casillas sin ver el camino.' },
+                { n: 'Taberna',   fx: 'opposite',            d: 'Una ronda de más y despiertas en el lado contrario del mapa.' }
+            ];
+
             const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
             const board = document.getElementById('dz-board');
             if (!board) return;
             const $ = id => document.getElementById(id);
-            const token = $('dz-token'), say = $('dz-say'), d20 = $('dz-d20'), numEl = $('dz-num'), panel = $('dz-panel');
+            const token = $('dz-token'), say = $('dz-say'), d20 = $('dz-d20'), numEl = $('dz-num'), panel = $('dz-panel'), pad = $('dz-pad'), wrap = $('dz-wrap');
             const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
             const alive = () => !!document.getElementById('dz-board') && document.getElementById('dz-board') === board;
             const wait = ms => new Promise(r => setTimeout(r, ms));
+            const rnd = (a, b) => a + ((Math.random() * (b - a + 1)) | 0);
 
-            /* Recorrido: la casilla 0 es la salida (arriba a la izquierda) y las demás siguen el sentido del reloj.
-               Se adapta al nº de dioses: el lado del tablero crece si hace falta. */
-            // 20 casillas (un d20): la salida vale 20 y las demás llevan su número del 1 al 19.
-            let side = 6; while (side * 4 - 4 < GODS.length + 1) side++;
-            const ringLen = side * 4 - 4;
-            board.style.gridTemplateColumns = 'repeat(' + side + ', 1fr)';
-            board.style.gridTemplateRows = 'repeat(' + side + ', 1fr)';
-            $('dz-center').style.gridArea = '2 / 2 / ' + side + ' / ' + side;
-            board.style.setProperty('--side', side);
-            const cellAt = i => {                       // i en 0..ringLen-1 -> [fila, columna]
-                if (i < side) return [1, 1 + i];
-                if (i < 2 * side - 1) return [1 + (i - side + 1), side];
-                if (i < 3 * side - 2) return [side, side - (i - (2 * side - 2))];
-                return [side - (i - (3 * side - 3)), 1];
+            /* Recorrido: tablero de 7 x 6 con 22 casillas en el borde. La 0 es la salida (arriba a la izquierda, dentro del
+               tablero) y las casillas 1 a 21 siguen el sentido del reloj. El d20 llega como mucho a la 20; si falta más,
+               se tira una vez, se avanza y se vuelve a tirar solo lo que falte. */
+            const cols = 7, rows = 6, L = 2 * (cols + rows) - 4, DMAX = 20;
+            board.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+            board.style.gridTemplateRows = 'repeat(' + rows + ', 1fr)';
+            board.style.setProperty('--cols', cols); board.style.setProperty('--rows', rows);
+            $('dz-center').style.gridArea = '2 / 2 / ' + rows + ' / ' + cols;
+            const cellAt = i => {                       // posición 0..L-1 -> [fila, columna]
+                if (i < cols) return [1, 1 + i];
+                if (i < cols + rows - 1) return [1 + (i - cols + 1), cols];
+                if (i < 2 * cols + rows - 2) return [rows, cols - 1 - (i - (cols + rows - 1))];
+                return [rows - 1 - (i - (2 * cols + rows - 2)), 1];
             };
-            const place = (el, i) => { const [r, c] = cellAt(i); el.style.gridArea = r + ' / ' + c; };
-            place(board.querySelector('.dz-start'), 0);
+            const place = (el, pos) => { const [r, c] = cellAt(pos); el.style.gridArea = r + ' / ' + c; };
+            place(pad, 0);
 
-            // Los dioses se reparten por igual a lo largo del recorrido; el resto de casillas son escenario.
-            const FILL = ['Trampa', 'Tesoro', 'Hoguera', 'Cripta', 'Portal', 'Altar', 'Emboscada', 'Santuario', 'Niebla', 'Taberna', 'Ruinas', 'Puente'];
+            // Los dioses se reparten por igual por las casillas 1 a 20 (el último, Zenelithca, cae en la 20).
             const n = GODS.length;
-            const godPos = GODS.map((g, k) => n > 1 ? Math.round(1 + k * (ringLen - 2) / (n - 1)) : 1);
-            const tiles = [];
-            const godAt = {};
-            let fi = 0;
-            board.querySelector('.dz-start').insertAdjacentHTML('afterbegin', '<span class="n">20</span>');
-            for (let pos = 1; pos < ringLen; pos++) {
+            const godPos = GODS.map((g, k) => n > 1 ? Math.round(1 + k * (DMAX - 1) / (n - 1)) : 1);
+            const godAt = {}, spAt = {}, tiles = [];
+            let si = 0;
+            for (let pos = 1; pos < L; pos++) {
                 const k = godPos.indexOf(pos);
-                let el;
+                const el = document.createElement('button'); el.type = 'button'; el.dataset.pos = pos;
                 if (k >= 0) {
-                    el = document.createElement('button'); el.type = 'button'; el.className = 'dz-tile';
-                    el.innerHTML = '<span class="n">' + pos + '</span>' + esc(GODS[k].n); el.dataset.i = k + 1;
-                    el.setAttribute('aria-label', 'Ver a ' + GODS[k].n); godAt[pos] = k + 1;
+                    godAt[pos] = k + 1; el.className = 'dz-tile';
+                    el.innerHTML = '<span class="n">' + pos + '</span>' + esc(GODS[k].n);
+                    el.setAttribute('aria-label', 'Ir a ' + GODS[k].n + ' (casilla ' + pos + ')');
                 } else {
-                    el = document.createElement('div'); el.className = 'dz-tile dz-fill'; el.setAttribute('aria-hidden', 'true');
-                    el.innerHTML = '<span class="n">' + pos + '</span>' + esc(FILL[fi++ % FILL.length]);
+                    const sp = SPECIAL[si++ % SPECIAL.length]; spAt[pos] = sp; el.className = 'dz-tile dz-fill';
+                    el.innerHTML = '<span class="n">' + pos + '</span>' + esc(sp.n);
+                    el.setAttribute('aria-label', 'Ir a ' + sp.n + ' (casilla ' + pos + ')');
                 }
                 place(el, pos); board.appendChild(el); tiles[pos] = el;
             }
@@ -257,47 +285,71 @@
             if (window.__aethernaSigil) $('dz-center').querySelector('.dz-ring-slot').outerHTML = window.__aethernaSigil('dz-ring');
 
             /* ---------- posición de la ficha ---------- */
-            let cur = 0, curGod = 0, busy = false;
+            let cur = 0, busy = false;
             const centerOf = i => {
-                const el = i === 0 ? board.querySelector('.dz-start') : tiles[i];
-                return { x: el.offsetLeft + el.offsetWidth / 2, y: el.offsetTop + el.offsetHeight * .94 };
+                const el = i === 0 ? pad : tiles[i], r = el.getBoundingClientRect(), w = wrap.getBoundingClientRect();
+                return { x: r.left - w.left + r.width / 2, y: r.top - w.top + r.height * .94 };
             };
-            const setToken = i => { const p = centerOf(i); token.style.transform = 'translate(' + p.x + 'px,' + p.y + 'px)'; token.dataset.x = p.x; token.dataset.y = p.y; };
-            setToken(0);
-            addEventListener('resize', () => { if (alive()) setToken(cur); });
-            if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => alive() && setToken(cur));
+            const tr = (p, sc, op) => 'translate(' + p.x + 'px,' + p.y + 'px) scale(' + sc + ')';
+            const setToken = i => { const p = centerOf(i); token.style.transform = tr(p, 1); token.style.opacity = 1; };
+            const relayout = () => setToken(cur);
+            relayout();
+            addEventListener('resize', () => { if (alive()) relayout(); });
+            if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => alive() && relayout());
 
-            /* ---------- sonido (solo si se entró con sonido) ---------- */
+            /* ---------- sonido del dado ---------- */
             let actx = null;
-            const soundOn = () => { try { return sessionStorage.getItem('aetherna_sound') === '1'; } catch (e) { return false; } };
+            const sndBtn = $('dz-snd');
+            // Suena salvo que se entrara a la web «sin sonido» o se quite con el botón.
+            const readSnd = () => { try { const v = localStorage.getItem('aetherna_dice_sound'); if (v !== null) return v === '1'; return sessionStorage.getItem('aetherna_sound') !== '0'; } catch (e) { return true; } };
+            let sndOn = readSnd();
+            const paintSnd = () => { sndBtn.textContent = 'Sonido: ' + (sndOn ? 'sí' : 'no'); sndBtn.setAttribute('aria-pressed', sndOn ? 'true' : 'false'); };
+            paintSnd();
             const ac = () => { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (actx && actx.state === 'suspended') actx.resume().catch(() => {}); return actx; };
+            // un «tac» seco de dado sobre madera: ráfaga de ruido filtrada + un cuerpo breve
             const tac = (t, vol, f) => {
                 const a = ac(); if (!a) return;
-                const n = a.createBufferSource(), buf = a.createBuffer(1, a.sampleRate * .05, a.sampleRate), d = buf.getChannelData(0);
-                for (let k = 0; k < d.length; k++) d[k] = (Math.random() * 2 - 1) * Math.pow(1 - k / d.length, 3);
-                n.buffer = buf;
-                const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = 1.4;
-                const g = a.createGain(); g.gain.value = vol; n.connect(bp); bp.connect(g); g.connect(a.destination); n.start(t);
-                const o = a.createOscillator(); o.type = 'triangle'; o.frequency.value = f * .45;
-                const g2 = a.createGain(); g2.gain.setValueAtTime(vol * .5, t); g2.gain.exponentialRampToValueAtTime(.001, t + .06);
+                const len = Math.floor(a.sampleRate * .06), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+                for (let k = 0; k < len; k++) d[k] = (Math.random() * 2 - 1) * Math.pow(1 - k / len, 3.2);
+                const nz = a.createBufferSource(); nz.buffer = buf;
+                const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = f; bp.Q.value = 1.6;
+                const g = a.createGain(); g.gain.value = vol; nz.connect(bp); bp.connect(g); g.connect(a.destination); nz.start(t);
+                const o = a.createOscillator(); o.type = 'triangle'; o.frequency.setValueAtTime(f * .5, t); o.frequency.exponentialRampToValueAtTime(f * .3, t + .05);
+                const g2 = a.createGain(); g2.gain.setValueAtTime(vol * .45, t); g2.gain.exponentialRampToValueAtTime(.001, t + .06);
                 o.connect(g2); g2.connect(a.destination); o.start(t); o.stop(t + .07);
             };
-            const sndRoll = () => { if (!soundOn()) return; const a = ac(); if (!a) return; let t = a.currentTime + .02, gap = .05, v = .5; for (let k = 0; k < 11; k++) { tac(t, v, 2600 + Math.random() * 2400); t += gap; gap *= 1.2; v *= .9; } };
-            const sndHop = () => { if (!soundOn()) return; const a = ac(); if (a) tac(a.currentTime, .22, 1700); };
-            const sndArrive = () => { if (!soundOn()) return; const a = ac(); if (!a) return; [660, 990].forEach((f, k) => { const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + k * .09; o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.12, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .9); o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 1); }); };
-
-            /* ---------- ficha del dios ---------- */
-                        const emptyPanel = () => {
-                panel.classList.remove('swap'); void panel.offsetWidth; panel.classList.add('swap');
-                panel.innerHTML = '<div class="dz-mono">' + (window.__aethernaSigil ? window.__aethernaSigil('dz-sg') : '') + '<span>?</span></div>' +
-                    '<div class="dz-name">Elige un dios</div><div class="dz-title">Mapa del panteón</div><div class="dz-rule"></div>' +
-                    '<p class="dz-desc">Cada casilla del mapa guarda a uno de los dioses de Aetherna. Pulsa una y tira iniciativa: tu ficha avanzará hasta ella.</p>' +
-                    '<button type="button" class="dz-btn" id="dz-rand">Que decidan los dados</button>';
+            sndBtn.addEventListener('click', () => { sndOn = !sndOn; try { localStorage.setItem('aetherna_dice_sound', sndOn ? '1' : '0'); } catch (e) {} paintSnd(); const a = ac(); if (sndOn && a) tac(a.currentTime, .5, 3200); });
+            // La tirada dura 1500 ms: traqueteo en el aire, golpe al caer (780 ms), segundo rebote y reposo (1500 ms)
+            const sndRoll = () => {
+                if (!sndOn) return; const a = ac(); if (!a) return; const t0 = a.currentTime + .02;
+                const at = (ms, v, f) => tac(t0 + ms / 1000, v, f);
+                for (let ms = 60; ms < 460; ms += 45 + Math.random() * 25) at(ms, .16 + Math.random() * .1, 3000 + Math.random() * 2500);
+                at(470, .38, 2400); at(780, .8, 1900); at(792, .5, 3400); at(812, .35, 2700);
+                for (let ms = 860; ms < 1080; ms += 55 + Math.random() * 30) at(ms, .14 + Math.random() * .08, 3200 + Math.random() * 2000);
+                at(1120, .34, 2500); at(1380, .22, 2100); at(1500, .55, 1800); at(1512, .3, 3000);
             };
+            const sndHop = () => { if (!sndOn) return; const a = ac(); if (a) tac(a.currentTime, .26, 1500); };
+            const sndArrive = () => { if (!sndOn) return; const a = ac(); if (!a) return; [660, 990].forEach((f, k) => { const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + k * .09; o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.12, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .9); o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + 1); }); };
+            // portal / teletransporte: ruido que barre de grave a agudo
+            const sndWhoosh = () => {
+                if (!sndOn) return; const a = ac(); if (!a) return; const t = a.currentTime, len = Math.floor(a.sampleRate * .7), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+                for (let k = 0; k < len; k++) d[k] = (Math.random() * 2 - 1) * Math.sin(Math.PI * k / len);
+                const nz = a.createBufferSource(); nz.buffer = buf;
+                const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 2.2; bp.frequency.setValueAtTime(300, t); bp.frequency.exponentialRampToValueAtTime(3600, t + .65);
+                const g = a.createGain(); g.gain.value = .5; nz.connect(bp); bp.connect(g); g.connect(a.destination); nz.start(t);
+            };
+
+            /* ---------- paneles ---------- */
+            const sigil = () => (window.__aethernaSigil ? window.__aethernaSigil('dz-sg') : '');
+            const swapIn = html => { panel.classList.remove('swap'); void panel.offsetWidth; panel.classList.add('swap'); panel.innerHTML = html; };
+            const again = label => '<button type="button" class="dz-btn" id="dz-rand">' + label + '</button>';
+            const emptyPanel = () => swapIn('<div class="dz-mono">' + sigil() + '<span>?</span></div>' +
+                '<div class="dz-name">Elige una casilla</div><div class="dz-title">Mapa del panteón</div><div class="dz-rule"></div>' +
+                '<p class="dz-desc">Los dioses de Aetherna esperan en el borde del mapa. Entre ellos hay casillas especiales que cambian tu camino. Pulsa una y tira iniciativa.</p>' +
+                again('Que decidan los dados'));
             const showGod = k => {
                 const g = GODS[k - 1];
-                panel.classList.remove('swap'); void panel.offsetWidth; panel.classList.add('swap');
-                panel.innerHTML = '<div class="dz-mono">' + (window.__aethernaSigil ? window.__aethernaSigil('dz-sg') : '') + '<span>' + esc(g.n.charAt(0).toUpperCase()) + '</span></div>' +
+                swapIn('<div class="dz-mono">' + sigil() + '<span>' + esc(g.n.charAt(0).toUpperCase()) + '</span></div>' +
                     '<div class="dz-name">' + esc(g.n) + '</div>' +
                     (g.t ? '<div class="dz-title">' + esc(g.t) + '</div>' : '') +
                     '<div class="dz-rule"></div>' +
@@ -305,14 +357,29 @@
                     (g.s ? '<div class="dz-kv"><b>Símbolo</b>' + esc(g.s) + '</div>' : '') +
                     ((g.a || g.s) ? '<div class="dz-rule"></div>' : '') +
                     (g.d ? '<p class="dz-desc">' + esc(g.d) + '</p>' : '<p class="dz-desc empty">Su historia aún no está escrita en el Códice.</p>') +
-                    '<div class="dz-count">Dios ' + k + ' de ' + GODS.length + '</div>' +
-                    '<button type="button" class="dz-btn" id="dz-rand">Tirar iniciativa otra vez</button>';
-                if (matchMedia('(max-width: 1023px)').matches) panel.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+                    '<div class="dz-count">Dios ' + k + ' de ' + GODS.length + '</div>' + again('Tirar iniciativa otra vez'));
+                scrollToPanel();
             };
+            const showSpecial = (pos, note) => {
+                const sp = spAt[pos];
+                swapIn('<div class="dz-mono">' + sigil() + '<span>&#10022;</span></div>' +
+                    '<div class="dz-name">' + esc(sp.n) + '</div><div class="dz-title">Casilla especial</div><div class="dz-rule"></div>' +
+                    '<p class="dz-desc">' + esc(sp.d) + '</p>' + (note ? '<p class="dz-note">' + esc(note) + '</p>' : '') +
+                    '<div class="dz-count">Casilla ' + pos + '</div>' + again('Tirar iniciativa otra vez'));
+                scrollToPanel();
+            };
+            const showStart = () => {
+                swapIn('<div class="dz-mono">' + sigil() + '<span>0</span></div>' +
+                    '<div class="dz-name">La salida</div><div class="dz-title">Casilla 0</div><div class="dz-rule"></div>' +
+                    '<p class="dz-desc">Aquí empieza el recorrido. Pulsa un dios o una casilla especial y tira iniciativa.</p>' + again('Que decidan los dados'));
+                scrollToPanel();
+            };
+            const scrollToPanel = () => { if (matchMedia('(max-width: 1023px)').matches) panel.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' }); };
             emptyPanel();
 
-            /* ---------- la tirada ---------- */
+            /* ---------- movimiento ---------- */
             const setBusy = b => { busy = b; board.querySelectorAll('button.dz-tile').forEach(t => { t.disabled = b; }); const r = $('dz-rand'); if (r) r.disabled = b; };
+            const clearOn = () => tiles.forEach(t => t && t.classList.remove('on'));
 
             async function rollDice(finalNum, crit) {
                 d20.classList.remove('crit'); d20.classList.add('go');
@@ -339,51 +406,114 @@
                 sndHop();
                 if (!reduce) {
                     await token.animate([
-                        { transform: 'translate(' + a.x + 'px,' + a.y + 'px) scale(1)' },
+                        { transform: tr(a, 1) },
                         { transform: 'translate(' + ((a.x + b.x) / 2) + 'px,' + ((a.y + b.y) / 2 - 16) + 'px) scale(1.25)', offset: .5 },
-                        { transform: 'translate(' + b.x + 'px,' + b.y + 'px) scale(1)' }
+                        { transform: tr(b, 1) }
                     ], { duration: hopMs, easing: 'ease-in-out' }).finished.catch(() => {});
                 }
-                token.style.transform = 'translate(' + b.x + 'px,' + b.y + 'px)';
-                const tl = tiles[to] || null;
+                token.style.transform = tr(b, 1);
+                const tl = to === 0 ? null : tiles[to];
                 if (tl) { tl.classList.add('pass'); setTimeout(() => tl.classList.remove('pass'), 330); }
             }
-
-            async function goTo(k) {
-                if (busy) return;
-                setBusy(true);
-                tiles.forEach(t => t && t.classList.remove('on'));
-                const g = GODS[k - 1], target = godPos[k - 1], steps = ((target - cur + ringLen) % ringLen) || ringLen;
+            // avanza (dir = 1) o retrocede (dir = -1) casilla a casilla
+            async function walk(steps, dir) {
                 hopMs = steps > 10 ? 140 : 230;
-                if (false) {
-                    say.innerHTML = 'Ya estás ante <b>' + esc(g.n.toUpperCase()) + '</b>.';
-                } else {
-                    say.innerHTML = '<b>TIRANDO INICIATIVA</b>';
-                    await rollDice(steps, steps === ringLen);
-                    if (!alive()) return;
-                    say.innerHTML = (steps === ringLen ? '<b>¡20 NATURAL!</b> Vuelta completa. ' : 'Sale un <b>' + steps + '</b>. ') + 'Avanzas ' + steps + (steps === 1 ? ' casilla.' : ' casillas.');
-                    await wait(reduce ? 0 : 380);
-                    for (let n = 0; n < steps; n++) {
-                        if (!alive()) return;
-                        const from = (cur + n) % ringLen, to = (cur + n + 1) % ringLen;
-                        await hop(from, to);
-                    }
-                    cur = target; curGod = k;
-                }
-                if (!alive()) return;
-                d20.classList.remove('go');
-                tiles[target].classList.add('on');
-                sndArrive();
-                say.innerHTML = 'Has llegado a <b>' + esc(g.n.toUpperCase()) + '</b>.';
-                showGod(k);
-                setBusy(false);
+                for (let m = 0; m < steps; m++) { if (!alive()) return; const nx = (cur + dir + L) % L; await hop(cur, nx); cur = nx; }
+            }
+            async function teleport(to) {
+                sndWhoosh();
+                const a = centerOf(cur), b = centerOf(to);
+                if (!reduce) await token.animate([{ transform: tr(a, 1), opacity: 1 }, { transform: tr(a, 0), opacity: 0 }], { duration: 300, easing: 'ease-in' }).finished.catch(() => {});
+                token.style.opacity = 0; token.style.transform = tr(b, 0); cur = to;
+                if (!reduce) await token.animate([{ transform: tr(b, 0), opacity: 0 }, { transform: tr(b, 1.3), opacity: 1, offset: .7 }, { transform: tr(b, 1), opacity: 1 }], { duration: 380, easing: 'ease-out' }).finished.catch(() => {});
+                token.style.opacity = 1; token.style.transform = tr(b, 1);
+                const tl = to === 0 ? null : tiles[to];
+                if (tl) { tl.classList.add('pass'); setTimeout(() => tl.classList.remove('pass'), 500); }
             }
 
-            board.addEventListener('click', e => { const t = e.target.closest('button.dz-tile'); if (t && t.dataset.i) goTo(+t.dataset.i); });
+            // Tirada(s) hasta una casilla: si faltan más de 20, se tira, se avanza y se vuelve a tirar solo lo que falte.
+            async function travel(target) {
+                let remaining = ((target - cur + L) % L) || L, rollNo = 0;
+                say.innerHTML = '<b>TIRANDO INICIATIVA</b>';
+                while (remaining > 0) {
+                    const roll = remaining <= DMAX ? remaining : (remaining - DMAX) + ((Math.random() * (DMAX - (remaining - DMAX))) | 0);
+                    rollNo++;
+                    if (rollNo > 1) say.innerHTML = '<b>OTRA TIRADA</b> Faltan ' + remaining + ' casillas.';
+                    await rollDice(roll, roll === DMAX);
+                    if (!alive()) return false;
+                    say.innerHTML = (roll === DMAX ? '<b>¡20 NATURAL!</b> ' : 'Sale un <b>' + roll + '</b>. ') + 'Avanzas ' + roll + (roll === 1 ? ' casilla.' : ' casillas.') + (remaining - roll > 0 ? ' Aún no llegas.' : '');
+                    await wait(reduce ? 0 : 380);
+                    await walk(roll, 1);
+                    remaining -= roll;
+                    if (remaining > 0) await wait(reduce ? 0 : 350);
+                }
+                return alive();
+            }
+
+            // Efecto de una casilla especial. Llegar a otra casilla por un efecto NO vuelve a activar su efecto.
+            async function applyFx(sp) {
+                const near = (dir, pred) => { for (let m = 1; m < L; m++) { const p = (cur + dir * m + L * 2) % L; if (pred(p)) return m; } return 0; };
+                switch (sp.fx) {
+                    case 'back': case 'fwd': {
+                        const v = rnd(sp.v[0], sp.v[1]), dir = sp.fx === 'back' ? -1 : 1;
+                        say.innerHTML = (dir < 0 ? 'Retrocedes <b>' : 'Avanzas <b>') + v + '</b> ' + (v === 1 ? 'casilla.' : 'casillas.');
+                        await wait(reduce ? 0 : 450); await walk(v, dir); break;
+                    }
+                    case 'bonus': {
+                        const r = rnd(1, DMAX);
+                        say.innerHTML = '<b>TIRADA EXTRA</b>';
+                        await rollDice(r, r === DMAX); if (!alive()) return;
+                        say.innerHTML = 'Sale un <b>' + r + '</b>. Avanzas ' + r + (r === 1 ? ' casilla.' : ' casillas.');
+                        await wait(reduce ? 0 : 380); await walk(r, 1); break;
+                    }
+                    case 'start': say.innerHTML = 'Vuelves a la <b>salida</b>.'; await wait(reduce ? 0 : 450); await teleport(0); break;
+                    case 'nextGod': {
+                        const m = near(1, p => godAt[p]); say.innerHTML = 'Avanzas <b>' + m + '</b> ' + (m === 1 ? 'casilla.' : 'casillas.');
+                        await wait(reduce ? 0 : 450); await walk(m, 1); break;
+                    }
+                    case 'randGod': {
+                        const opts = Object.keys(godAt).map(Number).filter(p => p !== cur); const to = opts[rnd(0, opts.length - 1)];
+                        say.innerHTML = 'El altar te lleva ante un dios…'; await wait(reduce ? 0 : 450); await teleport(to); break;
+                    }
+                    case 'tp': {
+                        const opts = []; for (let p = 1; p < L; p++) if (p !== cur) opts.push(p); const to = opts[rnd(0, opts.length - 1)];
+                        say.innerHTML = '<b>¡PORTAL!</b> Te teletransportas…'; await wait(reduce ? 0 : 450); await teleport(to); break;
+                    }
+                    case 'opposite': say.innerHTML = 'Despiertas al otro lado del mapa…'; await wait(reduce ? 0 : 450); await teleport((cur + (L >> 1)) % L); break;
+                }
+            }
+
+            async function arrive(pos, withFx) {
+                if (!alive()) return;
+                d20.classList.remove('go');
+                clearOn();
+                if (pos === 0) { pad.classList.add('on'); say.innerHTML = 'Estás en la <b>SALIDA</b>.'; sndArrive(); showStart(); return; }
+                pad.classList.remove('on');
+                tiles[pos].classList.add('on');
+                sndArrive();
+                if (godAt[pos]) { say.innerHTML = 'Has llegado a <b>' + esc(GODS[godAt[pos] - 1].n.toUpperCase()) + '</b>.'; showGod(godAt[pos]); return; }
+                const sp = spAt[pos];
+                say.innerHTML = 'Has caído en <b>' + esc(sp.n.toUpperCase()) + '</b>.';
+                showSpecial(pos, withFx ? '' : 'Llegaste por un efecto, así que esta casilla no se activa.');
+                if (withFx) {
+                    await wait(reduce ? 0 : 1300); if (!alive()) return;
+                    await applyFx(sp); if (!alive()) return;
+                    await arrive(cur, false);
+                }
+            }
+
+            async function goTo(target) {
+                if (busy) return;
+                setBusy(true); ac(); clearOn(); pad.classList.remove('on');
+                if (await travel(target)) await arrive(target, true);
+                if (alive()) setBusy(false);
+            }
+
+            board.addEventListener('click', e => { const t = e.target.closest('button.dz-tile'); if (t && t.dataset.pos) goTo(+t.dataset.pos); });
             panel.addEventListener('click', e => {
                 if (!e.target.closest('#dz-rand') || busy) return;
-                let k; do { k = 1 + ((Math.random() * GODS.length) | 0); } while (GODS.length > 1 && k === curGod);
-                goTo(k);
+                let p; do { p = 1 + ((Math.random() * (L - 1)) | 0); } while (p === cur);
+                goTo(p);
             });
 
             // Aparecer al bajar
