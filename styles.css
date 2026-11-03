@@ -257,12 +257,15 @@ html[data-theme="grimorio"] body::before, html[data-theme="grimorio"] body::afte
 html[data-theme="grimorio"] ::-webkit-scrollbar-track { background: #0B0603; }
 html[data-theme="grimorio"] ::-webkit-scrollbar-thumb { background: #6E4F2A; }
 .gl-smoke { position: absolute; inset: -10%; background:
-    radial-gradient(ellipse 55% 50% at 64% 46%, rgba(120,62,20,.34), transparent 70%),
-    radial-gradient(ellipse 45% 40% at 12% 78%, rgba(96,44,12,.30), transparent 72%),
-    radial-gradient(ellipse 40% 35% at 85% 12%, rgba(80,38,14,.26), transparent 72%);
-    animation: gl-drift 38s ease-in-out infinite alternate; }
+    radial-gradient(ellipse 38% 24% at 22% 30%, rgba(255,150,60,.075), transparent 70%),
+    radial-gradient(ellipse 42% 22% at 74% 62%, rgba(255,140,50,.07), transparent 72%),
+    radial-gradient(ellipse 30% 18% at 48% 88%, rgba(255,160,70,.06), transparent 72%);
+    animation: gl-drift 46s ease-in-out infinite alternate; }
+.gl-smoke2 { background:
+    radial-gradient(ellipse 34% 20% at 82% 16%, rgba(255,150,60,.065), transparent 72%),
+    radial-gradient(ellipse 40% 22% at 10% 70%, rgba(255,135,45,.06), transparent 72%);
+    animation-duration: 62s; animation-direction: alternate-reverse; }
 @keyframes gl-drift { from { transform: translate3d(-2%, 1%, 0) scale(1); } to { transform: translate3d(2%, -1%, 0) scale(1.06); } }
-.gl-sigil { position: absolute; width: min(125vmin, 1150px); right: -14vmin; top: 50%; transform: translateY(-50%); opacity: .2; }
 .gs-ring, .gs-inner { transform-box: view-box; transform-origin: 400px 400px; }
 .gs-ring { animation: gs-spin 220s linear infinite; }
 .gs-inner { animation: gs-spin 320s linear infinite reverse; }
@@ -363,4 +366,3 @@ html[data-theme="grimorio"] .lore-lift:hover, html[data-theme="grimorio"] .rz-li
     box-shadow: 0 16px 34px rgba(0,0,0,.6), 0 0 26px rgba(224,144,47,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
 html[data-theme="grimorio"] .lore-hover::before, html[data-theme="grimorio"] .lore-lift::before, html[data-theme="grimorio"] .rz-hover::before, html[data-theme="grimorio"] .rz-lift::before,
 html[data-theme="grimorio"] .mn-card::before, html[data-theme="grimorio"] .nw-item::before { background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(224,144,47,.24), rgba(217,180,106,.10) 45%, transparent 70%); }
-
