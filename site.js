@@ -164,7 +164,7 @@
     if (root0) root0.insertAdjacentHTML('beforebegin', HEADER_HTML);
     else document.body.insertAdjacentHTML('afterbegin', HEADER_HTML);
     if (!$('dock')) document.body.insertAdjacentHTML('beforeend', '<nav id="dock" aria-label="Navegación principal"><div id="dock-slots" class="dk-bar"></div></nav>');
-    if (!$('grim-layer')) document.body.insertAdjacentHTML('afterbegin', '<div id="grim-layer" aria-hidden="true"><div class="gl-smoke"></div>' + window.__aethernaSigil('gl-sigil') + '</div>');
+    if (!$('grim-layer')) document.body.insertAdjacentHTML('afterbegin', '<div id="grim-layer" aria-hidden="true"><div class="gl-smoke"></div><div class="gl-smoke gl-smoke2"></div></div>');
     if (!$('theme-pill')) document.body.insertAdjacentHTML('beforeend', '<button type="button" id="theme-pill" aria-label="Cambiar el estilo de la web" title="Cambiar el estilo de la web"><span class="tp-k">Estilo</span><span data-opt="nebulosa">Nebulosa</span><i>/</i><span data-opt="grimorio">Grimorio</span></button>');
     renderNav(pageKey(location));
 
@@ -834,23 +834,53 @@
         function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-        const embers = Array.from({ length: 46 }, () => ({
+        const warmNow = () => document.documentElement.dataset.theme === 'grimorio';
+        const mkEmber = () => ({
             x: Math.random() * canvas.width, y: Math.random() * canvas.height,
             size: Math.random() * 2 + 1, speedY: Math.random() * 0.4 + 0.2, speedX: (Math.random() - 0.5) * 0.2
-        }));
+        });
+        const embers = Array.from({ length: 110 }, mkEmber);
+        // runas que caen despacio (trazos dibujados, sin depender de ninguna fuente)
+        const mkRune = (top) => {
+            const strokes = [[0, -1, 0, 1]];
+            const n = 1 + Math.floor(Math.random() * 2);
+            for (let i = 0; i < n; i++) {
+                const y0 = -1 + Math.random() * 1.4, dir = Math.random() < 0.5 ? -1 : 1;
+                strokes.push([0, y0, dir * (0.5 + Math.random() * 0.4), y0 + 0.45 + Math.random() * 0.5]);
+            }
+            return { x: Math.random() * canvas.width, y: top ? -30 - Math.random() * canvas.height : Math.random() * canvas.height,
+                size: 7 + Math.random() * 9, speed: 0.25 + Math.random() * 0.45, drift: (Math.random() - 0.5) * 0.15,
+                a: 0.18 + Math.random() * 0.32, strokes };
+        };
+        const runes = Array.from({ length: 34 }, () => mkRune(false));
         function animateEmbers() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            embers.forEach(e => {
+            const warm = warmNow();
+            const count = warm ? embers.length : 46;
+            for (let i = 0; i < count; i++) {
+                const e = embers[i];
                 e.y -= e.speedY;
                 e.x += e.speedX + Math.sin(e.y * 0.02) * 0.2;
                 if (e.y < 0) { e.y = canvas.height + 10; e.x = Math.random() * canvas.width; }
                 ctx.beginPath();
                 ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
-                const warm = document.documentElement.dataset.theme === 'grimorio';
                 ctx.fillStyle = (warm ? 'rgba(255,150,60,' : 'rgba(196,160,255,') + (0.6 * Math.sin(e.y * 0.01)) + ')';
                 ctx.shadowBlur = 8; ctx.shadowColor = warm ? '#E0902F' : '#B48CFF';
                 ctx.fill(); ctx.shadowBlur = 0;
-            });
+            }
+            if (warm) {
+                ctx.lineWidth = 1.4; ctx.lineCap = 'round';
+                runes.forEach((r, i) => {
+                    r.y += r.speed; r.x += r.drift;
+                    if (r.y > canvas.height + 30) runes[i] = mkRune(true);
+                    const fade = Math.min(1, r.y / 120, (canvas.height - r.y) / 160 + 0.2);
+                    ctx.strokeStyle = 'rgba(240,170,80,' + (r.a * Math.max(0, fade)) + ')';
+                    ctx.shadowBlur = 6; ctx.shadowColor = '#E0902F';
+                    ctx.beginPath();
+                    r.strokes.forEach(t => { ctx.moveTo(r.x + t[0] * r.size, r.y + t[1] * r.size); ctx.lineTo(r.x + t[2] * r.size, r.y + t[3] * r.size); });
+                    ctx.stroke(); ctx.shadowBlur = 0;
+                });
+            }
             requestAnimationFrame(animateEmbers);
         }
         animateEmbers();
@@ -1003,3 +1033,4 @@
         go(location.href, { push: false });
     });
 })();
+
