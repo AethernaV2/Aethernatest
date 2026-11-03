@@ -194,8 +194,10 @@
         html[data-theme="grimorio"] .home-news-media { background: radial-gradient(120% 120% at 30% 20%, #6B3A14 0%, #1B1109 60%, #0E0804 100%); }
         html[data-theme="grimorio"] .site-foot { background: linear-gradient(180deg, transparent, rgba(8,5,3,.8)); }
         @media (min-width: 1024px) {
-            html[data-theme="grimorio"] .home-hero__emblem .hx { display: none; }
-            html[data-theme="grimorio"] .hero-sigil { display: block; position: absolute; width: 235%; left: -67.5%; top: -67.5%; opacity: .55; pointer-events: none; z-index: -1; will-change: transform; animation: gs-spin 240s linear infinite; }
+            .home-hero__emblem .hx { display: none; }
+            .hero-sigil { display: block; position: absolute; width: 235%; left: -67.5%; top: -67.5%; opacity: .55; pointer-events: none; z-index: -1; will-change: transform; animation: gs-spin 240s linear infinite; }
+            html:not([data-theme="grimorio"]) .hero-sigil g { stroke: #B898FF; }
+            html:not([data-theme="grimorio"]) .hero-sigil path[fill] { fill: #FFF2CF; }
             html[data-theme="grimorio"] .d20-halo { background: radial-gradient(circle, rgba(224,150,50,.30), rgba(120,60,15,.12) 52%, transparent 70%); }
             html[data-theme="grimorio"] .d20 { filter: none; }
             html[data-theme="grimorio"] .d20 .face { stroke: #F0B35A; }
@@ -560,3 +562,4 @@
     </script>
 </body>
 </html>
+
