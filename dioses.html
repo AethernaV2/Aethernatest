@@ -126,6 +126,26 @@
         .dz-desc { font-family: 'EB Garamond', serif; font-size: 1.12rem; line-height: 1.7; color: #E3D2B0; }
         .dz-desc.empty { font-style: italic; opacity: .75; }
         .dz-count { font: 600 10px 'Cinzel', serif; letter-spacing: .3em; text-transform: uppercase; color: #9C8865; margin-top: auto; padding-top: .8rem; }
+.dz-btns { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .4rem; }
+        .dz-btns .dz-btn { margin-top: 0; }
+        .dz-btn.dz-ghost { background: transparent; border-color: var(--dz-line); color: #CDBB98; }
+        .dz-btn.dz-ghost:hover:not(:disabled) { color: #FFF2CF; border-color: #E8C77D; }
+        .dz-panel.sealing > *:not(.dz-unseal) { opacity: 0; transition: opacity .35s; }
+        .dz-unseal { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; pointer-events: none; overflow: hidden; }
+        .dz-unseal .flash { position: absolute; inset: 0; background: radial-gradient(circle, rgba(var(--dz-glow), .75), transparent 62%); opacity: 0; }
+        .dz-unseal svg { position: relative; width: 78%; max-width: 380px; height: auto; opacity: 0; }
+        .dz-unseal svg * { stroke: var(--dz-accent) !important; }
+        .dz-unseal svg path[fill] { fill: var(--dz-accent); }
+        .dz-unseal.in svg { animation: dz-seal-in .7s cubic-bezier(.3,.1,.3,1) forwards; }
+        .dz-unseal.in .flash { animation: dz-flash-in .7s ease-in forwards; }
+        .dz-unseal.out svg { animation: dz-seal-out .7s ease-out forwards; }
+        .dz-unseal.out .flash { animation: dz-flash-out .7s ease-out forwards; }
+        @keyframes dz-seal-in { from { opacity: 0; transform: scale(.35) rotate(-120deg); } to { opacity: 1; transform: scale(1) rotate(60deg); } }
+        @keyframes dz-seal-out { from { opacity: 1; transform: scale(1) rotate(60deg); } to { opacity: 0; transform: scale(2.2) rotate(140deg); } }
+        @keyframes dz-flash-in { from { opacity: 0; } to { opacity: .55; } }
+        @keyframes dz-flash-out { from { opacity: 1; } to { opacity: 0; } }
+        .dz-panel { overflow: hidden; }
+        @media (min-width: 1024px) { .dz-panel { max-height: calc(100vh - 9rem); overflow-y: auto; } }
         .dz-btn { align-self: flex-start; margin-top: .4rem; padding: .7rem 1.4rem; font: 700 11px 'Cinzel', serif; letter-spacing: .22em; text-transform: uppercase; color: #FFF2CF; cursor: pointer;
             background: linear-gradient(135deg, rgba(165,49,27,.75), rgba(90,24,12,.6)); border: 1px solid #E8C77D; transition: box-shadow .2s, transform .2s; }
         .dz-btn:hover:not(:disabled) { box-shadow: 0 0 18px rgba(var(--dz-glow), .55); transform: translateY(-1px); }
@@ -198,23 +218,25 @@
         (function () {
             /* ============================================================
                DIOSES: edita aquí los textos. Para cada dios:
-                 n = nombre · t = título (ej. "Diosa de la luz") · d = descripción
+                 n = nombre · t = título (ej. "Diosa de la luz")
+                 r = resumen corto (1-2 frases, es lo que se ve al llegar a la casilla)
+                 d = historia completa (se ve al pulsar «Ver más»; separa párrafos con \n\n)
                  a = alineamiento (opcional) · s = símbolo sagrado (opcional)
-               Si dejas t o d vacíos, la ficha muestra un aviso en su lugar.
+               Si dejas t, r o d vacíos, la ficha muestra un aviso en su lugar.
                El orden de esta lista es el orden de las casillas (en el sentido del reloj).
                ============================================================ */
             const GODS = [
-                { n: 'Chassaria',   t: '', d: '' },
-                { n: 'Iasis',       t: '', d: '' },
-                { n: 'Irion',       t: '', d: '' },
-                { n: 'Lothshi',     t: '', d: '' },
-                { n: 'Baraka',      t: '', d: '' },
-                { n: 'Mushalee',    t: '', d: '' },
-                { n: 'Serathovah',  t: '', d: '' },
-                { n: 'Zark',        t: '', d: '' },
-                { n: 'Luminae',     t: '', d: '' },
-                { n: 'Vilza',       t: '', d: '' },
-                { n: 'Zenelithca',  t: '', d: '' }
+                { n: 'Chassaria',   t: '', r: '', d: '' },
+                { n: 'Iasis',       t: '', r: '', d: '' },
+                { n: 'Irion',       t: '', r: '', d: '' },
+                { n: 'Lothshi',     t: '', r: '', d: '' },
+                { n: 'Baraka',      t: '', r: '', d: '' },
+                { n: 'Mushalee',    t: '', r: '', d: '' },
+                { n: 'Serathovah',  t: '', r: '', d: '' },
+                { n: 'Zark',        t: '', r: '', d: '' },
+                { n: 'Luminae',     t: '', r: '', d: '' },
+                { n: 'Vilza',       t: '', r: '', d: '' },
+                { n: 'Zenelithca',  t: '', r: '', d: '' }
             ];
 
             /* Casillas especiales (las que no son dioses). Se pulsan igual que un dios y, al llegar, hacen algo:
@@ -381,24 +403,57 @@
             /* ---------- paneles ---------- */
             const sigil = () => (window.__aethernaSigil ? window.__aethernaSigil('dz-sg') : '');
             const swapIn = html => { panel.classList.remove('swap'); void panel.offsetWidth; panel.classList.add('swap'); panel.innerHTML = html; };
-            const again = label => '<button type="button" class="dz-btn" id="dz-rand">' + label + '</button>';
+            const again = (label, cls) => '<button type="button" class="dz-btn ' + (cls || '') + '" id="dz-rand">' + label + '</button>';
             const emptyPanel = () => swapIn('<div class="dz-mono">' + sigil() + '<span>?</span></div>' +
                 '<div class="dz-name">Elige una casilla</div><div class="dz-title">Mapa del panteón</div><div class="dz-rule"></div>' +
                 '<p class="dz-desc">Los dioses de Aetherna esperan en el borde del mapa. Entre ellos hay casillas especiales que cambian tu camino. Pulsa una y tira iniciativa.</p>' +
                 again('Que decidan los dados'));
+            const shortOf = g => g.r || (g.d ? g.d.split(/\n\n/)[0].slice(0, 190) + (g.d.length > 190 ? '…' : '') : '');
             const showGod = k => {
-                const g = GODS[k - 1];
+                const g = GODS[k - 1], sh = shortOf(g);
                 swapIn('<div class="dz-mono">' + sigil() + '<span>' + esc(g.n.charAt(0).toUpperCase()) + '</span></div>' +
+                    '<div class="dz-name">' + esc(g.n) + '</div>' +
+                    (g.t ? '<div class="dz-title">' + esc(g.t) + '</div>' : '') +
+                    '<div class="dz-rule"></div>' +
+                    (sh ? '<p class="dz-desc">' + esc(sh) + '</p>' : '<p class="dz-desc empty">Su historia aún no está escrita en el Códice.</p>') +
+                    '<div class="dz-count">Dios ' + k + ' de ' + GODS.length + '</div>' +
+                    '<div class="dz-btns"><button type="button" class="dz-btn" id="dz-more" data-k="' + k + '">Ver más</button>' + again('Tirar iniciativa otra vez', 'dz-ghost') + '</div>');
+                scrollToPanel();
+            };
+            const longHtml = k => {
+                const g = GODS[k - 1];
+                const paras = g.d ? String(g.d).split(/\n\s*\n/).map(p => '<p class="dz-desc">' + esc(p.trim()) + '</p>').join('') : '<p class="dz-desc empty">El Códice aún guarda silencio sobre este dios.</p>';
+                return '<div class="dz-mono">' + sigil() + '<span>' + esc(g.n.charAt(0).toUpperCase()) + '</span></div>' +
                     '<div class="dz-name">' + esc(g.n) + '</div>' +
                     (g.t ? '<div class="dz-title">' + esc(g.t) + '</div>' : '') +
                     '<div class="dz-rule"></div>' +
                     (g.a ? '<div class="dz-kv"><b>Alineamiento</b>' + esc(g.a) + '</div>' : '') +
                     (g.s ? '<div class="dz-kv"><b>Símbolo</b>' + esc(g.s) + '</div>' : '') +
-                    ((g.a || g.s) ? '<div class="dz-rule"></div>' : '') +
-                    (g.d ? '<p class="dz-desc">' + esc(g.d) + '</p>' : '<p class="dz-desc empty">Su historia aún no está escrita en el Códice.</p>') +
-                    '<div class="dz-count">Dios ' + k + ' de ' + GODS.length + '</div>' + again('Tirar iniciativa otra vez'));
-                scrollToPanel();
+                    ((g.a || g.s) ? '<div class="dz-rule"></div>' : '') + paras +
+                    '<div class="dz-count">Dios ' + k + ' de ' + GODS.length + '</div>' +
+                    '<div class="dz-btns"><button type="button" class="dz-btn dz-ghost" id="dz-less" data-k="' + k + '">Ver menos</button>' + again('Tirar iniciativa otra vez', 'dz-ghost') + '</div>';
             };
+            // «Ver más»: el sello rúnico se activa, gira y se abre; después aparece la historia completa
+            let anim = false;
+            const sndUnseal = () => {
+                if (!sndOn) return; const B = getBus(); if (!B) return; const t = B.ctx.currentTime + .02;
+                whoosh(t, .62);
+                [660, 990, 1320].forEach((f, i) => toneB(B, 'sine', f, f, t + .56 + i * .07, .1 / (i + 1), 1.3));
+            };
+            async function expandGod(k) {
+                if (busy || anim) return; anim = true;
+                sndUnseal();
+                if (reduce) { swapIn(longHtml(k)); anim = false; return; }
+                const ov = document.createElement('div'); ov.className = 'dz-unseal in';
+                ov.innerHTML = '<div class="flash"></div>' + (window.__aethernaSigil ? window.__aethernaSigil('us') : '');
+                panel.classList.add('sealing'); panel.appendChild(ov);
+                await wait(700); if (!alive()) return;
+                panel.classList.remove('sealing');
+                swapIn(longHtml(k));
+                ov.className = 'dz-unseal out'; panel.appendChild(ov);
+                setTimeout(() => ov.remove(), 700);
+                panel.scrollTop = 0; scrollToPanel(); anim = false;
+            }
             const showSpecial = (pos, note) => {
                 const sp = spAt[pos];
                 swapIn('<div class="dz-mono">' + sigil() + '<span>&#10022;</span></div>' +
@@ -550,6 +605,9 @@
 
             board.addEventListener('click', e => { const t = e.target.closest('button.dz-tile'); if (t && t.dataset.pos) goTo(+t.dataset.pos); });
             panel.addEventListener('click', e => {
+                const mo = e.target.closest('#dz-more'), le = e.target.closest('#dz-less');
+                if (mo) { expandGod(+mo.dataset.k); return; }
+                if (le && !busy && !anim) { showGod(+le.dataset.k); return; }
                 if (!e.target.closest('#dz-rand') || busy) return;
                 let p; do { p = 1 + ((Math.random() * (L - 1)) | 0); } while (p === cur);
                 goTo(p);
@@ -565,3 +623,4 @@
     </script>
 </body>
 </html>
+
