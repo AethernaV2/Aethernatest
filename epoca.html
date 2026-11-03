@@ -108,12 +108,12 @@
         .ep-item.now:not(.sealed) .ep-card { animation: ep-glow 4.5s ease-in-out infinite; }
         .ep-item.now:not(.sealed) .ep-card::before { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; transform: translateX(-120%);
             background: linear-gradient(105deg, transparent 38%, rgba(var(--ep-l), .16) 50%, transparent 62%); animation: ep-shine 6.5s ease-in-out 1.2s infinite; }
-        .ep-item.now:not(.sealed) .ep-card:hover { animation: ep-tremble .16s linear infinite, ep-glow 1.4s ease-in-out infinite; border-color: rgb(var(--ep-l)); }
+        .ep-item.now:not(.sealed) .ep-card { transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s; }
+        .ep-item.now:not(.sealed) .ep-card:hover { transform: translateY(-8px) scale(1.025); border-color: rgb(var(--ep-l)); animation: ep-glow 2.2s ease-in-out infinite; z-index: 5; }
         .ep-item.now:not(.sealed):hover .ep-node .ring { animation-duration: 6s; }
         .ep-item.now:not(.sealed):hover .ep-node .core { filter: drop-shadow(0 0 16px rgb(var(--ep-l))); }
         @keyframes ep-glow { 0%, 100% { box-shadow: inset 0 0 0 3px rgba(var(--ep), .18), 0 0 10px rgba(var(--ep), .12); } 50% { box-shadow: inset 0 0 0 3px rgba(var(--ep), .3), 0 0 28px rgba(var(--ep), .38); } }
         @keyframes ep-shine { 0% { transform: translateX(-120%); } 22%, 100% { transform: translateX(120%); } }
-        @keyframes ep-tremble { 0% { transform: translate(0, 0); } 25% { transform: translate(-1px, .6px) rotate(-.06deg); } 50% { transform: translate(1px, -.6px) rotate(.06deg); } 75% { transform: translate(-.6px, -1px) rotate(-.04deg); } 100% { transform: translate(0, 0); } }
 
         @media (min-width: 900px) {
             .ep-line { padding-left: 0; gap: 2.8rem; }
