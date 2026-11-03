@@ -143,6 +143,8 @@
         .home-hero__more { margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: .25rem; color: rgba(217,180,106,.7); animation: bounce 1s infinite; }
         @keyframes emblem-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
         @keyframes ring-spin { to { transform: rotate(360deg); } }
+        @keyframes d20-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+        @keyframes d20-shadow { 0%,100% { transform: scale(1); opacity: .9; } 50% { transform: scale(.82); opacity: .6; } }
         @media (min-width: 1024px) {
             .home-hero { flex-direction: row; justify-content: space-between; text-align: left; padding: 8rem clamp(1.5rem,5vw,4rem) 4rem; gap: 3rem; }
             .home-hero h1 { font-size: clamp(2.4rem, 6vw, 5rem); white-space: nowrap; }
@@ -155,13 +157,16 @@
             .home-hero__emblem .hx polygon:nth-child(1) { stroke-width: .6; opacity: .38; }
             .home-hero__emblem .hx polygon:nth-child(2) { stroke-width: .4; opacity: .2; }
             .home-hero__emblem .hx polygon:nth-child(3) { stroke-width: .4; opacity: .12; }
-            .d20-stage { position: absolute; left: 27%; top: 27%; width: 46%; height: 46%; perspective: 700px; }
-            .d20 { width: 100%; height: 100%; overflow: visible; transform-style: preserve-3d; filter: drop-shadow(0 0 8px rgba(224,160,70,.35)); }
-            .d20 .face { fill: #0B0824; stroke: #D9B46A; stroke-width: 1.6; stroke-linejoin: round; }
-            .d20 .edge { fill: none; stroke: #D9B46A; stroke-width: 1.1; stroke-opacity: .8; stroke-linejoin: round; }
-            .d20 text { fill: #F6E2B3; font-family: Cinzel, serif; font-weight: 700; text-anchor: middle; }
-            .d20.crit .face, .d20.crit .edge { stroke: #FFF2CF; }
-            .d20.crit { filter: drop-shadow(0 0 16px rgba(255,190,90,.8)); }
+            .d20-halo { position: absolute; left: 12%; top: 12%; width: 76%; height: 76%; border-radius: 50%; background: radial-gradient(circle, rgba(110,60,210,.34), rgba(70,32,127,.14) 52%, transparent 70%); }
+            .d20-shadow { position: absolute; left: 31%; top: 76%; width: 38%; height: 5%; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.65), transparent); animation: d20-shadow 4.2s ease-in-out infinite; }
+            .d20-stage { position: absolute; left: 27%; top: 27%; width: 46%; height: 46%; perspective: 700px; animation: d20-float 4.2s ease-in-out infinite; }
+            .d20 { width: 100%; height: 100%; overflow: visible; transform-style: preserve-3d; filter: drop-shadow(0 0 12px rgba(120,70,225,.7)); }
+            .d20 .face { fill: url(#d20g); stroke: #8B5CE6; stroke-width: 2.2; stroke-linejoin: round; }
+            .d20 .edge { fill: none; stroke: #8B5CE6; stroke-width: 1.5; stroke-opacity: .9; stroke-linejoin: round; }
+            .d20 .sh { stroke: none; fill: #9D6CF0; }
+            .d20 text { fill: #E6D9FF; font-family: Cinzel, serif; font-weight: 700; text-anchor: middle; }
+            .d20.crit .face, .d20.crit .edge { stroke: #D9C2FF; }
+            .d20.crit { filter: drop-shadow(0 0 22px rgba(165,115,255,.95)); }
         }
         /* en la portada los hexágonos de fondo pasan a ser los del dado (y se mueven con la página) */
         body::before, body::after { display: none; }
@@ -204,6 +209,7 @@
                 <polygon points="100,22 167.500,61 167.500,139 100,178 32.500,139 32.500,61"/>
                 <polygon points="100,41 151,70.500 151,129.500 100,159 49,129.500 49,70.500"/>
             </svg>
+            <div class="d20-halo"></div><div class="d20-shadow"></div>
             <div class="d20-stage"><svg class="d20" id="d20" viewBox="0 0 200 200"></svg></div>
         </div>
         <a href="#origen" class="home-hero__more" aria-label="Continuar">
@@ -384,7 +390,9 @@
                 const pt = p => p[0].toFixed(1) + ',' + p[1].toFixed(1);
                 const V = [-90, -30, 30, 90, 150, 210].map(a => P(92, a)), T = [-90, 30, 150].map(a => P(48, a)), S = [P(70, -30), P(70, 90), P(70, 210)];
                 const edges = [[T[0], V[1]], [T[0], V[5]], [T[0], V[0]], [T[1], V[1]], [T[1], V[3]], [T[1], V[2]], [T[2], V[3]], [T[2], V[5]], [T[2], V[4]]].map(e => 'M' + pt(e[0]) + 'L' + pt(e[1])).join('');
-                svg.innerHTML = '<polygon class="face" points="' + V.map(pt).join(' ') + '"/><polygon class="edge" points="' + T.map(pt).join(' ') + '"/><path class="edge" d="' + edges + '"/>' +
+                const tri = (a, b, c, o) => '<polygon class="sh" fill-opacity="' + o + '" points="' + pt(a) + ' ' + pt(b) + ' ' + pt(c) + '"/>';
+                const shade = tri(T[0], V[0], V[1], .13) + tri(T[0], V[0], V[5], .05) + tri(T[1], V[1], V[2], .05) + tri(T[1], V[2], V[3], .12) + tri(T[2], V[3], V[4], .05) + tri(T[2], V[4], V[5], .13) + tri(T[0], T[1], V[1], .08) + tri(T[1], T[2], V[3], .02) + tri(T[2], T[0], V[5], .1);
+                svg.innerHTML = '<defs><linearGradient id="d20g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B1A5C"/><stop offset="1" stop-color="#0A0722"/></linearGradient></defs><polygon class="face" points="' + V.map(pt).join(' ') + '"/>' + shade + '<polygon class="edge" points="' + T.map(pt).join(' ') + '"/><path class="edge" d="' + edges + '"/>' +
                     '<text id="d20n" x="100" y="' + (T[1][1] - 13).toFixed(1) + '" font-size="30">20</text>' +
                     S.map(p => '<text class="d20s" x="' + p[0].toFixed(1) + '" y="' + (p[1] + 5).toFixed(1) + '" font-size="13" fill-opacity=".6">0</text>').join('');
                 const num = document.getElementById('d20n'), smalls = svg.querySelectorAll('.d20s');
@@ -527,4 +535,3 @@
     </script>
 </body>
 </html>
-
