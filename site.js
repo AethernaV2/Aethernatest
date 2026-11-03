@@ -24,6 +24,39 @@
         set(k, v, which) { try { area(which).setItem(k, v); } catch (e) {} }
     };
 
+    // Estilo de la web: «nebulosa» (por defecto) o «grimorio». Se recuerda en este navegador y se aplica a todas las páginas.
+    const getTheme = () => (store.get('aetherna_theme', 'local') === 'grimorio' ? 'grimorio' : 'nebulosa');
+    document.documentElement.dataset.theme = getTheme();
+    function setTheme(t) {
+        t = t === 'grimorio' ? 'grimorio' : 'nebulosa';
+        document.documentElement.dataset.theme = t;
+        store.set('aetherna_theme', t, 'local');
+        document.querySelectorAll('[data-theme-pick]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themePick === t)));
+        document.querySelectorAll('[data-theme-label]').forEach(b => { b.textContent = t === 'grimorio' ? 'Grimorio' : 'Nebulosa'; });
+        window.dispatchEvent(new CustomEvent('aetherna:theme', { detail: t }));
+    }
+    nativeAdd.call(document, 'click', e => {
+        const pick = e.target.closest && e.target.closest('[data-theme-pick]');
+        if (pick) { setTheme(pick.dataset.themePick); return; }
+        if (e.target.closest && e.target.closest('#theme-pill, [data-theme-toggle]')) setTheme(getTheme() === 'grimorio' ? 'nebulosa' : 'grimorio');
+    });
+    // Runas y sigilo del estilo Grimorio (trazos inventados, sin fuentes). cls = clase del <svg>.
+    window.__aethernaSigil = function (cls) {
+        let seed = 11; const r = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+        const G = ['M0 -12V12M-8 -3H8', 'M0 -12V12M0 -5L8 -11', 'M-7 -10L7 10M7 -10L-7 10', 'M0 -12V12M-7 5L0 -1L7 5', 'M-7 -11H7M0 -11V12M-7 7H7'];
+        let runes = '';
+        for (let i = 0; i < 48; i++) runes += '<path d="' + G[(r() * G.length) | 0] + '" transform="rotate(' + (i * 7.5) + ' 400 400) translate(400 62)"/>';
+        return '<svg class="' + cls + '" viewBox="0 0 800 800" aria-hidden="true"><g fill="none" stroke="#C98A3C" stroke-width="1.4">' +
+            '<circle cx="400" cy="400" r="394"/><circle cx="400" cy="400" r="386" stroke-opacity=".55"/>' +
+            '<circle cx="400" cy="400" r="372" stroke-width="9" stroke-dasharray="2 19" stroke-opacity=".55"/>' +
+            '<circle cx="400" cy="400" r="356" stroke-opacity=".7"/><circle cx="400" cy="400" r="320" stroke-opacity=".7"/>' +
+            '<g class="gs-ring" stroke-width="2.4" stroke-linecap="square">' + runes + '</g>' +
+            '<g class="gs-inner" stroke-opacity=".8"><circle cx="400" cy="400" r="290"/><circle cx="400" cy="400" r="262" stroke-opacity=".6"/>' +
+            '<polygon points="585.3,214.7 585.3,585.3 214.7,585.3 214.7,214.7"/><polygon points="662,400 400,662 138,400 400,138"/></g>' +
+            '<circle cx="400" cy="400" r="44" stroke-opacity=".6"/></g>' +
+            '<path d="M400 372 L404 396 L428 400 L404 404 L400 428 L396 404 L372 400 L396 396Z" fill="#E0902F" fill-opacity=".9"/></svg>';
+    };
+
     // Si falta el archivo de un emblema (fotos/<clase>.webp), se oculta en vez de enseñar una imagen rota
     nativeAdd.call(document, 'error', e => {
         const t = e.target;
@@ -87,7 +120,7 @@
     function renderNav(key) {
         const d = $('nav-links'), m = $('mobile-menu');
         if (d) d.innerHTML = NAV.map(n => desktopLink(n[0], n[1], n[2], n[0] === key)).join('\n');
-        if (m) m.innerHTML = NAV.map(n => mobileLink(n[0], n[1], n[2], n[0] === key)).join('\n');
+        if (m) m.innerHTML = NAV.map(n => mobileLink(n[0], n[1], n[2], n[0] === key)).join('\n') + '<button type="button" data-theme-toggle class="theme-toggle-m">Estilo: <b data-theme-label>' + (getTheme() === 'grimorio' ? 'Grimorio' : 'Nebulosa') + '</b></button>';
         const k = $('dock-slots');
         if (k) k.innerHTML = NAV.map((n, i) => dockSlot(n, i, n[0] === key)).join('') + DOCK_SEARCH;
     }
@@ -131,6 +164,8 @@
     if (root0) root0.insertAdjacentHTML('beforebegin', HEADER_HTML);
     else document.body.insertAdjacentHTML('afterbegin', HEADER_HTML);
     if (!$('dock')) document.body.insertAdjacentHTML('beforeend', '<nav id="dock" aria-label="Navegación principal"><div id="dock-slots" class="dk-bar"></div></nav>');
+    if (!$('grim-layer')) document.body.insertAdjacentHTML('afterbegin', '<div id="grim-layer" aria-hidden="true"><div class="gl-smoke"></div>' + window.__aethernaSigil('gl-sigil') + '</div>');
+    if (!$('theme-pill')) document.body.insertAdjacentHTML('beforeend', '<button type="button" id="theme-pill" aria-label="Cambiar el estilo de la web" title="Cambiar el estilo de la web"><span class="tp-k">Estilo</span><span data-opt="nebulosa">Nebulosa</span><i>/</i><span data-opt="grimorio">Grimorio</span></button>');
     renderNav(pageKey(location));
 
     // Barra de habilidades: buscar y teclas 1-8
@@ -428,29 +463,35 @@
     // 2b) Intro de la entrada: tirada de iniciativa con un d20 (20 natural). Se salta con un clic o con una tecla.
     // ------------------------------------------------------------------
     function playDice(gate, done, sound) {
+        const warm = document.documentElement.dataset.theme === 'grimorio';
+        const PAL = warm ? { glow: 'rgba(224,150,50,.36), rgba(120,60,15,.12) 46%', crit: 'rgba(255,190,90,.9)', pipBg: '#E0902F', pipBd: '#F0B35A', pipSh: 'rgba(224,144,47,.7)', pipCur: '#FFF2CF',
+                flash: 'rgba(255,236,190,.85), rgba(255,200,110,.25) 40%', ring: '#F0B35A', dg: 'rgba(240,170,70,.65)', f0: '#24150A', f1: '#090503', st: '#F0B35A', num: '#FFE9B8', spark: '#F0B35A', bg: '#070402' }
+            : { glow: '${PAL.glow}', crit: '${PAL.crit}', pipBg: '#7B4FD8', pipBd: '#B79CFF', pipSh: 'rgba(130,80,230,.8)', pipCur: '#EBDDFF',
+                flash: '${PAL.flash}', ring: '#B79CFF', dg: 'rgba(125,75,230,.75)', f0: '#2B1A5C', f1: '#0A0722', st: '#8B5CE6', num: '#E6D9FF', spark: '#B79CFF', bg: '#05030C' };
         const NS = 'http://www.w3.org/2000/svg';
-        if (!$('dice-style')) {
+        {
+            const old = $('dice-style'); if (old) old.remove();
             const st = document.createElement('style'); st.id = 'dice-style';
             st.textContent = `
-#entry-gate.dice { background: #05030C; backdrop-filter: none; cursor: pointer; }
+#entry-gate.dice { background: ${PAL.bg}; backdrop-filter: none; cursor: pointer; }
 .dice-stage { position: relative; width: min(74vmin, 420px); aspect-ratio: 1; }
 .dice-stage svg { position: relative; width: 100%; height: 100%; overflow: visible; }
-.dice-glow { position: absolute; inset: -30%; background: radial-gradient(circle, rgba(110,60,210,.38), rgba(70,32,127,.14) 46%, transparent 68%); opacity: 0; animation: dice-in 1.2s ease forwards; }
+.dice-glow { position: absolute; inset: -30%; background: radial-gradient(circle, ${PAL.glow}, transparent 68%); opacity: 0; animation: dice-in 1.2s ease forwards; }
 .dice-ring { transform-box: view-box; transform-origin: 200px 200px; animation: dice-spin 60s linear infinite; }
 .dice-ring path { fill: none; stroke: #D9B46A; stroke-width: 1; opacity: .6; stroke-linecap: round; }
 .dice-fade { opacity: 0; animation: dice-in .9s ease .15s forwards; }
 .dice-label { margin-top: 1.4rem; font: 700 .8rem Cinzel, serif; letter-spacing: .38em; text-transform: uppercase; color: #D9B46A; text-align: center; transition: color .3s, text-shadow .3s; }
-.dice-label.crit { color: #FFF2CF; text-shadow: 0 0 16px rgba(190,150,255,.95); }
+.dice-label.crit { color: #FFF2CF; text-shadow: 0 0 16px ${PAL.crit}; }
 .dice-pips { display: flex; gap: .55rem; margin-top: .9rem; }
 .dice-pips i { width: 9px; height: 9px; transform: rotate(45deg); border: 1px solid rgba(217,180,106,.5); transition: background .2s, box-shadow .2s; }
-.dice-pips i.on { background: #7B4FD8; border-color: #B79CFF; box-shadow: 0 0 8px rgba(130,80,230,.8); }
-.dice-pips i.cur { background: #EBDDFF; }
+.dice-pips i.on { background: ${PAL.pipBg}; border-color: ${PAL.pipBd}; box-shadow: 0 0 8px ${PAL.pipSh}; }
+.dice-pips i.cur { background: ${PAL.pipCur}; }
 .dice-quote { position: absolute; left: 0; right: 0; bottom: 9vh; padding: 0 1.5rem; text-align: center; font: italic 1.05rem 'EB Garamond', serif; color: #B9A98A; opacity: 0; transition: opacity 1s; }
 .dice-skip { position: absolute; top: 1rem; right: 1.25rem; font: 600 .62rem Cinzel, serif; letter-spacing: .25em; text-transform: uppercase; color: #6f6450; }
-.dice-flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 46%, rgba(225,205,255,.85), rgba(150,100,240,.28) 40%, transparent 70%); }
-.dice-ring-x { fill: none; stroke: #B79CFF; stroke-width: 1.2; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.dice-flash { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 46%, ${PAL.flash}, transparent 70%); }
+.dice-ring-x { fill: none; stroke: ${PAL.ring}; stroke-width: 1.2; opacity: 0; transform-box: fill-box; transform-origin: center; }
 .dice-shadow, #dice { transform-box: view-box; transform-origin: 200px 200px; }
-#dice { filter: drop-shadow(0 0 12px rgba(125,75,230,.75)); }
+#dice { filter: drop-shadow(0 0 12px ${PAL.dg}); }
 @keyframes dice-in { to { opacity: 1; } }
 @keyframes dice-spin { to { transform: rotate(360deg); } }`;
             document.head.appendChild(st);
@@ -477,7 +518,7 @@
         <div class="dice-stage">
             <div class="dice-glow"></div>
             <svg viewBox="0 0 400 400" aria-hidden="true">
-                <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B1A5C"/><stop offset="1" stop-color="#0A0722"/></linearGradient></defs>
+                <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${PAL.f0}"/><stop offset="1" stop-color="${PAL.f1}"/></linearGradient></defs>
                 <g class="dice-fade">
                     <circle cx="200" cy="200" r="118" fill="none" stroke="#D9B46A" stroke-opacity=".22"/>
                     <circle cx="200" cy="200" r="100" fill="none" stroke="#D9B46A" stroke-opacity=".16"/>
@@ -490,10 +531,10 @@
                 <ellipse class="dice-shadow" id="dice-shadow" cx="200" cy="304" rx="62" ry="9" fill="#000" opacity="0"/>
                 <circle class="dice-ring-x" cx="200" cy="200" r="100"/><circle class="dice-ring-x" cx="200" cy="200" r="100"/>
                 <g id="dice" opacity="0">
-                    <polygon points="${V.map(pt).join(' ')}" fill="url(#dg)" stroke="#8B5CE6" stroke-width="2.2" stroke-linejoin="round"/>
-                    <polygon points="${T.map(pt).join(' ')}" fill="none" stroke="#8B5CE6" stroke-width="1.8" stroke-linejoin="round"/>
-                    <path d="${edges}" stroke="#8B5CE6" stroke-width="1.5" stroke-opacity=".85" fill="none"/>
-                    <g fill="#E6D9FF" font-family="Cinzel, serif" font-weight="700" text-anchor="middle">
+                    <polygon points="${V.map(pt).join(' ')}" fill="url(#dg)" stroke="${PAL.st}" stroke-width="2.2" stroke-linejoin="round"/>
+                    <polygon points="${T.map(pt).join(' ')}" fill="none" stroke="${PAL.st}" stroke-width="1.8" stroke-linejoin="round"/>
+                    <path d="${edges}" stroke="${PAL.st}" stroke-width="1.5" stroke-opacity=".85" fill="none"/>
+                    <g fill="${PAL.num}" font-family="Cinzel, serif" font-weight="700" text-anchor="middle">
                         <text id="dn" x="200" y="${(T[1][1] - 12).toFixed(1)}" font-size="30">7</text>
                         ${small.map((p, i) => '<text class="ds" x="' + p[0].toFixed(1) + '" y="' + (p[1] + 5).toFixed(1) + '" font-size="14" fill-opacity=".8">' + (i + 3) + '</text>').join('')}
                     </g>
@@ -513,7 +554,7 @@
         const burst = (x, y, n, spd, up) => {
             for (let i = 0; i < n; i++) {
                 const c = document.createElementNS(NS, 'circle');
-                c.setAttribute('r', (1 + Math.random() * 1.8).toFixed(1)); c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('fill', '#B79CFF');
+                c.setAttribute('r', (1 + Math.random() * 1.8).toFixed(1)); c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('fill', PAL.spark);
                 sparks.appendChild(c);
                 const a = up ? -Math.PI / 2 + (Math.random() - .5) * 2.4 : Math.random() * 6.283, d = spd * (.45 + Math.random() * .75);
                 const an = c.animate([{ transform: 'translate(0,0)', opacity: 1 }, { transform: 'translate(' + Math.cos(a) * d + 'px,' + Math.sin(a) * d + 'px)', opacity: 0 }],
@@ -624,7 +665,11 @@
     <div id="entry-gate" role="dialog" aria-modal="true" aria-labelledby="gate-title" class="fixed inset-0 z-[100] flex flex-col items-center justify-center text-center px-6 bg-[#05030C]/95 backdrop-blur-md transition-opacity duration-500">
         <img src="fotos/Logo.png" alt="" class="gate-logo w-24 h-24 object-contain mb-8">
         <div id="gate-title" class="font-title-deco text-aetherna-goldLight text-3xl sm:text-5xl tracking-[0.15em] mb-3">AETHERNA V2</div>
-        <p class="font-garamond italic text-aetherna-textSoft mb-10">Códice de Fantasía Oscura</p>
+        <p class="font-garamond italic text-aetherna-textSoft mb-8">Códice de Fantasía Oscura</p>
+        <div class="gate-theme" role="group" aria-label="Estilo de la web"><span>Estilo</span>
+            <button type="button" data-theme-pick="nebulosa" aria-pressed="${getTheme() === 'nebulosa'}">Nebulosa</button>
+            <button type="button" data-theme-pick="grimorio" aria-pressed="${getTheme() === 'grimorio'}">Grimorio</button>
+        </div>
         <button id="gate-enter" type="button" class="btn-normal px-8 py-3 text-sm">Entrar al Códice</button>
         <button id="gate-silent" type="button" class="mt-5 font-cinzel text-[11px] uppercase tracking-[0.25em] text-aetherna-textMuted hover:text-aetherna-goldHover transition-colors">Entrar en silencio</button>
         <p class="mt-10 max-w-xs text-[12px] font-garamond text-aetherna-textMuted">Esta web tiene música ambiental. Podrás pausarla o bajarla cuando quieras desde el reproductor.</p>
@@ -789,7 +834,7 @@
         function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-        const embers = Array.from({ length: 30 }, () => ({
+        const embers = Array.from({ length: 46 }, () => ({
             x: Math.random() * canvas.width, y: Math.random() * canvas.height,
             size: Math.random() * 2 + 1, speedY: Math.random() * 0.4 + 0.2, speedX: (Math.random() - 0.5) * 0.2
         }));
@@ -801,8 +846,9 @@
                 if (e.y < 0) { e.y = canvas.height + 10; e.x = Math.random() * canvas.width; }
                 ctx.beginPath();
                 ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(196,160,255, ${0.6 * Math.sin(e.y * 0.01)})`;
-                ctx.shadowBlur = 8; ctx.shadowColor = '#B48CFF';
+                const warm = document.documentElement.dataset.theme === 'grimorio';
+                ctx.fillStyle = (warm ? 'rgba(255,150,60,' : 'rgba(196,160,255,') + (0.6 * Math.sin(e.y * 0.01)) + ')';
+                ctx.shadowBlur = 8; ctx.shadowColor = warm ? '#E0902F' : '#B48CFF';
                 ctx.fill(); ctx.shadowBlur = 0;
             });
             requestAnimationFrame(animateEmbers);
@@ -957,4 +1003,3 @@
         go(location.href, { push: false });
     });
 })();
-
