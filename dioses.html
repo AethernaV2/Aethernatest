@@ -34,6 +34,7 @@
         :root { --dz-t1: #1B1546; --dz-t2: #0C0926; --dz-line: rgba(217,180,106,.55); --dz-glow: 157,108,240; --dz-d20a: #2B1A5C; --dz-d20b: #0A0722; --dz-stroke: #C4A0FF; --dz-num: #FFF2CF; --dz-frame: rgba(14,11,38,.88); --dz-accent: #C4A0FF; }
         html[data-theme="grimorio"] { --dz-t1: #25160A; --dz-t2: #0E0804; --dz-line: rgba(201,150,70,.6); --dz-glow: 224,144,47; --dz-d20a: #24150A; --dz-d20b: #090503; --dz-stroke: #F0B35A; --dz-num: #FFE9B8; --dz-frame: rgba(18,11,6,.9); --dz-accent: #F0B35A; }
 
+        .dz-layout[hidden] { display: none !important; }
         .dz-layout { display: grid; gap: 2rem; align-items: start; }
         @media (min-width: 1024px) { .dz-layout { grid-template-columns: minmax(0, 700px) minmax(0, 1fr); gap: 2.5rem; } .dz-panel { position: sticky; top: 7.5rem; } }
 
@@ -130,22 +131,40 @@
         .dz-btns .dz-btn { margin-top: 0; }
         .dz-btn.dz-ghost { background: transparent; border-color: var(--dz-line); color: #CDBB98; }
         .dz-btn.dz-ghost:hover:not(:disabled) { color: #FFF2CF; border-color: #E8C77D; }
-        .dz-panel.sealing > *:not(.dz-unseal) { opacity: 0; transition: opacity .35s; }
-        .dz-unseal { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center; pointer-events: none; overflow: hidden; }
-        .dz-unseal .flash { position: absolute; inset: 0; background: radial-gradient(circle, rgba(var(--dz-glow), .75), transparent 62%); opacity: 0; }
-        .dz-unseal svg { position: relative; width: 78%; max-width: 380px; height: auto; opacity: 0; }
-        .dz-unseal svg * { stroke: var(--dz-accent) !important; }
-        .dz-unseal svg path[fill] { fill: var(--dz-accent); }
-        .dz-unseal.in svg { animation: dz-seal-in .7s cubic-bezier(.3,.1,.3,1) forwards; }
-        .dz-unseal.in .flash { animation: dz-flash-in .7s ease-in forwards; }
-        .dz-unseal.out svg { animation: dz-seal-out .7s ease-out forwards; }
-        .dz-unseal.out .flash { animation: dz-flash-out .7s ease-out forwards; }
-        @keyframes dz-seal-in { from { opacity: 0; transform: scale(.35) rotate(-120deg); } to { opacity: 1; transform: scale(1) rotate(60deg); } }
-        @keyframes dz-seal-out { from { opacity: 1; transform: scale(1) rotate(60deg); } to { opacity: 0; transform: scale(2.2) rotate(140deg); } }
-        @keyframes dz-flash-in { from { opacity: 0; } to { opacity: .55; } }
-        @keyframes dz-flash-out { from { opacity: 1; } to { opacity: 0; } }
-        .dz-panel { overflow: hidden; }
-        @media (min-width: 1024px) { .dz-panel { max-height: calc(100vh - 9rem); overflow-y: auto; } }
+        /* animación a pantalla completa de «Ver más» */
+        .dz-cine { position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .dz-cine .bg { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(var(--dz-glow), .38), rgba(5,3,10,.97) 70%); opacity: 0; }
+        .dz-cine .flash { position: absolute; inset: 0; background: radial-gradient(circle, rgba(var(--dz-glow), .9), transparent 60%); opacity: 0; }
+        .dz-cine svg { position: absolute; width: min(135vmin, 1200px); height: auto; opacity: 0; }
+        .dz-cine svg * { stroke: var(--dz-accent) !important; }
+        .dz-cine svg path[fill] { fill: var(--dz-accent); }
+        .dz-cine .nm { position: relative; font: 900 clamp(34px, 8vw, 112px)/1 'Cinzel Decorative', serif; text-transform: uppercase; text-align: center; padding: 0 1rem; opacity: 0;
+            background: linear-gradient(180deg, #FFF2CF, var(--dz-accent)); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 24px rgba(var(--dz-glow), .8)); }
+        .dz-cine.in .bg { animation: dz-c-bg .55s ease-out forwards; }
+        .dz-cine.in svg { animation: dz-c-sig 1s cubic-bezier(.25,.1,.3,1) forwards; }
+        .dz-cine.in .flash { animation: dz-c-flash 1s ease-in forwards; }
+        .dz-cine.in .nm { animation: dz-c-nm .8s cubic-bezier(.2,.8,.2,1) .35s forwards; }
+        .dz-cine.out .bg { opacity: 1; animation: dz-c-bgout .8s ease-in forwards; }
+        .dz-cine.out svg { opacity: .9; animation: dz-c-sigout .8s ease-in forwards; }
+        .dz-cine.out .nm { opacity: 1; animation: dz-c-nmout .6s ease-in forwards; }
+        .dz-cine.out .flash { opacity: .9; animation: dz-c-bgout .7s ease-out forwards; }
+        @keyframes dz-c-bg { to { opacity: 1; } }
+        @keyframes dz-c-sig { from { opacity: 0; transform: scale(.2) rotate(-150deg); } to { opacity: .9; transform: scale(1) rotate(40deg); } }
+        @keyframes dz-c-flash { 0% { opacity: 0; } 70% { opacity: .5; } 100% { opacity: .9; } }
+        @keyframes dz-c-nm { from { opacity: 0; letter-spacing: .6em; transform: scale(.9); } to { opacity: 1; letter-spacing: .1em; transform: scale(1); } }
+        @keyframes dz-c-bgout { to { opacity: 0; } }
+        @keyframes dz-c-sigout { to { opacity: 0; transform: scale(2.8) rotate(120deg); } }
+        @keyframes dz-c-nmout { to { opacity: 0; transform: scale(1.12); } }
+
+        /* ficha a página completa (como Razas y Clases) */
+        .dz-detail[hidden] { display: none; }
+        .dz-detail.show { animation: dz-in .7s cubic-bezier(.16,1,.3,1) both; }
+        .dz-reading .dz-sub { display: none; }
+        .dz-back { display: inline-block; margin-bottom: 1.4rem; cursor: pointer; }
+        .dz-detail .dz-title { font-size: 1.15rem; margin-top: .25rem; }
+        .dz-detail .dz-kv { margin-top: 1.2rem; }
+        html:not([data-theme="grimorio"]) #page-root .dz-detail .lore-hover::after { display: none; }
+        @media (prefers-reduced-motion: reduce) { .dz-detail.show { animation: none; } }
         .dz-btn { align-self: flex-start; margin-top: .4rem; padding: .7rem 1.4rem; font: 700 11px 'Cinzel', serif; letter-spacing: .22em; text-transform: uppercase; color: #FFF2CF; cursor: pointer;
             background: linear-gradient(135deg, rgba(165,49,27,.75), rgba(90,24,12,.6)); border: 1px solid #E8C77D; transition: box-shadow .2s, transform .2s; }
         .dz-btn:hover:not(:disabled) { box-shadow: 0 0 18px rgba(var(--dz-glow), .55); transform: translateY(-1px); }
@@ -171,7 +190,7 @@
             <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">PANTEÓN DE AETHERNA</span>
             <h1 class="font-title-deco text-4xl sm:text-6xl text-aetherna-goldLight tracking-wider mb-4">LOS DIOSES</h1>
             <div class="w-24 h-[1px] bg-aetherna-goldMain mx-auto mb-6"></div>
-            <p class="font-garamond italic text-aetherna-parchment text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+            <p class="dz-sub font-garamond italic text-aetherna-parchment text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
                 Elige una casilla y deja que los dados te lleven hasta el dios que quieres conocer.
             </p>
         </div>
@@ -204,6 +223,8 @@
 
             <aside class="dz-panel" id="dz-panel" aria-live="polite"></aside>
         </div>
+
+        <section class="dz-detail" id="dz-detail" hidden></section>
     </main>
 
     <footer class="py-8 px-4 border-t border-aetherna-goldMain/15 text-center text-xs text-aetherna-textMuted relative z-10">
@@ -420,40 +441,54 @@
                     '<div class="dz-btns"><button type="button" class="dz-btn" id="dz-more" data-k="' + k + '">Ver más</button>' + again('Tirar iniciativa otra vez', 'dz-ghost') + '</div>');
                 scrollToPanel();
             };
-            const longHtml = k => {
-                const g = GODS[k - 1];
-                const paras = g.d ? String(g.d).split(/\n\s*\n/).map(p => '<p class="dz-desc">' + esc(p.trim()) + '</p>').join('') : '<p class="dz-desc empty">El Códice aún guarda silencio sobre este dios.</p>';
-                return '<div class="dz-mono">' + sigil() + '<span>' + esc(g.n.charAt(0).toUpperCase()) + '</span></div>' +
-                    '<div class="dz-name">' + esc(g.n) + '</div>' +
-                    (g.t ? '<div class="dz-title">' + esc(g.t) + '</div>' : '') +
-                    '<div class="dz-rule"></div>' +
-                    (g.a ? '<div class="dz-kv"><b>Alineamiento</b>' + esc(g.a) + '</div>' : '') +
-                    (g.s ? '<div class="dz-kv"><b>Símbolo</b>' + esc(g.s) + '</div>' : '') +
-                    ((g.a || g.s) ? '<div class="dz-rule"></div>' : '') + paras +
-                    '<div class="dz-count">Dios ' + k + ' de ' + GODS.length + '</div>' +
-                    '<div class="dz-btns"><button type="button" class="dz-btn dz-ghost" id="dz-less" data-k="' + k + '">Ver menos</button>' + again('Tirar iniciativa otra vez', 'dz-ghost') + '</div>';
-            };
-            // «Ver más»: el sello rúnico se activa, gira y se abre; después aparece la historia completa
-            let anim = false;
+            // «Ver más»: animación a pantalla completa y después la ficha del dios en página completa
+            let anim = false, savedY = 0;
             const sndUnseal = () => {
                 if (!sndOn) return; const B = getBus(); if (!B) return; const t = B.ctx.currentTime + .02;
-                whoosh(t, .62);
-                [660, 990, 1320].forEach((f, i) => toneB(B, 'sine', f, f, t + .56 + i * .07, .1 / (i + 1), 1.3));
+                whoosh(t, .95);
+                toneB(B, 'sine', 90, 55, t + .72, .16, .9);
+                [660, 990, 1320, 1980].forEach((f, i) => toneB(B, 'sine', f, f, t + .8 + i * .07, .11 / (i + 1), 1.8));
             };
-            async function expandGod(k) {
-                if (busy || anim) return; anim = true;
+            const detailHtml = k => {
+                const g = GODS[k - 1];
+                const paras = g.d ? String(g.d).split(/\n\s*\n/).map(p => '<p>' + esc(p.trim()) + '</p>').join('') : '<p class="italic opacity-75">El Códice aún guarda silencio sobre este dios.</p>';
+                return '<a href="#" class="dz-back font-cinzel text-xs tracking-[0.14em] uppercase text-aetherna-goldMain hover:text-aetherna-goldHover">&larr; Todos los dioses</a>' +
+                    '<article class="lore-hover frame-panel p-6 sm:p-10">' +
+                    '<div class="rv flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">' +
+                    '<span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">Dios ' + k + ' de ' + GODS.length + '</span>' +
+                    '<div style="text-align:right"><h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-aetherna-goldLight">' + esc(g.n.toUpperCase()) + '</h2>' + (g.t ? '<div class="dz-title">' + esc(g.t) + '</div>' : '') + '</div></div>' +
+                    '<div class="rv font-garamond text-aetherna-textNormal text-base sm:text-lg space-y-4 leading-relaxed">' + paras +
+                    (g.a ? '<div class="dz-kv"><b>Alineamiento</b>' + esc(g.a) + '</div>' : '') +
+                    (g.s ? '<div class="dz-kv"><b>Símbolo</b>' + esc(g.s) + '</div>' : '') + '</div></article>' +
+                    '<a href="#" class="dz-back font-cinzel text-xs tracking-[0.14em] uppercase text-aetherna-goldMain hover:text-aetherna-goldHover" style="margin:1.6rem 0 0">&larr; Todos los dioses</a>';
+            };
+            const detail = $('dz-detail'), layout = document.querySelector('.dz-layout');
+            const showDetail = k => {
+                savedY = window.scrollY;
+                detail.innerHTML = detailHtml(k); detail.hidden = false; layout.hidden = true; document.querySelector('main').classList.add('dz-reading');
+                detail.classList.remove('show'); void detail.offsetWidth; detail.classList.add('show');
+                window.scrollTo(0, 0);
+            };
+            const closeDetail = () => {
+                if (detail.hidden || anim) return;
+                detail.hidden = true; layout.hidden = false; layout.style.display = ''; document.querySelector('main').classList.remove('dz-reading');
+                setToken(cur); window.scrollTo(0, savedY);
+            };
+            async function openDetail(k) {
+                if (busy || anim) return; anim = true; ac();
                 sndUnseal();
-                if (reduce) { swapIn(longHtml(k)); anim = false; return; }
-                const ov = document.createElement('div'); ov.className = 'dz-unseal in';
-                ov.innerHTML = '<div class="flash"></div>' + (window.__aethernaSigil ? window.__aethernaSigil('us') : '');
-                panel.classList.add('sealing'); panel.appendChild(ov);
-                await wait(700); if (!alive()) return;
-                panel.classList.remove('sealing');
-                swapIn(longHtml(k));
-                ov.className = 'dz-unseal out'; panel.appendChild(ov);
-                setTimeout(() => ov.remove(), 700);
-                panel.scrollTop = 0; scrollToPanel(); anim = false;
+                if (reduce) { showDetail(k); anim = false; return; }
+                const ov = document.createElement('div'); ov.className = 'dz-cine in'; ov.setAttribute('aria-hidden', 'true');
+                ov.innerHTML = '<div class="bg"></div><div class="flash"></div>' + (window.__aethernaSigil ? window.__aethernaSigil('cn') : '') + '<div class="nm">' + esc(GODS[k - 1].n) + '</div>';
+                const root = $('page-root') || document.body; root.appendChild(ov);
+                await wait(1250); if (!alive()) { ov.remove(); return; }
+                showDetail(k);                      // la ficha se monta debajo mientras la pantalla sigue cubierta
+                await wait(120);
+                ov.className = 'dz-cine out';
+                await wait(850); ov.remove(); anim = false;
             }
+            detail.addEventListener('click', e => { if (e.target.closest('.dz-back')) { e.preventDefault(); closeDetail(); } });
+            document.addEventListener('keydown', e => { if (e.key === 'Escape' && alive()) closeDetail(); });
             const showSpecial = (pos, note) => {
                 const sp = spAt[pos];
                 swapIn('<div class="dz-mono">' + sigil() + '<span>&#10022;</span></div>' +
@@ -605,9 +640,8 @@
 
             board.addEventListener('click', e => { const t = e.target.closest('button.dz-tile'); if (t && t.dataset.pos) goTo(+t.dataset.pos); });
             panel.addEventListener('click', e => {
-                const mo = e.target.closest('#dz-more'), le = e.target.closest('#dz-less');
-                if (mo) { expandGod(+mo.dataset.k); return; }
-                if (le && !busy && !anim) { showGod(+le.dataset.k); return; }
+                const mo = e.target.closest('#dz-more');
+                if (mo) { openDetail(+mo.dataset.k); return; }
                 if (!e.target.closest('#dz-rand') || busy) return;
                 let p; do { p = 1 + ((Math.random() * (L - 1)) | 0); } while (p === cur);
                 goTo(p);
@@ -623,4 +657,3 @@
     </script>
 </body>
 </html>
-
