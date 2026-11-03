@@ -307,6 +307,8 @@
         .bk-arrow { width: 40px; height: 40px; font: 400 26px/1 'Cinzel', serif; color: rgb(var(--bk-a)); background: rgba(14,9,26,.75); border: 1px solid rgba(var(--bk-a), .5); cursor: pointer; transition: box-shadow .2s, color .2s, opacity .2s; }
         .bk-arrow:hover:not(:disabled) { color: #FFF2CF; box-shadow: 0 0 14px rgba(var(--bk-a), .45); }
         .bk-arrow:disabled { opacity: .3; cursor: default; }
+        .bk-snd { width: 40px; height: 40px; margin-left: .4rem; display: grid; place-items: center; color: rgb(var(--bk-a)); background: rgba(14,9,26,.75); border: 1px solid rgba(var(--bk-a), .5); cursor: pointer; transition: box-shadow .2s, color .2s, opacity .2s; }
+        .bk-snd:hover { color: #FFF2CF; box-shadow: 0 0 14px rgba(var(--bk-a), .45); } .bk-snd[aria-pressed="false"] { opacity: .55; }
         .bk-dots { display: flex; gap: .45rem; }
         .bk-dot { min-width: 34px; height: 34px; padding: 0 .5rem; font: 600 11px 'Cinzel', serif; letter-spacing: .08em; color: #CDBB98; background: transparent; border: 1px solid rgba(var(--bk-a), .28); cursor: pointer; transition: all .25s; }
         .bk-dot:hover { color: #FFF2CF; border-color: rgba(var(--bk-a), .8); }
@@ -532,6 +534,66 @@
             const KEY = 'aetherna_lore_cap';
             const rd = () => { try { return +localStorage.getItem(KEY) || 0; } catch (e) { return 0; } };
             const wr = c => { try { localStorage.setItem(KEY, String(c)); } catch (e) {} };
+
+            /* ---------- Sonido del libro (sintetizado, sin archivos) ---------- */
+            let actx = null, bus = null;
+            const readSnd = () => { try { const v = localStorage.getItem('aetherna_book_sound'); if (v !== null) return v === '1'; return sessionStorage.getItem('aetherna_sound') !== '0'; } catch (e) { return true; } };
+            let sndOn = readSnd();
+            const AC = () => {
+                if (!actx) {
+                    try {
+                        actx = new (window.AudioContext || window.webkitAudioContext)();
+                        const comp = actx.createDynamicsCompressor(), master = actx.createGain(); master.gain.value = .85;
+                        comp.connect(master); master.connect(actx.destination); bus = comp;
+                    } catch (e) { actx = null; }
+                }
+                if (actx && actx.state === 'suspended') actx.resume().catch(() => {});
+                return actx;
+            };
+            let nbuf = null;
+            const noiseB = a => { if (!nbuf) { nbuf = a.createBuffer(1, a.sampleRate * 2, a.sampleRate); const d = nbuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; } return nbuf; };
+            // soplido de papel: ruido filtrado con barrido de frecuencia
+            const swish = (a, t, dur, f0, f1, g, q) => {
+                const s = a.createBufferSource(); s.buffer = noiseB(a); s.loop = true;
+                const f = a.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = q || .9; f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+                const e = a.createGain(); e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + dur * .35); e.gain.exponentialRampToValueAtTime(.0001, t + dur);
+                s.connect(f); f.connect(e); e.connect(bus); s.start(t, Math.random()); s.stop(t + dur + .05);
+            };
+            // golpe sordo (tapa o hoja al caer)
+            const thud = (a, t, f, g, dur) => {
+                dur = dur || .35;
+                const o = a.createOscillator(), e = a.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(f * 1.8, t); o.frequency.exponentialRampToValueAtTime(f * .55, t + dur);
+                e.gain.setValueAtTime(g, t); e.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(e); e.connect(bus); o.start(t); o.stop(t + dur + .05);
+                const s = a.createBufferSource(); s.buffer = noiseB(a); const lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = f * 6;
+                const n = a.createGain(); n.gain.setValueAtTime(g * .7, t); n.gain.exponentialRampToValueAtTime(.0001, t + dur * .5); s.connect(lp); lp.connect(n); n.connect(bus); s.start(t, Math.random()); s.stop(t + dur);
+            };
+            // crujido del cuero de la tapa
+            const creak = (a, t, dur, g) => {
+                const o = a.createOscillator(), f = a.createBiquadFilter(), e = a.createGain(), lfo = a.createOscillator(), lg = a.createGain();
+                o.type = 'sawtooth'; o.frequency.setValueAtTime(70, t); o.frequency.linearRampToValueAtTime(115, t + dur);
+                f.type = 'bandpass'; f.Q.value = 7; f.frequency.setValueAtTime(260, t); f.frequency.linearRampToValueAtTime(520, t + dur);
+                lfo.frequency.value = 17; lg.gain.value = g * .5; lfo.connect(lg); lg.connect(e.gain);
+                e.gain.setValueAtTime(.0001, t); e.gain.linearRampToValueAtTime(g, t + dur * .25); e.gain.linearRampToValueAtTime(.0001, t + dur);
+                o.connect(f); f.connect(e); e.connect(bus); o.start(t); lfo.start(t); o.stop(t + dur + .05); lfo.stop(t + dur + .05);
+            };
+            const chime = (a, t, fr, g, dur) => { const o = a.createOscillator(), e = a.createGain(); o.type = 'sine'; o.frequency.value = fr; e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + .03); e.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(e); e.connect(bus); o.start(t); o.stop(t + dur + .05); };
+            const sound = (kind, delay) => {
+                if (!sndOn || reduce) return; const a = AC(); if (!a) return; const t = a.currentTime + .02 + (delay || 0);
+                if (kind === 'page') {            // hoja: soplido de papel y roce suave al posarse
+                    swish(a, t, .62, 1300, 4300, .26); swish(a, t + .1, .5, 2400, 6000, .1, 1.4); thud(a, t + .98, 130, .1, .22); swish(a, t + .96, .3, 3000, 900, .07);
+                } else if (kind === 'open') {     // abrir: cuero que cruje, golpe sordo y la hoja de guarda cayendo
+                    creak(a, t, .95, .05); thud(a, t + .35, 62, .42, .55); swish(a, t + .7, .95, 700, 3800, .3, .8);
+                    chime(a, t + .95, 988, .035, 1.6); chime(a, t + 1.02, 1480, .025, 1.8); thud(a, t + 1.7, 95, .2, .3); swish(a, t + 1.65, .45, 2600, 900, .09);
+                } else {                          // cerrar: aire de las páginas y portazo grave
+                    swish(a, t, .75, 4200, 1000, .28, .8); thud(a, t + .95, 52, .55, .7); swish(a, t + .93, .4, 1800, 400, .2, .7); creak(a, t + 1.0, .55, .035);
+                }
+            };
+            // botón de sonido junto a las flechas
+            const bar = document.getElementById('bk-bar');
+            const sbtn = mk('bk-snd', '', 'button'); sbtn.type = 'button';
+            const paintSnd = () => { sbtn.setAttribute('aria-pressed', sndOn ? 'true' : 'false'); sbtn.title = sndOn ? 'Sonido del libro: activado' : 'Sonido del libro: desactivado'; sbtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/>' + (sndOn ? '<path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>' : '<path d="M17 9l5 6M22 9l-5 6"/>') + '</svg>'; };
+            paintSnd(); bar.appendChild(sbtn);
+            sbtn.addEventListener('click', () => { sndOn = !sndOn; try { localStorage.setItem('aetherna_book_sound', sndOn ? '1' : '0'); } catch (e) {} paintSnd(); if (sndOn) { AC(); sound('page'); } });
             let saved = rd();
             arts.forEach(p => p.querySelectorAll('.reveal, .rv').forEach(e => e.classList.add('active')));
 
@@ -637,6 +699,7 @@
                         p.setAttribute('aria-hidden', k === i ? 'false' : 'true');
                     });
                     if (dir) {
+                        sound(opening || (dir < 0 && old === N - 1) ? 'open' : closing || (dir > 0 && i === N - 1) ? 'close' : 'page');
                         const leaving = dir > 0 ? pages[old] : null, arriving = dir < 0 ? pages[i] : null;
                         const ms = opening ? 1950 : closing ? 1550 : 1100;
                         if (leaving) { pulse(leaving, opening ? 't-open' : 't-out', ms); pulse(leaving, 'flip', ms); }
@@ -712,6 +775,7 @@
                 const BW = [{ transform: 'rotateY(-180deg) skewY(0deg)' }, { transform: 'rotateY(-130deg) skewY(1.3deg)', offset: .28 }, { transform: 'rotateY(-52deg) skewY(-1.7deg)', offset: .68 }, { transform: 'rotateY(0deg) skewY(0deg)' }];
                 function flip(k, dir, delay, dur) {
                     const l = leaves[k], d = reduce ? 1 : dur, dl = reduce ? 0 : delay;
+                    sound(k === 0 ? (dir > 0 ? 'open' : 'close') : k === NL - 1 ? (dir > 0 ? 'close' : 'open') : 'page', dl / 1000);
                     l.el.style.zIndex = dir > 0 ? 100 - k : 100 + k;
                     setTimeout(() => { l.el.style.zIndex = dir > 0 ? 100 + k : 100 - k; }, dl + d * .5);
                     const opt = { duration: d, delay: dl, easing: 'cubic-bezier(.42, .03, .3, 1)', fill: 'both' };
