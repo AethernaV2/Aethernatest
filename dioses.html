@@ -463,7 +463,7 @@
             const shortOf = g => g.r || (g.d ? g.d.split(/\n\n/)[0].slice(0, 190) + (g.d.length > 190 ? '…' : '') : '');
             const showGod = k => {
                 const g = GODS[k - 1], sh = shortOf(g);
-                swapIn('<div class="dz-pic"><img src="' + pic(g) + '" alt="' + esc(g.n) + '" onerror="this.parentNode.remove()"></div>' +
+                swapIn('<div class="dz-mono">' + sigil() + '<span>' + esc(g.n.charAt(0).toUpperCase()) + '</span></div>' +
                     '<div class="dz-name">' + esc(g.n) + '</div>' +
                     (g.t ? '<div class="dz-title">' + esc(g.t) + '</div>' : '') +
                     '<div class="dz-rule"></div>' +
