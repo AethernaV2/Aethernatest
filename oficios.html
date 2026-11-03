@@ -443,6 +443,93 @@
                         c.restore();
                     } };
 
+                /* ===== sonido de cada escena (sintetizado, sincronizado con la imagen) ===== */
+                const SND = {};
+                const nbuf = a => a._nb || (a._nb = (() => { const b = a.createBuffer(1, a.sampleRate * 2, a.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return b; })());
+                // ruido filtrado con barrido de frecuencia y envolvente
+                function nz(A, t, dur, type, f0, f1, g, att, q) { const a = A.a, s = a.createBufferSource(); s.buffer = nbuf(a); s.loop = true; const f = a.createBiquadFilter(); f.type = type; f.Q.value = q || .9; f.frequency.setValueAtTime(f0, t); if (f1 && f1 !== f0) f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+                    const e = a.createGain(); att = att === undefined ? .02 : att; e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + Math.min(att, dur * .8)); e.gain.exponentialRampToValueAtTime(.0001, t + dur); s.connect(f); f.connect(e); e.connect(A.bus); s.start(t, Math.random()); s.stop(t + dur + .05); }
+                function tn(A, t, type, f0, f1, dur, g, att) { const a = A.a, o = a.createOscillator(), e = a.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur); att = att === undefined ? .008 : att;
+                    e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + att); e.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(e); e.connect(A.bus); o.start(t); o.stop(t + dur + .05); }
+                const bell = (A, t, f, g, dur) => [[1, 1], [2.76, .35], [5.4, .15]].forEach(p => tn(A, t, 'sine', f * p[0], 0, dur / p[0] ** .3, g * p[1], .004));
+                const metal = (A, t, f, g, dur) => [[1, 1], [2.32, .7], [4.25, .5], [6.63, .35], [9.38, .22]].forEach((p, i) => tn(A, t, 'sine', f * p[0], 0, dur * (1 - i * .13), g * p[1], .002));
+                const thud = (A, t, f, g, dur) => tn(A, t, 'sine', f * 1.9, f * .5, dur || .3, g, .003);
+                const blip = (A, t, f, g) => tn(A, t, 'sine', f, f * 1.9, .07, g, .004);
+                const tick = (A, t, g) => nz(A, t, .03, 'highpass', 3500, 0, g, .001, .7);
+                const swish = (A, t, dur, f0, f1, g) => nz(A, t, dur, 'bandpass', f0, f1, g, dur * .45, 1);
+                function crackle(A, t, dur, n, g, f) { const r = R(Math.floor(t * 1000) + n); for (let i = 0; i < n; i++) nz(A, t + r() * dur, .02 + r() * .03, 'bandpass', (f || 2500) * (.6 + r() * 1.4), 0, g * (.4 + r() * .6), .001, 1.2); }
+                const shim = (A, t, n, g, f0, span) => { const r = R(Math.floor(t * 777) + n); for (let i = 0; i < n; i++) bell(A, t + i * .07 + r() * .04, f0 * (1 + r() * span), g * (.5 + r() * .5), 1.1); };
+                // ruido continuo con modulación de volumen (fuego, agua, viento)
+                function bed(A, t, dur, type, f, g, lfoHz, lfoDepth) { const a = A.a, s = a.createBufferSource(); s.buffer = nbuf(a); s.loop = true; const fl = a.createBiquadFilter(); fl.type = type; fl.frequency.value = f; const e = a.createGain(); e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + Math.min(.35, dur / 3)); e.gain.setValueAtTime(g, t + dur - .4); e.gain.exponentialRampToValueAtTime(.0001, t + dur);
+                    if (lfoHz) { const l = a.createOscillator(), lg = a.createGain(); l.frequency.value = lfoHz; lg.gain.value = g * lfoDepth; l.connect(lg); lg.connect(e.gain); l.start(t); l.stop(t + dur + .05); } s.connect(fl); fl.connect(e); e.connect(A.bus); s.start(t, Math.random()); s.stop(t + dur + .05); }
+                const magic = (A, t, g) => { [1046.5, 1318.5, 1568, 2093, 2637, 3136].forEach((f, k) => tn(A, t + k * .07, 'sine', f, 0, 1.6, g / (1 + k * .25), .006)); };
+
+                SND.alquimista = (A, t0) => {
+                    tn(A, t0, 'triangle', 90, 330, 1.7, .07, 1); tn(A, t0 + .2, 'sine', 330, 1320, 1.6, .03, 1.2); swish(A, t0, 1.6, 300, 2400, .06);
+                    for (let i = 0; i < 12; i++) tn(A, t0 + .1 + i * .095, 'sine', 700 + i * 90, 0, .08, .025, .004);   // trazos del círculo
+                    const r = R(5); for (let i = 0; i < 20; i++) blip(A, t0 + .5 + r() * 1.4, 260 + r() * 520, .05);       // burbujas
+                    tn(A, t0 + 1.72, 'sine', 140, 55, .6, .16, .01); swish(A, t0 + 1.7, .9, 500, 5200, .1); magic(A, t0 + 1.8, .09); shim(A, t0 + 1.95, 6, .04, 2500, .7);
+                };
+                SND.cocinero = (A, t0) => {
+                    bed(A, t0, 2.45, 'lowpass', 420, .06, 7, .5); bed(A, t0, 2.4, 'highpass', 3800, .018, 11, .6); crackle(A, t0 + .1, 2.2, 38, .06, 2600);   // fuego
+                    const r = R(11); for (let i = 0; i < 14; i++) blip(A, t0 + .45 + r() * 1.5, 160 + r() * 200, .05);                                      // hervor
+                    for (let i = 0; i < 7; i++) { swish(A, t0 + .9 + i * .1, .22, 500, 1600, .05); thud(A, t0 + 1.5 + i * .05, 220, .03, .08); }
+                    nz(A, t0 + 1.2, .8, 'highpass', 5200, 0, .05, .1, .8);
+                    bell(A, t0 + 1.85, 1568, .06, 1.2); bell(A, t0 + 1.95, 2093, .05, 1.2); shim(A, t0 + 2.0, 4, .03, 2800, .5);
+                };
+                SND.herrero = (A, t0) => {
+                    bed(A, t0, 2.5, 'lowpass', 260, .05, 5, .5); crackle(A, t0, 2.3, 22, .04, 2200);
+                    [.55, 1.15, 1.7].forEach((k, i) => { const f = 520 + i * 90; swish(A, t0 + k - .3, .28, 400, 2000, .08);
+                        metal(A, t0 + k, f, .11, 1.3); thud(A, t0 + k, 110, .22, .35); nz(A, t0 + k, .09, 'highpass', 3000, 0, .16, .001, .8); crackle(A, t0 + k, .6, 16 + i * 6, .09, 3800); });
+                    metal(A, t0 + 1.75, 1250, .06, 1.6); swish(A, t0 + 1.72, 1, 800, 6000, .06);
+                };
+                SND.joyero = (A, t0) => {
+                    for (let i = 0; i < 11; i++) tn(A, t0 + .05 + i * .1, 'sine', 1200 + i * 130, 0, .14, .07, .002);
+                    [[523.3, 0], [659.3, .08], [784, .16], [1046.5, .24]].forEach(n => tn(A, t0 + .95 + n[1], 'sine', n[0], 0, 1.4, .045, .5));
+                    swish(A, t0 + 1.5, .7, 2500, 8000, .05);
+                    const r = R(21); [1.55, 1.7, 1.85, 1.98, 2.1, 2.2, 2.3].forEach((k, i) => bell(A, t0 + k, 2200 + r() * 1900, .05, 1.2));
+                    bell(A, t0 + 1.65, 1568, .05, 1.6);
+                };
+                SND.herborista = (A, t0) => {
+                    bed(A, t0, 2.6, 'bandpass', 2800, .035, 3, .6); bed(A, t0, 2.6, 'lowpass', 380, .03, .6, .6);
+                    const r = R(31); for (let i = 0; i < 14; i++) { tn(A, t0 + .15 + i * .11 + r() * .04, 'sine', 500 + r() * 400, 0, .12, .018, .01); nz(A, t0 + .15 + i * .11, .1, 'bandpass', 2200 + r() * 1500, 0, .03, .01, 1); }
+                    [[523.3, 1.35], [659.3, 1.5], [784, 1.65], [1046.5, 1.85]].forEach(n => bell(A, t0 + n[1], n[0], .05, 1.8));
+                    shim(A, t0 + 2.0, 5, .025, 2600, .5);
+                };
+                SND.cazador = (A, t0) => {
+                    bed(A, t0, 2.4, 'lowpass', 300, .025, .5, .5);
+                    for (let i = 0; i < 8; i++) { const t = t0 + i * .09; thud(A, t, 90, .08, .12); nz(A, t, .09, 'bandpass', 1800, 0, .05, .004, .8); }
+                    tn(A, t0 + .5, 'sine', 80, 190, .5, .05, .3);                                                    // tensión
+                    tn(A, t0 + .75, 'sawtooth', 70, 150, .3, .03, .1);                                               // arco que se tensa
+                    tn(A, t0 + 1.0, 'triangle', 330, 150, .35, .1, .002); nz(A, t0 + 1.0, .1, 'highpass', 2500, 0, .06, .002, .8); // cuerda
+                    swish(A, t0 + 1.0, .42, 3500, 900, .08);                                                         // la flecha vuela
+                    thud(A, t0 + 1.4, 140, .25, .3); nz(A, t0 + 1.4, .06, 'bandpass', 1400, 0, .18, .001, .9); tn(A, t0 + 1.41, 'sine', 420, 400, .5, .05, .002);
+                    tn(A, t0 + 1.45, 'sine', 900, 0, 1.2, .025, .01);
+                };
+                SND.minero = (A, t0) => {
+                    bed(A, t0, 2.7, 'lowpass', 200, .035, .4, .5);
+                    [.55, 1.15, 1.7].forEach((k, i) => { swish(A, t0 + k - .28, .25, 300, 1500, .05); nz(A, t0 + k, .06, 'bandpass', 3200, 0, .2, .001, 1.4); thud(A, t0 + k, 85, .22, .3); tn(A, t0 + k, 'sine', 1800 + i * 150, 0, .35, .035, .001);
+                        crackle(A, t0 + k + .05, .35, 7, .1, 1800); for (let j = 0; j < 6; j++) tick(A, t0 + k + .25 + j * .06 + (j % 3) * .02, .06); });
+                    nz(A, t0 + 1.74, .7, 'lowpass', 900, 150, .22, .02, .8); thud(A, t0 + 1.76, 60, .3, .6); crackle(A, t0 + 1.75, .5, 20, .1, 1500);   // la roca se parte
+                    bell(A, t0 + 1.95, 1760, .07, 2); bell(A, t0 + 2.0, 2349, .06, 2); shim(A, t0 + 2.05, 6, .04, 2600, .8);
+                };
+                SND.pescador = (A, t0) => {
+                    bed(A, t0, 2.8, 'lowpass', 520, .06, .8, .6); bed(A, t0, 2.8, 'bandpass', 1800, .02, 1.3, .6);
+                    nz(A, t0 + .78, .25, 'bandpass', 1400, 500, .1, .01, .8); blip(A, t0 + .8, 300, .1);                      // la boya se hunde
+                    for (let i = 0; i < 5; i++) tick(A, t0 + .82 + i * .045, .04);                                          // carrete
+                    nz(A, t0 + 1.0, .5, 'bandpass', 2600, 700, .16, .03, .8); swish(A, t0 + 1.02, .7, 700, 2200, .06);       // el pez sale
+                    const r = R(41); for (let i = 0; i < 9; i++) blip(A, t0 + 1.05 + r() * .5, 900 + r() * 900, .04);
+                    nz(A, t0 + 2.0, .6, 'bandpass', 2200, 500, .24, .008, .7); thud(A, t0 + 2.0, 100, .14, .3);              // cae al agua
+                    for (let i = 0; i < 10; i++) blip(A, t0 + 2.05 + r() * .55, 800 + r() * 1100, .045);
+                };
+                SND.lenador = (A, t0) => {
+                    bed(A, t0, 2.6, 'bandpass', 2600, .02, 2.5, .6); bed(A, t0, 2.6, 'lowpass', 300, .03, .5, .5);
+                    [.55, 1.15, 1.7].forEach((k, i) => { swish(A, t0 + k - .3, .3, 350, 1700, .07); tn(A, t0 + k, 'sine', 210 - i * 15, 85, .22, .2, .002); nz(A, t0 + k, .07, 'bandpass', 900, 0, .2, .001, 1); thud(A, t0 + k, 75, .14, .25);
+                        for (let j = 0; j < 5; j++) tick(A, t0 + k + .15 + j * .07, .05); });
+                    nz(A, t0 + 1.74, .22, 'bandpass', 1500, 300, .3, .004, .8); tn(A, t0 + 1.74, 'sawtooth', 300, 70, .25, .06, .003); crackle(A, t0 + 1.74, .3, 12, .12, 1600);   // el tronco cruje y se abre
+                    thud(A, t0 + 2.0, 90, .2, .3); thud(A, t0 + 2.1, 110, .16, .25);
+                };
+
                 /* ===== motor: lienzo a pantalla completa, fundido, nombre y entrega ===== */
                 let cv, ctx, raf = 0, running = false;
                 function title(c, txt, W, H, u, a, color) {
@@ -458,18 +545,24 @@
                     sc.draw(c, t, state, W, H, u); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
                     title(c, sc.title, W, H, u, ss(sc.D * .55, sc.D * .78, t), gr ? 'rgb(224,170,90)' : 'rgb(157,108,240)');
                 }
+                const SND_G = { alquimista: 1.9, cocinero: 2.6, herrero: .8, joyero: 2.2, herborista: 2.8, cazador: 1.4, minero: .85, pescador: 1.5, lenador: .55 };   // iguala el volumen entre escenas
+                function audioOn(key) {
+                    try { if (sessionStorage.getItem('aetherna_sound') === '0') return null; const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+                        const a = new AC(); if (a.state === 'suspended') a.resume(); const cp = a.createDynamicsCompressor(), bus = a.createGain(); bus.gain.value = .95 * (SND_G[key] || 1); bus.connect(cp); cp.connect(a.destination); return { a, bus }; } catch (e) { return null; }
+                }
                 function play(key, done) {
                     if (running || !S[key]) { done(); return; } running = true;
                     if (!cv) { cv = document.createElement('canvas'); cv.id = 'of-fx'; cv.setAttribute('aria-hidden', 'true'); cv.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:90;opacity:0;transition:opacity .28s;cursor:pointer;touch-action:manipulation'; document.body.appendChild(cv); ctx = cv.getContext('2d'); }
                     const dpr = Math.min(2, devicePixelRatio || 1), W = innerWidth, H = innerHeight, u = Math.min(W, H) / 100 * (W > 900 ? 1.15 : 1);
                     cv.width = W * dpr; cv.height = H * dpr; cv.style.display = 'block'; void cv.offsetWidth; cv.style.opacity = '1';
-                    const sc = S[key], st = sc.init(u), t0 = performance.now(); let fin = false;
-                    const end = () => { if (fin) return; fin = true; cancelAnimationFrame(raf); done(); cv.style.opacity = '0'; setTimeout(() => { cv.style.display = 'none'; running = false; }, 330); };
+                    const sc = S[key], st = sc.init(u), t0 = performance.now(); let fin = false, A = audioOn(key);
+                    if (A) { try { SND[key](A, A.a.currentTime + .05); } catch (e) { A = null; } }
+                    const end = () => { if (fin) return; fin = true; cancelAnimationFrame(raf); done(); if (A) { const a = A.a, g = A.bus.gain; try { g.setValueAtTime(g.value, a.currentTime); g.linearRampToValueAtTime(0, a.currentTime + .25); } catch (e) {} setTimeout(() => { try { a.close(); } catch (e) {} }, 500); } cv.style.opacity = '0'; setTimeout(() => { cv.style.display = 'none'; running = false; }, 330); };
                     cv.onclick = () => { end(); };
                     const loop = now => { if (fin) return; const t = (now - t0) / 1000; frame(key, Math.min(t, sc.D), st, W, H, u); if (t >= sc.D + .08) end(); else raf = requestAnimationFrame(loop); };
                     raf = requestAnimationFrame(loop);
                 }
-                return { play, S, frame, _init: (c, w, h) => { ctx = c; }, setCtx: c => { ctx = c; } };
+                return { play, S, SND, frame, _init: (c, w, h) => { ctx = c; }, setCtx: c => { ctx = c; } };
             })();
 
             // Carga bajo demanda del detalle (fragments/...): la página pesa poco y cada sección se descarga al abrirla
