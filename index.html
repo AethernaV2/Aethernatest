@@ -182,6 +182,29 @@
         .site-foot nav a { color: #D9B46A; transition: color .2s; }
         .site-foot nav a:hover, .site-foot nav a:focus-visible { color: #FFF2CF; }
         .site-foot p { margin: 0; font: 400 .95rem 'EB Garamond', serif; color: #B9A98A; }
+        /* Estilo Grimorio en la portada */
+        .hero-sigil { display: none; }
+        html[data-theme="grimorio"] { --d20-a: #24150A; --d20-b: #090503; }
+        html[data-theme="grimorio"] .home-hero__in { position: relative; z-index: 2; }
+        html[data-theme="grimorio"] .home-hero h1 .v2 { background: linear-gradient(180deg,#FFE2A8,#E0902F); -webkit-background-clip: text; background-clip: text; }
+        html[data-theme="grimorio"] .home-hero h1 { filter: drop-shadow(0 4px 22px rgba(0,0,0,.8)) drop-shadow(0 0 20px rgba(224,144,47,.3)); }
+        html[data-theme="grimorio"] .home-hero__cta a { background: rgba(14,8,4,.9); border-color: rgba(217,170,90,.7); box-shadow: inset 0 0 0 2px rgba(0,0,0,.55); }
+        html[data-theme="grimorio"] .home-hero__cta a.btn-primary-aetherna { background: linear-gradient(135deg,#7A4214,#2E1808); border-color: #F0D79E; }
+        html[data-theme="grimorio"] .discord-panel { background: radial-gradient(120% 140% at 50% 0%, rgba(224,144,47,.16), rgba(18,10,5,.92) 62%); border-color: rgba(201,150,70,.55); }
+        html[data-theme="grimorio"] .home-news-media { background: radial-gradient(120% 120% at 30% 20%, #6B3A14 0%, #1B1109 60%, #0E0804 100%); }
+        html[data-theme="grimorio"] .site-foot { background: linear-gradient(180deg, transparent, rgba(8,5,3,.8)); }
+        @media (min-width: 1024px) {
+            html[data-theme="grimorio"] .home-hero__emblem .hx { display: none; }
+            html[data-theme="grimorio"] .hero-sigil { display: block; position: absolute; width: 235%; left: -67.5%; top: -67.5%; opacity: .55; pointer-events: none; z-index: -1; }
+            html[data-theme="grimorio"] .d20-halo { background: radial-gradient(circle, rgba(224,150,50,.30), rgba(120,60,15,.12) 52%, transparent 70%); }
+            html[data-theme="grimorio"] .d20 { filter: drop-shadow(0 0 12px rgba(240,170,70,.65)); }
+            html[data-theme="grimorio"] .d20 .face { stroke: #F0B35A; }
+            html[data-theme="grimorio"] .d20 .edge { stroke: #F0B35A; }
+            html[data-theme="grimorio"] .d20 .sh { fill: #F0B35A; }
+            html[data-theme="grimorio"] .d20 text { fill: #FFE9B8; }
+            html[data-theme="grimorio"] .d20.crit { filter: drop-shadow(0 0 22px rgba(255,190,90,.95)); }
+            html[data-theme="grimorio"] .d20.crit .face, html[data-theme="grimorio"] .d20.crit .edge { stroke: #FFF2CF; }
+        }
     </style>
     <link rel="stylesheet" href="tailwind.css">
 </head>
@@ -392,9 +415,11 @@
                 const edges = [[T[0], V[1]], [T[0], V[5]], [T[0], V[0]], [T[1], V[1]], [T[1], V[3]], [T[1], V[2]], [T[2], V[3]], [T[2], V[5]], [T[2], V[4]]].map(e => 'M' + pt(e[0]) + 'L' + pt(e[1])).join('');
                 const tri = (a, b, c, o) => '<polygon class="sh" fill-opacity="' + o + '" points="' + pt(a) + ' ' + pt(b) + ' ' + pt(c) + '"/>';
                 const shade = tri(T[0], V[0], V[1], .13) + tri(T[0], V[0], V[5], .05) + tri(T[1], V[1], V[2], .05) + tri(T[1], V[2], V[3], .12) + tri(T[2], V[3], V[4], .05) + tri(T[2], V[4], V[5], .13) + tri(T[0], T[1], V[1], .08) + tri(T[1], T[2], V[3], .02) + tri(T[2], T[0], V[5], .1);
-                svg.innerHTML = '<defs><linearGradient id="d20g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B1A5C"/><stop offset="1" stop-color="#0A0722"/></linearGradient></defs><polygon class="face" points="' + V.map(pt).join(' ') + '"/>' + shade + '<polygon class="edge" points="' + T.map(pt).join(' ') + '"/><path class="edge" d="' + edges + '"/>' +
+                svg.innerHTML = '<defs><linearGradient id="d20g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color: var(--d20-a, #2B1A5C)"/><stop offset="1" style="stop-color: var(--d20-b, #0A0722)"/></linearGradient></defs><polygon class="face" points="' + V.map(pt).join(' ') + '"/>' + shade + '<polygon class="edge" points="' + T.map(pt).join(' ') + '"/><path class="edge" d="' + edges + '"/>' +
                     '<text id="d20n" x="100" y="' + (T[1][1] - 13).toFixed(1) + '" font-size="30">20</text>' +
                     S.map(p => '<text class="d20s" x="' + p[0].toFixed(1) + '" y="' + (p[1] + 5).toFixed(1) + '" font-size="13" fill-opacity=".6">0</text>').join('');
+                const em = document.querySelector('.home-hero__emblem');
+                if (em && window.__aethernaSigil && !em.querySelector('.hero-sigil')) em.insertAdjacentHTML('afterbegin', window.__aethernaSigil('hero-sigil'));
                 const num = document.getElementById('d20n'), smalls = svg.querySelectorAll('.d20s');
                 const rnd = () => 1 + ((Math.random() * 20) | 0);
                 const setSmalls = () => smalls.forEach(s => { s.textContent = rnd(); });
@@ -535,3 +560,4 @@
     </script>
 </body>
 </html>
+
