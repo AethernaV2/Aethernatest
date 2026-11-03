@@ -368,3 +368,69 @@ html[data-theme="grimorio"] .lore-lift:hover, html[data-theme="grimorio"] .rz-li
     box-shadow: 0 16px 34px rgba(0,0,0,.6), 0 0 26px rgba(224,144,47,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
 html[data-theme="grimorio"] .lore-hover::before, html[data-theme="grimorio"] .lore-lift::before, html[data-theme="grimorio"] .rz-hover::before, html[data-theme="grimorio"] .rz-lift::before,
 html[data-theme="grimorio"] .mn-card::before, html[data-theme="grimorio"] .nw-item::before { background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(224,144,47,.24), rgba(217,180,106,.10) 45%, transparent 70%); }
+
+/* ===== Grimorio · Lore: páginas de códice ===== */
+html[data-theme="grimorio"] #page-root .lore-hover { border-color: rgba(176,132,62,.55); box-shadow: inset 0 0 0 4px #0F0904, inset 0 0 0 5px rgba(176,132,62,.35), 0 18px 40px rgba(0,0,0,.5);
+    background-image: radial-gradient(ellipse 70% 50% at 100% 0%, rgba(224,120,40,.07), transparent 70%), radial-gradient(ellipse 60% 45% at 0% 100%, rgba(224,120,40,.05), transparent 70%); }
+html[data-theme="grimorio"] #page-root .lore-hover::after { content: ""; position: absolute; inset: 14px; z-index: 0; pointer-events: none; --c: rgba(224,170,90,.7);
+    background:
+      linear-gradient(var(--c),var(--c)) left top / 22px 1.5px no-repeat, linear-gradient(var(--c),var(--c)) left top / 1.5px 22px no-repeat,
+      linear-gradient(var(--c),var(--c)) right top / 22px 1.5px no-repeat, linear-gradient(var(--c),var(--c)) right top / 1.5px 22px no-repeat,
+      linear-gradient(var(--c),var(--c)) left bottom / 22px 1.5px no-repeat, linear-gradient(var(--c),var(--c)) left bottom / 1.5px 22px no-repeat,
+      linear-gradient(var(--c),var(--c)) right bottom / 22px 1.5px no-repeat, linear-gradient(var(--c),var(--c)) right bottom / 1.5px 22px no-repeat; }
+html[data-theme="grimorio"] #page-root .lore-hover > * { position: relative; z-index: 1; }
+html[data-theme="grimorio"] #page-root .lore-hover h2 { color: #F3D9A0; letter-spacing: .06em; text-shadow: 0 0 18px rgba(224,144,47,.3); }
+html[data-theme="grimorio"] #page-root .lore-hover .font-cinzel.px-3 { background: linear-gradient(180deg, #3A2410, #1B1109); border-color: rgba(224,170,90,.6); color: #F0C26E; letter-spacing: .14em; }
+html[data-theme="grimorio"] #page-root .lore-hover > .rv:first-child { border-bottom: 0; padding-bottom: 1.4rem; position: relative; }
+html[data-theme="grimorio"] #page-root .lore-hover > .rv:first-child::after { content: "\25C6"; position: absolute; left: 0; right: 0; bottom: -.55rem; text-align: center; font-size: 10px; line-height: 1; color: #E0902F;
+    background: linear-gradient(90deg, transparent, rgba(224,170,90,.55) 12%, transparent 46%, transparent 54%, rgba(224,170,90,.55) 88%, transparent) center .5rem / 100% 1px no-repeat; }
+/* capital ornamental en el primer párrafo de cada capítulo */
+html[data-theme="grimorio"] #page-root .lore-hover .rv.font-garamond > p:first-child::first-letter { font-family: 'Cinzel Decorative', serif; font-weight: 900; float: left; font-size: 3.5em; line-height: .82; padding: .06em .12em 0 0;
+    background: linear-gradient(180deg, #FFE7B0, #D58A2B); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+html[data-theme="grimorio"] #page-root .lore-hover p { color: #E3D2B0; }
+/* ilustraciones como láminas enmarcadas */
+html[data-theme="grimorio"] #page-root .lore-lift { border-color: rgba(176,132,62,.7); box-shadow: 0 0 0 4px #0F0904, 0 0 0 5px rgba(176,132,62,.5), 0 14px 30px rgba(0,0,0,.55); background: #0A0603; }
+html[data-theme="grimorio"] #page-root .lore-lift img { filter: sepia(.38) saturate(1.15) contrast(1.04); }
+html[data-theme="grimorio"] #page-root .lore-lift .from-aetherna-bgMain\/90 { --tw-gradient-from: rgba(10,6,3,.92); }
+/* cabecera de la página */
+html[data-theme="grimorio"] #page-root main > .reveal:first-child h1 { background: linear-gradient(180deg, #FFEFC4, #D9923A 80%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; text-shadow: none; filter: drop-shadow(0 4px 18px rgba(0,0,0,.8)); }
+html[data-theme="grimorio"] #page-root main > .reveal:first-child .w-24 { width: 9rem; height: 1px; background: linear-gradient(90deg, transparent, #E0902F, transparent); }
+html[data-theme="grimorio"] #page-root .separator-diamond { color: #E0902F; }
+html[data-theme="grimorio"] #page-root .separator-line::before, html[data-theme="grimorio"] #page-root .separator-line::after { background: linear-gradient(90deg, transparent, rgba(224,144,47,.5), transparent); }
+
+/* ===== Nebulosa · Lore: códice cósmico ===== */
+html:not([data-theme="grimorio"]) #page-root .lore-hover { background-image:
+    radial-gradient(1.2px 1.2px at 12% 18%, rgba(255,242,207,.55), transparent 60%), radial-gradient(1px 1px at 86% 12%, rgba(196,160,255,.6), transparent 60%),
+    radial-gradient(1.4px 1.4px at 72% 82%, rgba(255,242,207,.45), transparent 60%), radial-gradient(1px 1px at 28% 90%, rgba(196,160,255,.5), transparent 60%),
+    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(120,70,225,.16), transparent 70%), radial-gradient(ellipse 70% 50% at 0% 100%, rgba(60,40,150,.18), transparent 70%); }
+html:not([data-theme="grimorio"]) #page-root .lore-hover h2 { text-shadow: 0 0 18px rgba(157,108,240,.35); letter-spacing: .05em; }
+html:not([data-theme="grimorio"]) #page-root .lore-hover > .rv:first-child { border-bottom: 0; padding-bottom: 1.5rem; position: relative; }
+html:not([data-theme="grimorio"]) #page-root .lore-hover > .rv:first-child::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 18px; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 18'%3E%3Cpath d='M0 9H78L96 4L120 13L144 5L162 9H240' fill='none' stroke='%23C4A0FF' stroke-opacity='.55' stroke-width='.8'/%3E%3Cg fill='%23FFF2CF'%3E%3Ccircle cx='96' cy='4' r='1.8'/%3E%3Ccircle cx='120' cy='13' r='2.4'/%3E%3Ccircle cx='144' cy='5' r='1.6'/%3E%3Ccircle cx='78' cy='9' r='1.2'/%3E%3Ccircle cx='162' cy='9' r='1.2'/%3E%3C/g%3E%3C/svg%3E") center / min(100%, 480px) 18px no-repeat; }
+/* letra capital */
+html:not([data-theme="grimorio"]) #page-root .lore-hover .rv.font-garamond > p:first-child::first-letter { font-family: 'Cinzel Decorative', serif; font-weight: 900; float: left; font-size: 3.5em; line-height: .82; padding: .06em .12em 0 0;
+    background: linear-gradient(180deg, #FFF2CF, #A57BFF); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+/* láminas con resplandor violeta */
+html:not([data-theme="grimorio"]) #page-root .lore-lift { border-color: rgba(196,160,255,.45); box-shadow: 0 0 0 3px rgba(14,11,38,.9), 0 0 24px rgba(120,70,225,.35), 0 14px 30px rgba(0,0,0,.5); }
+html:not([data-theme="grimorio"]) #page-root .lore-lift img { filter: saturate(1.05) contrast(1.04); }
+/* cabecera */
+html:not([data-theme="grimorio"]) #page-root main > .reveal:first-child h1 { background: linear-gradient(180deg, #FFF2CF 20%, #B898FF); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 18px rgba(0,0,0,.7)); }
+html:not([data-theme="grimorio"]) #page-root main > .reveal:first-child .w-24 { width: 11rem; position: relative; background: linear-gradient(90deg, transparent, #C4A0FF, transparent); overflow: visible; }
+html:not([data-theme="grimorio"]) #page-root main > .reveal:first-child .w-24::before { content: "\2726"; position: absolute; left: 50%; top: 50%; translate: -50% -50%; font-size: 13px; line-height: 1; color: #FFF2CF; padding: 0 .5rem; background: #0B0820; text-shadow: 0 0 10px rgba(196,160,255,.9); }
+/* hilo estelar entre capítulos (solo escritorio) */
+@media (min-width: 1024px) {
+  html:not([data-theme="grimorio"]) #page-root main > .space-y-16 { position: relative; }
+  html:not([data-theme="grimorio"]) #page-root main > .space-y-16::before { content: ""; position: absolute; left: 50%; top: -2rem; bottom: -2rem; width: 1px; z-index: 0;
+    background: linear-gradient(180deg, transparent, rgba(196,160,255,.55) 8%, rgba(196,160,255,.55) 92%, transparent); }
+  html:not([data-theme="grimorio"]) #page-root .lore-hover::after { content: ""; position: absolute; left: 50%; top: -2.5rem; width: 9px; height: 9px; translate: -50% -50%; border-radius: 50%; pointer-events: none; z-index: 2;
+    background: #FFF2CF; box-shadow: 0 0 0 3px rgba(157,108,240,.35), 0 0 14px 3px rgba(196,160,255,.8); }
+}
+/* barra de progreso de lectura (CSS puro, solo navegadores que lo soporten) */
+@supports (animation-timeline: scroll()) {
+  @media (min-width: 1024px) {
+    html:not([data-theme="grimorio"]) #page-root main:has(.lore-hover)::before { content: ""; position: fixed; left: 14px; top: 110px; bottom: 90px; width: 3px; z-index: 5; border-radius: 3px; pointer-events: none;
+      background: linear-gradient(180deg, #FFF2CF, #9D6CF0); box-shadow: 0 0 10px rgba(157,108,240,.7); transform-origin: top; transform: scaleY(0); animation: lore-prog linear both; animation-timeline: scroll(root); }
+    html:not([data-theme="grimorio"]) #page-root main:has(.lore-hover)::after { content: ""; position: fixed; left: 14px; top: 110px; bottom: 90px; width: 3px; z-index: 4; border-radius: 3px; pointer-events: none; background: rgba(157,108,240,.18); }
+  }
+}
+@keyframes lore-prog { to { transform: scaleY(1); } }
