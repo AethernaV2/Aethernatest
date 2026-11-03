@@ -70,9 +70,10 @@
     // 1) Cabecera + buscador
     // ------------------------------------------------------------------
     // [clave de página, texto, enlace]   (los enlaces son relativos: funcionan también abriendo los archivos en local)
-    const NAV = [ // orden del menú: Inicio, Lore, Época, Razas, Clases, Oficios, Manual, Noticias
+    const NAV = [ // orden del menú: Inicio, Lore, Dioses, Época, Razas, Clases, Oficios, Manual, Noticias
         ['inicio',   'Inicio',   './'],
         ['lore',     'Lore',     'lore.html'],
+        ['dioses',   'Dioses',   'dioses.html'],
         ['epoca',    'Época',    'epoca.html'],
         ['razas',    'Razas',    'razas.html'],
         ['clases',   'Clases',   'clases.html'],
@@ -104,6 +105,7 @@
     const DOCK_ICONS = {
         inicio:   '<img src="fotos/Logo.png" alt="" width="24" height="24">',
         lore:     svg('<path d="M6 6.5c3-1.4 6.5-1.4 10 .6 3.5-2 7-2 10-.6V25c-3-1.4-6.5-1.4-10 .6-3.5-2-7-2-10-.6z"/><path d="M16 7.1V25.6"/>'),
+        dioses:   svg('<path d="M16 4l2.600 7.400L26 12l-6 4.800L22 25l-6-4.400L10 25l2-8.200L6 12l7.400-.6z"/>'),
         razas:    svg('<circle cx="11" cy="11" r="4"/><circle cx="22" cy="12" r="3.2"/><path d="M3.5 26c.6-5 3.5-8 7.5-8s6.900 3 7.500 8M18 26c.4-3.600 2.200-5.800 5-5.800s4.600 2.200 5 5.800"/>'),
         clases:   svg('<path d="M23.5 5.5l3 3L13 22l-4 1 1-4z"/><path d="M8 24l-3 3M20.5 8.5l3 3"/>'),
         epoca:    svg('<path d="M9 5h14M9 27h14M10 5c0 6 6 6 6 11s-6 5-6 11M22 5c0 6-6 6-6 11s6 5 6 11"/>'),
@@ -172,7 +174,7 @@
     (function () {
         const dock = $('dock'), wide = matchMedia('(min-width: 1024px)');
         dock.addEventListener('click', e => { if (e.target.closest('#dock-search')) { const b = $('search-btn'); if (b) b.click(); } });
-        // Teclas 1-8: ir a cada sección
+        // Teclas 1-9: ir a cada sección
         window.addEventListener('keydown', e => {
             if (!wide.matches || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
             if (/input|textarea|select/i.test((e.target && e.target.tagName) || '') || (e.target && e.target.isContentEditable)) return;
@@ -687,6 +689,7 @@
         const closeGate = (withMusic, skipIntro) => {
             if (!$('entry-gate') || gate.dataset.busy) return;
             store.set('aetherna_entered', '1', 'session');
+            store.set('aetherna_sound', withMusic ? '1' : '0', 'session');
             if (window.__aethernaPlayer) window.__aethernaPlayer.enter(withMusic);
             if (reduceMotion || skipIntro) release();
             else { gate.dataset.busy = '1'; playDice(gate, release, withMusic); }
@@ -1032,4 +1035,3 @@
         go(location.href, { push: false });
     });
 })();
-
