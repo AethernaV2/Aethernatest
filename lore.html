@@ -139,6 +139,7 @@
         #book.sp .fc { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: #0D0919; }
         html[data-theme="grimorio"] #book.sp .fc { background: #0F0904; }
         #book.sp .fc.back { transform: rotateY(180deg); }
+        #book.sp .lf.flipped .fc.front > .pg, #book.sp .lf:not(.flipped) .fc.back > .pg { pointer-events: none; }
         #book.sp .fc.cvf { inset: calc(var(--by) * -1) calc(var(--by) * -1) calc(var(--by) * -1) 0; background: transparent; }
         #book.sp .fc > .sh { position: absolute; inset: 0; z-index: 40; pointer-events: none; opacity: 0; background: linear-gradient(90deg, rgba(0,0,0,.85), rgba(0,0,0,.3) 55%, rgba(0,0,0,.06)); }
         #book.sp .fc.back > .sh { background: linear-gradient(270deg, rgba(0,0,0,.85), rgba(0,0,0,.3) 55%, rgba(0,0,0,.06)); }
