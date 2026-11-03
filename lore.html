@@ -259,7 +259,7 @@
         #book .bk-shadow.on { animation: bk-shadow 1.05s ease-in-out; }
         @keyframes bk-shadow { 0%, 100% { opacity: 0; } 45% { opacity: .75; } }
         /* Abrir el libro: tapa pesada con destello desde el lomo y el sello rúnico encendiéndose */
-        .pg.t-open { animation: bk-open 1.9s linear; }
+        .pg.t-open { animation: bk-open 1.9s linear 1.9s backwards; }
         .pg.t-close { animation: bk-close 1.5s linear; }
         @keyframes bk-open {
           0%   { transform: scale(1) rotateY(0); opacity: 1; visibility: visible; filter: brightness(1); animation-timing-function: ease-out; }
@@ -278,8 +278,8 @@
           background: radial-gradient(ellipse at 6% 50%, rgba(255,242,207,.95), rgba(var(--bk-a), .55) 22%, transparent 62%); }
         #book .bk-burst.on { animation: bk-burst 1.9s ease-in-out; }
         @keyframes bk-burst { 0%, 100% { opacity: 0; transform: scaleX(.4); } 40% { opacity: 0; } 60% { opacity: .85; transform: scaleX(1); } }
-        .bk-cover.opening svg.bk-sigil { animation: bk-sig 1.9s ease-in both; }
-        @keyframes bk-sig { 0% { transform: rotate(0) scale(1); opacity: .22; } 30% { opacity: .85; } 100% { transform: rotate(160deg) scale(1.3); opacity: .5; } }
+        .bk-cover.spinning svg.bk-sigil { animation: bk-spin 1.9s cubic-bezier(.35, .05, .25, 1) both; }
+        @keyframes bk-spin { 0% { transform: rotate(0deg) scale(1); opacity: .3; } 55% { transform: rotate(640deg) scale(1.05); opacity: .85; } 100% { transform: rotate(1080deg) scale(1.1); opacity: .6; } }
         #book .pg { background-color: #0D0919; }
         html[data-theme="grimorio"] #book .pg { background-color: #0F0904; }
         #book .pg.lore-hover { display: flex; flex-direction: column; justify-content: safe center; }
@@ -577,13 +577,28 @@
                 o.connect(f); f.connect(e); e.connect(bus); o.start(t); lfo.start(t); o.stop(t + dur + .05); lfo.stop(t + dur + .05);
             };
             const chime = (a, t, fr, g, dur) => { const o = a.createOscillator(), e = a.createGain(); o.type = 'sine'; o.frequency.value = fr; e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + .03); e.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(e); e.connect(bus); o.start(t); o.stop(t + dur + .05); };
+            // «tac» seco de dado (igual que en la página de los dioses y la intro)
+            const tick = (a, t, v) => {
+                const s = a.createBufferSource(); s.buffer = noiseB(a);
+                const bp = a.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 3200 + Math.random() * 1500; bp.Q.value = 1.4;
+                const g = a.createGain(); g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(v * .9, t + .004); g.gain.exponentialRampToValueAtTime(.0001, t + .014);
+                s.connect(bp); bp.connect(g); g.connect(bus); s.start(t, Math.random()); s.stop(t + .03);
+                const base = 900 + Math.random() * 500;
+                [1, 2.15, 3.6].forEach((m, i) => { const o = a.createOscillator(), e = a.createGain(), d = .05 / (i + 1) + .012; o.type = 'sine'; o.frequency.setValueAtTime(base * m, t); o.frequency.exponentialRampToValueAtTime(base * m * .97, t + d);
+                    e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(v * .55 / (i + 1), t + .004); e.gain.exponentialRampToValueAtTime(.0001, t + d); o.connect(e); e.connect(bus); o.start(t); o.stop(t + d + .05); });
+                const o2 = a.createOscillator(), e2 = a.createGain(); o2.type = 'sine'; o2.frequency.setValueAtTime(480 + Math.random() * 120, t); o2.frequency.exponentialRampToValueAtTime(260, t + .045);
+                e2.gain.setValueAtTime(.0001, t); e2.gain.exponentialRampToValueAtTime(v * .45, t + .004); e2.gain.exponentialRampToValueAtTime(.0001, t + .045); o2.connect(e2); e2.connect(bus); o2.start(t); o2.stop(t + .1);
+            };
+            const clatter = (a, t0, v, offs) => offs.forEach((o, k) => tick(a, t0 + o, v * (1 - k * .09)));
             const sound = (kind, delay) => {
                 if (!sndOn || reduce) return; const a = AC(); if (!a) return; const t = a.currentTime + .02 + (delay || 0);
-                if (kind === 'page') {            // hoja: soplido de papel y roce suave al posarse
+                if (kind === 'dice') {            // tirada de d20: silbido, choques y rebotes (dura ~1,9 s)
+                    swish(a, t, .75, 300, 1500, .09, 1.2); clatter(a, t + .78, .55, [0, .03, .075, .13, .2, .29]); clatter(a, t + 1.13, .3, [0, .05, .12]); clatter(a, t + 1.5, .38, [0, .04, .1, .18]); clatter(a, t + 1.85, .16, [0, .07]);
+                } else if (kind === 'page') {            // hoja: soplido de papel y roce suave al posarse
                     swish(a, t, .62, 1300, 4300, .26); swish(a, t + .1, .5, 2400, 6000, .1, 1.4); thud(a, t + .98, 130, .1, .22); swish(a, t + .96, .3, 3000, 900, .07);
                 } else if (kind === 'open') {     // abrir: cuero que cruje, golpe sordo y la hoja de guarda cayendo
                     creak(a, t, .95, .05); thud(a, t + .35, 62, .42, .55); swish(a, t + .7, .95, 700, 3800, .3, .8);
-                    chime(a, t + .95, 988, .035, 1.6); chime(a, t + 1.02, 1480, .025, 1.8); thud(a, t + 1.7, 95, .2, .3); swish(a, t + 1.65, .45, 2600, 900, .09);
+                    thud(a, t + 1.7, 95, .2, .3); swish(a, t + 1.65, .45, 2600, 900, .09);
                 } else {                          // cerrar: aire de las páginas y portazo grave
                     swish(a, t, .75, 4200, 1000, .28, .8); thud(a, t + .95, 52, .55, .7); swish(a, t + .93, .4, 1800, 400, .2, .7); creak(a, t + 1.0, .55, .035);
                 }
@@ -699,14 +714,14 @@
                         p.setAttribute('aria-hidden', k === i ? 'false' : 'true');
                     });
                     if (dir) {
-                        sound(opening || (dir < 0 && old === N - 1) ? 'open' : closing || (dir > 0 && i === N - 1) ? 'close' : 'page');
+                        if (opening) { sound('dice'); sound('open', reduce ? 0 : 1.9); } else sound(dir < 0 && old === N - 1 ? 'open' : closing || (dir > 0 && i === N - 1) ? 'close' : 'page');
                         const leaving = dir > 0 ? pages[old] : null, arriving = dir < 0 ? pages[i] : null;
-                        const ms = opening ? 1950 : closing ? 1550 : 1100;
+                        const SP = opening && !reduce ? 1900 : 0, ms = opening ? 1950 + SP : closing ? 1550 : 1100;
                         if (leaving) { pulse(leaving, opening ? 't-open' : 't-out', ms); pulse(leaving, 'flip', ms); }
                         if (arriving) { pulse(arriving, closing ? 't-close' : 't-back', ms); pulse(arriving, 'flip', ms); }
                         if (dir > 0) pulse(pages[i], 't-settle', 1100);
                         pulse(shade, 'on', 1100);
-                        if (opening) { pulse(burst, 'on', ms); cover.classList.add('opening'); setTimeout(() => cover.classList.remove('opening'), ms); }
+                        if (opening) { cover.classList.add('spinning'); setTimeout(() => cover.classList.remove('spinning'), SP + 50); setTimeout(() => pulse(burst, 'on', 1950), SP); }
                     }
                     const c = pages[i]; c.scrollTop = 0; c.classList.remove('enter'); void c.offsetWidth;
                     if (!dir) c.classList.add('enter');
@@ -717,7 +732,7 @@
                 function go(i) {
                     i = Math.max(0, Math.min(N - 1, i)); if (i === cur) return;
                     const now = Date.now(); if (now < lock) return;
-                    lockUntil(now + (reduce ? 120 : (cur === 0 && i > cur ? 1950 : 1100)));
+                    lockUntil(now + (reduce ? 120 : (cur === 0 && i > cur ? 3850 : 1100)));
                     const dir = cur < 0 ? 0 : (i > cur ? 1 : -1);
                     render(i, dir); cur = i;
                 }
@@ -792,10 +807,12 @@
                     const dir = ns > s ? 1 : -1, from = s, opening = from === 0 && dir > 0;
                     s = ns; stat();
                     if (instant) return;
+                    const SPIN = opening && !reduce ? 1900 : 0;
+                    if (opening) { book.classList.add('closed'); setTimeout(() => book.classList.remove('closed'), SPIN); sound('dice'); cover.classList.add('spinning'); setTimeout(() => cover.classList.remove('spinning'), SPIN + 50); }
                     const list = []; if (dir > 0) for (let k = from; k < ns; k++) list.push(k); else for (let k = from - 1; k >= ns; k--) list.push(k);
-                    list.forEach((k, j) => flip(k, dir, j * 320, k === 0 ? 1900 : 1450));
-                    lockUntil(now + (list.length - 1) * 320 + (reduce ? 120 : (list.indexOf(0) >= 0 ? 2000 : 1500)));
-                    if (opening) { burst.classList.remove('on'); void burst.offsetWidth; burst.classList.add('on'); setTimeout(() => burst.classList.remove('on'), 1950); cover.classList.add('opening'); setTimeout(() => cover.classList.remove('opening'), 1950); }
+                    list.forEach((k, j) => flip(k, dir, j * 320 + SPIN, k === 0 ? 1900 : 1450));
+                    lockUntil(now + SPIN + (list.length - 1) * 320 + (reduce ? 120 : (list.indexOf(0) >= 0 ? 2000 : 1500)));
+                    if (opening) setTimeout(() => { burst.classList.remove('on'); void burst.offsetWidth; burst.classList.add('on'); setTimeout(() => burst.classList.remove('on'), 1950); }, SPIN);
                 }
                 goChapter = c => setS(c === 0 ? 0 : SP_OF[Math.min(NC, c)]);
                 step = d => setS(s + d);
