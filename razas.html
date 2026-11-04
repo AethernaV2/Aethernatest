@@ -580,6 +580,7 @@
 
     <script src="site.js?v=3"></script>
     <script data-page>
+(function () { /* aislado: así las páginas no chocan al navegar entre ellas */
             // sonido de las animaciones: se puede silenciar (se recuerda) y respeta «entrar en silencio»
             let fxSound = (() => { try { const v = localStorage.getItem('aetherna_razas_sound'); if (v !== null) return v === '1'; return sessionStorage.getItem('aetherna_sound') !== '0'; } catch (e) { return true; } })();
             /* ===== Animaciones de entrada de cada oficio (canvas, una escena por oficio) ===== */
@@ -1121,7 +1122,9 @@
 
             window.addEventListener('hashchange', route);
             route();
+            try { const pk = sessionStorage.getItem('aetherna_play'); if (pk) { sessionStorage.removeItem('aetherna_play'); if (pk === location.hash.slice(1) && !reduceFx && OFX.S[pk]) OFX.play(pk, () => {}); } if (sessionStorage.getItem('aetherna_quiz') === 'razas') { sessionStorage.removeItem('aetherna_quiz'); document.getElementById('rzQuiz').click(); } } catch (e) {}
         })();
+})();
     </script>
 </body>
 </html>
