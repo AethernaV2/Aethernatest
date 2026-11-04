@@ -207,7 +207,48 @@
             html[data-theme="grimorio"] .d20.crit { filter: none; }
             html[data-theme="grimorio"] .d20.crit .face, html[data-theme="grimorio"] .d20.crit .edge { stroke: #FFF2CF; }
         }
-    </style>
+            /* ===== Portada: mejoras ===== */
+        .hm2-kicker { font: 600 10px 'Cinzel', serif; letter-spacing: .3em; text-transform: uppercase; color: #D9B46A; display: block; }
+        .hm2-epoca-wrap { margin-top: -1.5rem; margin-bottom: 1rem; }
+        .hm2-epoca { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 2rem; max-width: 56rem; margin: 0 auto; padding: 1.2rem 1.6rem; }
+        .hm2-ep-t { display: block; font: 700 1.35rem 'Cinzel', serif; color: #F3DFA8; margin: .2rem 0; }
+        .hm2-ep-s { display: block; font: italic 1.05rem 'EB Garamond', serif; color: #CDBB95; }
+        .hm2-ep-r { display: flex; flex-direction: column; align-items: flex-end; gap: .6rem; }
+        .hm2-pips { display: inline-flex; gap: .4rem; } .hm2-pips i { width: 38px; height: 5px; border-radius: 3px; background: rgba(217,180,106,.2); } .hm2-pips i.on { background: linear-gradient(90deg, #F1D48C, #C99A45); box-shadow: 0 0 10px rgba(217,180,106,.5); }
+        .hm2-link { font: 600 11px 'Cinzel', serif; letter-spacing: .18em; text-transform: uppercase; color: #D9B46A; }
+        @media (max-width: 560px) { .hm2-ep-r { align-items: flex-start; } }
+        .hm2-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+        .hm2-steps > li { position: relative; padding: 1.6rem 1.4rem 1.4rem; display: flex; flex-direction: column; gap: .6rem; }
+        .hm2-n { font: 900 2.6rem 'Cinzel Decorative', serif; line-height: 1; color: rgba(217,180,106,.28); }
+        .hm2-steps p { flex: 1; font-size: 1.05rem; }
+        .hm2-btns { display: flex; flex-wrap: wrap; gap: .5rem; }
+        .hm2-btn { display: inline-block; padding: .5rem 1rem; font: 600 11px 'Cinzel', serif; letter-spacing: .16em; text-transform: uppercase; color: #1B1230; background: linear-gradient(135deg, #F1D48C, #C99A45); transition: box-shadow .2s, transform .2s; align-self: flex-start; }
+        .hm2-btn.alt { color: #D9B46A; background: transparent; border: 1px solid rgba(217,180,106,.5); }
+        .hm2-btn:hover, .hm2-btn:focus-visible { box-shadow: 0 0 16px rgba(217,180,106,.45); transform: translateY(-2px); }
+        .hm2-gods { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x proximity; padding: .5rem .2rem 1rem; scrollbar-width: thin; scrollbar-color: rgba(217,180,106,.4) transparent; }
+        .hm2-god { flex: 0 0 168px; scroll-snap-align: start; display: block; text-align: center; padding: .8rem .8rem 1rem; transition: transform .3s, border-color .3s; }
+        .hm2-god:hover, .hm2-god:focus-visible { transform: translateY(-6px); }
+        .hm2-god img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; margin-bottom: .7rem; border: 1px solid rgba(217,180,106,.3); background: #0A0722; }
+        .hm2-god b { display: block; font: 700 1rem 'Cinzel', serif; color: #F3DFA8; }
+        .hm2-god em { display: block; font: 600 10px 'Cinzel', serif; letter-spacing: .16em; text-transform: uppercase; color: #D9B46A; margin: .25rem 0; font-style: normal; }
+        .hm2-god span { display: block; font: italic .95rem 'EB Garamond', serif; color: #A8997A; line-height: 1.3; }
+        .hm2-online { display: inline-flex; align-items: center; gap: .5rem; margin: 0 0 1.2rem; font: 600 12px 'Cinzel', serif; letter-spacing: .14em; text-transform: uppercase; color: #CDBB95; }
+        .hm2-online i { width: 9px; height: 9px; border-radius: 50%; background: #5BD08A; box-shadow: 0 0 10px #5BD08A; }
+        .hm2-online[hidden] { display: none; }
+        .hm2-tools { position: absolute; right: clamp(.8rem, 3vw, 2rem); bottom: 1.2rem; z-index: 3; display: flex; gap: .5rem; flex-wrap: wrap; justify-content: flex-end; }
+        .hm2-tool { display: inline-flex; align-items: center; gap: .45rem; padding: .4rem .8rem; font: 600 10px 'Cinzel', serif; letter-spacing: .14em; text-transform: uppercase; color: #D9B46A; background: rgba(14,9,26,.7); border: 1px solid rgba(217,180,106,.4); cursor: pointer; transition: color .2s, box-shadow .2s; }
+        html[data-theme="grimorio"] .hm2-tool { background: rgba(18,11,6,.8); }
+        .hm2-tool:hover, .hm2-tool:focus-visible { color: #FFF2CF; box-shadow: 0 0 14px rgba(217,180,106,.35); }
+        .hm2-tool[aria-pressed="false"] { opacity: .6; }
+        .hm2-qn { position: fixed; left: 0; right: 0; top: 78px; z-index: 40; display: none; gap: .3rem; overflow-x: auto; padding: .4rem .6rem; background: rgba(10,7,26,.92); border-bottom: 1px solid rgba(217,180,106,.25); backdrop-filter: blur(6px); transform: translateY(-140%); transition: transform .3s; }
+        html[data-theme="grimorio"] .hm2-qn { background: rgba(14,8,4,.94); }
+        .hm2-qn.show { transform: none; }
+        .hm2-qn a { flex: 0 0 auto; padding: .35rem .8rem; font: 600 11px 'Cinzel', serif; letter-spacing: .14em; text-transform: uppercase; color: #CDBB95; border: 1px solid transparent; }
+        .hm2-qn a.on { color: #1B1230; background: #D9B46A; }
+        @media (max-width: 767px) { .hm2-qn { display: flex; } .hm2-tools { position: static; justify-content: center; margin-top: 1.5rem; } }
+        .hm2-rel { margin-left: .5rem; color: #A8997A; font-style: italic; }
+        @media (prefers-reduced-motion: reduce) { .hm2-qn, .hm2-god, .hm2-btn { transition: none; } }
+</style>
     <link rel="stylesheet" href="tailwind.css">
 </head>
 <body class="relative selection:bg-aetherna-goldMain selection:text-aetherna-bgMain">
@@ -217,6 +258,7 @@
     <canvas id="ember-canvas" aria-hidden="true"></canvas>
 
     <div id="page-root">
+    <nav class="hm2-qn" id="hm2-qn" aria-label="Ir a una sección"><a href="#origen">Origen</a><a href="#razas">Razas</a><a href="#clases">Clases</a><a href="#oficios">Oficios</a><a href="#dioses">Dioses</a><a href="#noticias">Noticias</a></nav>
     <!-- Hero Principal -->
     <section id="inicio" class="home-hero">
         <div class="home-hero__in reveal active">
@@ -237,6 +279,7 @@
             <div class="d20-halo"></div><div class="d20-shadow"></div>
             <div class="d20-stage"><svg class="d20" id="d20" viewBox="0 0 200 200"></svg></div>
         </div>
+        <div class="hm2-tools" id="hm2-tools"><button type="button" class="hm2-tool" id="hmReplay" title="Ver otra vez la escena de apertura">Ver la apertura</button><button type="button" class="hm2-tool" id="hmSnd"></button></div>
         <a href="#origen" class="home-hero__more" aria-label="Continuar">
             <span class="font-cinzel text-[9px] tracking-[0.3em] uppercase">Continuar</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
@@ -247,6 +290,50 @@
     <div class="separator-line max-w-4xl mx-auto px-4 z-10 relative reveal">
         <span class="separator-diamond font-cinzel">◆</span>
     </div>
+
+    <!-- Época actual -->
+    <section id="epoca-actual" class="hm2-epoca-wrap px-4 relative z-10">
+        <a href="epoca.html" class="hm2-epoca frame-panel gold-card reveal">
+            <span class="hm2-ep-l">
+                <span class="hm2-kicker">Época actual</span>
+                <span class="hm2-ep-t">Fase I &middot; Era de la Piedra</span>
+                <span class="hm2-ep-s">Piedra, pieles y plantas. Se sobrevive con lo que da el entorno.</span>
+            </span>
+            <span class="hm2-ep-r">
+                <span class="hm2-pips" role="img" aria-label="Fase 1 de 3 desbloqueada"><i class="on"></i><i></i><i></i></span>
+                <span class="hm2-link">Ver la línea del tiempo &rarr;</span>
+            </span>
+        </a>
+    </section>
+
+    <!-- Camino para nuevos jugadores -->
+    <section id="empieza" class="py-16 px-4 max-w-6xl mx-auto relative z-10">
+        <div class="text-center mb-12 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">NUEVOS JUGADORES</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">EMPIEZA AQUÍ</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+        <ol class="hm2-steps stagger-group">
+            <li class="reveal frame-panel gold-card">
+                <span class="hm2-n" aria-hidden="true">1</span>
+                <h3 class="font-cinzel text-lg font-bold text-aetherna-goldLight">Entiende el mundo</h3>
+                <p class="font-garamond text-aetherna-textSoft">Cómo cayó el cosmos y de qué cenizas nace Aetherna.</p>
+                <a href="lore.html" class="hm2-btn">Abrir el Lore</a>
+            </li>
+            <li class="reveal frame-panel gold-card">
+                <span class="hm2-n" aria-hidden="true">2</span>
+                <h3 class="font-cinzel text-lg font-bold text-aetherna-goldLight">Elige tu linaje</h3>
+                <p class="font-garamond text-aetherna-textSoft">Once estirpes con su propio carácter y su habilidad de inicio.</p>
+                <span class="hm2-btns"><a href="razas.html" class="hm2-btn">Ver razas</a><a href="razas.html" class="hm2-btn alt" data-quiz="razas">Hacer el test</a></span>
+            </li>
+            <li class="reveal frame-panel gold-card">
+                <span class="hm2-n" aria-hidden="true">3</span>
+                <h3 class="font-cinzel text-lg font-bold text-aetherna-goldLight">Elige tu clase</h3>
+                <p class="font-garamond text-aetherna-textSoft">Doce sendas de combate y magia, con su tabla de niveles completa.</p>
+                <span class="hm2-btns"><a href="clases.html" class="hm2-btn">Ver clases</a><a href="clases.html" class="hm2-btn alt" data-quiz="clases">Hacer el test</a></span>
+            </li>
+        </ol>
+    </section>
 
     <!-- Lore (Resumen en Portada) -->
     <section id="origen" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
@@ -309,7 +396,7 @@
             </a>
             <a href="razas.html#infernal" class="reveal frame-panel gold-card p-6 block">
                 <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Infernal</h3>
-                <p class="font-garamond text-aetherna-textSoft text-sm">Parias con cornamentas</p>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Cornamentas e infiernos olvidados</p>
             </a>
         </div>
     </section>
@@ -355,6 +442,17 @@
         <div id="oficios-grid" class="grid md:grid-cols-3 gap-x-8 gap-y-28 pt-20 stagger-group"></div>
     </section>
 
+    <!-- Dioses -->
+    <section id="dioses" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+        <div class="text-center mb-12 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">PODERES DEL FIRMAMENTO</span>
+            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">LOS ONCE DIOSES</h2>
+            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
+        </div>
+        <div class="hm2-gods reveal" id="hm2-gods" tabindex="0" aria-label="Dioses de Aetherna (desliza para ver más)"></div>
+        <div class="text-center mt-8 reveal"><a href="dioses.html" class="gold-btn btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs font-cinzel">Abrir el tablero de los dioses</a></div>
+    </section>
+
     <!-- Noticias -->
     <section id="noticias" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
         <div class="text-center mb-16 reveal">
@@ -387,6 +485,7 @@
         <div class="discord-panel frame-panel reveal">
             <h2 class="font-title-deco text-2xl md:text-3xl text-aetherna-goldLight mb-4 tracking-wide">¿Listo para pertenecer al nuevo mundo?</h2>
             <p class="font-garamond text-aetherna-textSoft text-lg mb-8">Charla con otros jugadores, comparte tus partidas y entérate antes que nadie de las novedades del Códice.</p>
+            <p class="hm2-online" id="hm2-online" hidden><i></i><span><b>0</b> conectados ahora</span></p><br>
             <a href="https://discord.gg/gWMFjzKaPe" target="_blank" rel="noopener noreferrer"
                class="btn-primary-aetherna gold-btn inline-flex items-center gap-3 px-10 py-4 text-xs tracking-[0.25em]">
                 <span>Unirse a Discord</span>
@@ -406,6 +505,141 @@
 
     <script src="site.js?v=3"></script>
     <script data-page>
+(function () { /* aislado: así las páginas no chocan al navegar entre ellas */
+            // sonido de las animaciones: se puede silenciar (se recuerda) y respeta «entrar en silencio»
+            let fxSound = (() => { try { const v = localStorage.getItem('aetherna_intro_sound'); if (v !== null) return v === '1'; return sessionStorage.getItem('aetherna_sound') !== '0'; } catch (e) { return true; } })();
+            /* ===== Animaciones de entrada de cada oficio (canvas, una escena por oficio) ===== */
+            const OFX = (function () {
+                const TAU = Math.PI * 2, cl = (v, a, b) => Math.max(a === undefined ? 0 : a, Math.min(b === undefined ? 1 : b, v));
+                const lr = (a, b, k) => a + (b - a) * k, eo = k => 1 - Math.pow(1 - cl(k), 3), ei = k => Math.pow(cl(k), 3), ss = (a, b, t) => cl((t - a) / (b - a));
+                const R = seed => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+                const mix = (a, b, k) => 'rgb(' + [0, 1, 2].map(i => Math.round(lr(a[i], b[i], cl(k)))).join(',') + ')';
+                const rgba = (a, al) => 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + al + ')';
+                function sparks(n, seed, vmin, vmax, life, amin, amax) { const r = R(seed); return Array.from({ length: n }, () => ({ a: lr(amin === undefined ? 0 : amin, amax === undefined ? TAU : amax, r()), v: lr(vmin, vmax, r()), l: life * (.6 + .4 * r()), s: .5 + r() * 1.5, h: r(), rot: r() * TAU })); }
+                function burst(c, list, ox, oy, t0, t, g, col, mode, u) {
+                    list.forEach(p => {
+                        const k0 = t - t0; if (k0 < 0 || k0 > p.l) return; const k = 1 - k0 / p.l;
+                        const x = ox + Math.cos(p.a) * p.v * k0, y = oy + Math.sin(p.a) * p.v * k0 + g * k0 * k0 / 2;
+                        c.globalAlpha = k; c.fillStyle = c.strokeStyle = col(p.h);
+                        if (mode === 'streak') { const k2 = Math.max(0, k0 - .05), x2 = ox + Math.cos(p.a) * p.v * k2, y2 = oy + Math.sin(p.a) * p.v * k2 + g * k2 * k2 / 2; c.lineWidth = p.s * u * .3; c.beginPath(); c.moveTo(x2, y2); c.lineTo(x, y); c.stroke(); }
+                        else if (mode === 'chip') { c.save(); c.translate(x, y); c.rotate(p.rot + k0 * 6 * (p.h - .5)); c.fillRect(-p.s * u * .5, -p.s * u * .3, p.s * u, p.s * u * .6); c.restore(); }
+                        else { c.beginPath(); c.arc(x, y, Math.max(.5, p.s * u * .45 * k), 0, TAU); c.fill(); }
+                    }); c.globalAlpha = 1;
+                }
+                function glow(c, x, y, r, col, a) { if (r <= 0 || a <= 0) return; const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, rgba(col, a)); g.addColorStop(1, rgba(col, 0)); c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill(); }
+                function star(c, x, y, r, col, a) { if (r <= 0) return; c.save(); c.translate(x, y); c.globalAlpha = a; c.fillStyle = col; c.beginPath(); for (let i = 0; i < 8; i++) { const rr = i % 2 ? r * .18 : r, an = i * Math.PI / 4 - Math.PI / 2; c.lineTo(Math.cos(an) * rr, Math.sin(an) * rr); } c.closePath(); c.fill(); c.restore(); c.globalAlpha = 1; }
+                function ring(c, x, y, r, col, a, lw) { if (a <= 0 || r <= 0) return; c.globalAlpha = a; c.strokeStyle = col; c.lineWidth = lw; c.beginPath(); c.arc(x, y, r, 0, TAU); c.stroke(); c.globalAlpha = 1; }
+                // balanceo de una herramienta: ángulo en grados, sube/baja en cada golpe
+                function swing(t, T, up, hit) { let a = up; T.forEach(k => { if (t >= k - .3 && t < k) a = lr(up, hit, ei((t - (k - .3)) / .3)); else if (t >= k && t < k + .4) a = lr(hit, up, eo((t - k) / .4)); }); return a * Math.PI / 180; }
+                function shakeAmt(t, T, u) { let s = 0; T.forEach((k, i) => { const d = t - k; if (d >= 0 && d < .22) s += (1 - d / .22) * (.8 + i * .45) * u * .45; }); return s; }
+                const pick = (a, h) => a[Math.floor(h * a.length) % a.length];
+
+                // paleta según el estilo: Nebulosa (violeta cósmico) o Grimorio (ámbar y oro viejo)
+                let PAL = {};
+                function setPal() { const nb = document.documentElement.dataset.theme !== 'grimorio';
+                    PAL = nb ? { nb: 1, acc: [157, 108, 240], accL: [216, 196, 255], hot: [190, 150, 255], sa: [170, 140, 255], sb: [240, 230, 255], cs: 'rgb(196,160,255)', star: '#EADDFF' }
+                             : { nb: 0, acc: [224, 170, 90], accL: [255, 226, 160], hot: [255, 205, 90], sa: [255, 190, 70], sb: [255, 240, 170], cs: 'rgb(255,215,130)', star: '#FFE9A8' }; }
+                const SKY = (() => { const r = R(77); return { st: Array.from({ length: 80 }, () => ({ x: r(), y: r(), s: .3 + r() * .9, p: r() * 6, f: 1 + r() * 2 })), em: Array.from({ length: 34 }, () => ({ x: r(), d: r(), sp: 4 + r() * 8, s: .3 + r() * .7, ph: r() * 6 })) }; })();
+                function backdrop(c, t, W, H, u) {
+                    if (PAL.nb) { glow(c, W * (.18 + Math.sin(t * .5) * .03), H * (.3 + Math.cos(t * .4) * .03), W * .5, [120, 70, 220], .2); glow(c, W * (.86 - Math.sin(t * .45) * .03), H * .78, W * .45, [70, 90, 220], .16); glow(c, W * .6, H * .12, W * .35, [200, 90, 200], .08);
+                        SKY.st.forEach(s => { const k = ((s.p / 6 + t * (4 + s.f * 2.5 + s.s * 4) / 100) % 1), y = H * (1.02 - k * 1.05), x = s.x * W + Math.sin(t * 1.4 + s.p) * 3 * u;   // suben y se apagan, igual que las brasas del Grimorio
+                            c.globalAlpha = (1 - Math.abs(k * 2 - 1)) * (.55 + .45 * Math.sin(t * s.f * 2 + s.p)); c.fillStyle = '#EADDFF'; c.beginPath(); c.arc(x, y, s.s * u * .55, 0, TAU); c.fill(); }); }
+                    else { glow(c, W * .5, H * 1.02, W * .55, [200, 110, 40], .2); glow(c, W * .12, H * .2, W * .35, [120, 60, 20], .1);
+                        SKY.em.forEach(e => { const k = ((e.d + t * e.sp / 100) % 1), y = H * (1.02 - k * 1.05); c.globalAlpha = (1 - Math.abs(k * 2 - 1)) * .75; c.fillStyle = '#F0A24A'; c.beginPath(); c.arc(e.x * W + Math.sin(t * 1.6 + e.ph) * 3 * u, y, e.s * u * .4, 0, TAU); c.fill(); }); }
+                    c.globalAlpha = 1; }
+                const S = {};
+                const bez = (p0, p1, p2, k) => { const m = 1 - k; return [m * m * p0[0] + 2 * m * k * p1[0] + k * k * p2[0], m * m * p0[1] + 2 * m * k * p1[1] + k * k * p2[1]]; };
+                /* GÉNESIS: dos mundos en guerra chocan, sus cenizas caen y se reúnen en un mundo nuevo, con una hoguera */
+                S.genesis = { D: 3.6, title: 'AETHERNA', T: 1.15,
+                    init: u => { const r = R(701); return { ash: Array.from({ length: 90 }, () => ({ a: r() * TAU, v: 18 + r() * 52, s: .3 + r() * .9, h: r(), sw: (r() - .5) * 3, d: r() * .25 })), sp: sparks(30, 702, 14 * u, 70 * u, .9, 0, TAU), fr: sparks(18, 703, 3 * u, 10 * u, 1.2, -Math.PI * .85, -Math.PI * .15) }; },
+                    draw(c, t, s, W, H, u) {
+                        const cx = W / 2, cy = H * .44, T = S.genesis.T, sh = shakeAmt(t, [T, T + .12], u * 1.4);
+                        c.save(); c.translate(Math.sin(t * 95) * sh, Math.cos(t * 83) * sh);
+                        // dos mundos que se acercan
+                        const k = ei(ss(.1, T, t));
+                        if (t < T) { [[-1, [255, 190, 90], [255, 120, 40]], [1, [170, 130, 255], [90, 70, 230]]].forEach(o => { const p0 = [cx + o[0] * W * .5, cy - 16 * u], p1 = [cx + o[0] * W * .18, cy + 26 * u], p2 = [cx, cy]; const pos = bez(p0, p1, p2, k), r0 = lr(5, 11, k) * u;
+                            for (let i = 14; i > 0; i--) { const kk = Math.max(0, k - i * .02), q = bez(p0, p1, p2, kk); c.globalCompositeOperation = 'lighter'; glow(c, q[0], q[1], r0 * (1 - i * .05) * 1.8, o[2], .1 * (1 - i / 15)); }
+                            c.globalCompositeOperation = 'lighter'; glow(c, pos[0], pos[1], r0 * 3.4, o[2], .5); c.globalCompositeOperation = 'source-over';
+                            const g = c.createRadialGradient(pos[0] - r0 * .3, pos[1] - r0 * .3, 0, pos[0], pos[1], r0); g.addColorStop(0, rgba(o[1], 1)); g.addColorStop(1, rgba(o[2], 1)); c.fillStyle = g; c.beginPath(); c.arc(pos[0], pos[1], r0, 0, TAU); c.fill(); }); }
+                        // choque
+                        const d = t - T; c.globalCompositeOperation = 'lighter';
+                        if (d > 0) { glow(c, cx, cy, lr(10 * u, 90 * u, eo(d / .5)), [255, 245, 220], (1 - ss(0, .7, d)) * .95); [0, .14, .3].forEach(o => { const dd = d - o; if (dd > 0 && dd < 1) ring(c, cx, cy, lr(2 * u, 80 * u, eo(dd / 1)), 'rgb(255,226,170)', (1 - dd) * .7, 2.2 * u); }); burst(c, s.sp, cx, cy, T, t, 30 * u, h => mix([255, 180, 90], [255, 250, 230], h), 'streak', u); }
+                        c.globalCompositeOperation = 'source-over';
+                        // ceniza que cae y se reúne
+                        const kk = (t - T - .1) / 1.7; if (kk > 0) { s.ash.forEach(p => { const q = cl((kk - p.d) / (1 - p.d)), a = p.a + p.sw * q * 2.2, rr = lr(p.v * u * eo(q * 1.8), 12 * u, ss(.4, 1, q)); const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr * .8 + (1 - ss(0, .5, q)) * 0; c.globalAlpha = (1 - ss(.85, 1, q)) * .85; c.fillStyle = mix([200, 190, 180], [255, 190, 110], p.h * .7 + q * .3); c.beginPath(); c.arc(x, y, p.s * u * .5 * (1 - q * .4), 0, TAU); c.fill(); }); c.globalAlpha = 1; }
+                        // nace el mundo nuevo
+                        const w = eo(ss(T + .9, T + 1.9, t)); if (w > 0) { const R0 = 13 * u * w; c.globalCompositeOperation = 'lighter'; glow(c, cx, cy, R0 * 2.6, PAL.hot, .4 * w); c.globalCompositeOperation = 'source-over';
+                            const g = c.createRadialGradient(cx - R0 * .4, cy - R0 * .4, R0 * .1, cx, cy, R0 * 1.05); g.addColorStop(0, PAL.nb ? '#6B4BC0' : '#B8793A'); g.addColorStop(.6, PAL.nb ? '#2A1A66' : '#4E2D14'); g.addColorStop(1, '#07040E'); c.fillStyle = g; c.beginPath(); c.arc(cx, cy, R0, 0, TAU); c.fill();
+                            c.save(); c.beginPath(); c.arc(cx, cy, R0, 0, TAU); c.clip(); c.globalAlpha = .35; c.fillStyle = PAL.nb ? '#B9A0F0' : '#E8B77A'; [[-4, -3, 4.5], [3, 2, 3.4], [-1, 5, 2.6], [5, -5, 2.2]].forEach(m => { c.beginPath(); c.ellipse(cx + m[0] * u * w, cy + m[1] * u * w, m[2] * u * w, m[2] * u * w * .55, .5, 0, TAU); c.fill(); }); c.restore();
+                            c.strokeStyle = rgba(PAL.accL, .7 * w); c.lineWidth = .5 * u; c.beginPath(); c.arc(cx, cy, R0, -2.6, .6); c.stroke(); c.strokeStyle = rgba(PAL.accL, .25 * w); c.lineWidth = 1.8 * u; c.beginPath(); c.arc(cx, cy, R0 + .8 * u, -2.5, .5); c.stroke();
+                            // hoguera en lo alto del mundo
+                            const f = ss(T + 1.7, T + 2.3, t); if (f > 0) { const fx = cx, fy = cy - R0 - .2 * u; c.globalCompositeOperation = 'lighter'; glow(c, fx, fy - 2 * u, 8 * u * f, [255, 150, 50], .8 * f); c.globalCompositeOperation = 'source-over'; c.fillStyle = 'rgba(255,170,60,' + f + ')'; c.beginPath(); c.moveTo(fx - 1.3 * u * f, fy); c.quadraticCurveTo(fx - 1.2 * u * f, fy - 2.4 * u * f, fx + Math.sin(t * 11) * .4 * u, fy - 4.6 * u * f * (.9 + .1 * Math.sin(t * 13))); c.quadraticCurveTo(fx + 1.2 * u * f, fy - 2.4 * u * f, fx + 1.3 * u * f, fy); c.fill(); c.fillStyle = 'rgba(255,240,170,' + f + ')'; c.beginPath(); c.moveTo(fx - .6 * u * f, fy); c.quadraticCurveTo(fx, fy - 3 * u * f, fx + .6 * u * f, fy); c.fill(); c.globalCompositeOperation = 'lighter'; burst(c, s.fr, fx, fy - 2 * u, T + 1.9, t, -6 * u, h => mix([255, 150, 50], [255, 235, 170], h), 'dot', u * .7); c.globalCompositeOperation = 'source-over'; } }
+                        c.restore();
+                    } };
+
+                                /* ===== sonido de cada escena (sintetizado, sincronizado con la imagen) ===== */
+                const SND = {};
+                const nbuf = a => a._nb || (a._nb = (() => { const b = a.createBuffer(1, a.sampleRate * 2, a.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return b; })());
+                // ruido filtrado con barrido de frecuencia y envolvente
+                function nz(A, t, dur, type, f0, f1, g, att, q) { t = A.t0 + (t - A.t0) * A.k; const a = A.a, s = a.createBufferSource(); s.buffer = nbuf(a); s.loop = true; const f = a.createBiquadFilter(); f.type = type; f.Q.value = q || .9; f.frequency.setValueAtTime(f0, t); if (f1 && f1 !== f0) f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+                    const e = a.createGain(); att = att === undefined ? .02 : att; e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + Math.min(att, dur * .8)); e.gain.exponentialRampToValueAtTime(.0001, t + dur); s.connect(f); f.connect(e); e.connect(A.bus); s.start(t, Math.random()); s.stop(t + dur + .05); }
+                function tn(A, t, type, f0, f1, dur, g, att) { t = A.t0 + (t - A.t0) * A.k; const a = A.a, o = a.createOscillator(), e = a.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(f1, t + dur); att = att === undefined ? .008 : att;
+                    e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + att); e.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(e); e.connect(A.bus); o.start(t); o.stop(t + dur + .05); }
+                const bell = (A, t, f, g, dur) => [[1, 1], [2.76, .35], [5.4, .15]].forEach(p => tn(A, t, 'sine', f * p[0], 0, dur / p[0] ** .3, g * p[1], .004));
+                const metal = (A, t, f, g, dur) => [[1, 1], [2.32, .7], [4.25, .5], [6.63, .35], [9.38, .22]].forEach((p, i) => tn(A, t, 'sine', f * p[0], 0, dur * (1 - i * .13), g * p[1], .002));
+                const thud = (A, t, f, g, dur) => tn(A, t, 'sine', f * 1.9, f * .5, dur || .3, g, .003);
+                const blip = (A, t, f, g) => tn(A, t, 'sine', f, f * 1.9, .07, g, .004);
+                const tick = (A, t, g) => nz(A, t, .03, 'highpass', 3500, 0, g, .001, .7);
+                const swish = (A, t, dur, f0, f1, g) => nz(A, t, dur, 'bandpass', f0, f1, g, dur * .45, 1);
+                function crackle(A, t, dur, n, g, f) { const r = R(Math.floor(t * 1000) + n); for (let i = 0; i < n; i++) nz(A, t + r() * dur, .02 + r() * .03, 'bandpass', (f || 2500) * (.6 + r() * 1.4), 0, g * (.4 + r() * .6), .001, 1.2); }
+                const shim = (A, t, n, g, f0, span) => { const r = R(Math.floor(t * 777) + n); for (let i = 0; i < n; i++) bell(A, t + i * .07 + r() * .04, f0 * (1 + r() * span), g * (.5 + r() * .5), 1.1); };
+                // ruido continuo con modulación de volumen (fuego, agua, viento)
+                function bed(A, t, dur, type, f, g, lfoHz, lfoDepth) { dur *= A.k; t = A.t0 + (t - A.t0) * A.k; const a = A.a, s = a.createBufferSource(); s.buffer = nbuf(a); s.loop = true; const fl = a.createBiquadFilter(); fl.type = type; fl.frequency.value = f; const e = a.createGain(); e.gain.setValueAtTime(.0001, t); e.gain.exponentialRampToValueAtTime(g, t + Math.min(.35, dur / 3)); e.gain.setValueAtTime(g, t + dur - .4); e.gain.exponentialRampToValueAtTime(.0001, t + dur);
+                    if (lfoHz) { const l = a.createOscillator(), lg = a.createGain(); l.frequency.value = lfoHz; lg.gain.value = g * lfoDepth; l.connect(lg); lg.connect(e.gain); l.start(t); l.stop(t + dur + .05); } s.connect(fl); fl.connect(e); e.connect(A.bus); s.start(t, Math.random()); s.stop(t + dur + .05); }
+                const magic = (A, t, g) => { [1046.5, 1318.5, 1568, 2093, 2637, 3136].forEach((f, k) => tn(A, t + k * .07, 'sine', f, 0, 1.6, g / (1 + k * .25), .006)); };
+
+                SND.genesis = (A, t0) => { tn(A, t0 + .05, 'sine', 38, 90, 1.2, .1, .8); bed(A, t0 + .1, 1.1, 'lowpass', 300, .12, .9, .5); swish(A, t0 + .2, 1.0, 200, 3200, .13); tn(A, t0 + .3, 'sawtooth', 55, 180, .85, .04, .6);
+                    thud(A, t0 + 1.15, 44, .7, 1.0); nz(A, t0 + 1.15, .7, 'lowpass', 2400, 120, .45, .002, .8); nz(A, t0 + 1.2, 1.4, 'bandpass', 1100, 200, .13, .01, .9); crackle(A, t0 + 1.3, 1.1, 24, .1, 2200);
+                    shim(A, t0 + 1.6, 9, .05, 900, 1.4); swish(A, t0 + 1.9, 1.0, 3000, 400, .06);
+                    [130.8, 196, 261.6, 329.6].forEach((f, i) => tn(A, t0 + 2.05 + i * .06, 'triangle', f, 0, 2.1, .05 / (1 + i * .25), .5)); bell(A, t0 + 2.2, 784, .06, 2.0); magic(A, t0 + 2.3, .05); crackle(A, t0 + 2.85, .7, 14, .05, 2600); };
+                /* ===== motor: lienzo a pantalla completa, fundido, nombre y entrega ===== */
+                let cv, ctx, raf = 0, running = false, HINT = false;
+                function title(c, txt, W, H, u, a, color) {
+                    if (a <= 0) return; c.save(); c.globalAlpha = a; c.font = '700 ' + Math.max(18, 4.2 * u) + 'px Cinzel, "Times New Roman", serif'; c.textBaseline = 'middle';
+                    const sp = 1.3 * u, ws = [...txt].map(ch => c.measureText(ch).width), tot = ws.reduce((x, y) => x + y, 0) + sp * (txt.length - 1); let x = W / 2 - tot / 2, y = H * .8 + (1 - a) * 2 * u;
+                    c.shadowColor = color; c.shadowBlur = 0; c.fillStyle = '#F6E2B3'; [...txt].forEach((ch, i) => { c.fillText(ch, x, y); x += ws[i] + sp; });
+                    c.globalAlpha = a * .6; c.strokeStyle = color; c.lineWidth = .25 * u; c.beginPath(); c.moveTo(W / 2 - 14 * u, y + 4 * u); c.lineTo(W / 2 + 14 * u, y + 4 * u); c.stroke(); c.restore();
+                }
+                function frame(key, t, state, W, H, u) {
+                    const sc = S[key], c = ctx, gr = document.documentElement.dataset.theme === 'grimorio';
+                    c.setTransform(Math.min(2, devicePixelRatio || 1), 0, 0, Math.min(2, devicePixelRatio || 1), 0, 0); c.clearRect(0, 0, W, H);
+                    const bg = c.createRadialGradient(W / 2, H * .46, 0, W / 2, H * .46, Math.max(W, H) * .7); bg.addColorStop(0, gr ? '#1A0F07' : '#120B30'); bg.addColorStop(1, gr ? '#080503' : '#05030F'); c.fillStyle = bg; c.fillRect(0, 0, W, H);
+                    setPal(); backdrop(c, t, W, H, u); sc.draw(c, t, state, W, H, u); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+                    if (HINT) { c.save(); c.globalAlpha = ss(.5, 1, t) * (1 - ss(sc.D * .82, sc.D, t)) * .7; c.font = '600 ' + Math.max(11, 1.7 * u) + 'px Cinzel, serif'; c.textAlign = 'center'; c.fillStyle = '#CDBB95'; c.fillText('TOCA PARA SALTAR', W / 2, H - 3.2 * u); c.restore(); }
+                    title(c, sc.title, W, H, u, ss(sc.D * .55, sc.D * .78, t), gr ? 'rgb(224,170,90)' : 'rgb(157,108,240)');
+                }
+                const SND_G = { genesis: 1.5 };   // iguala el volumen entre escenas
+                function audioOn(key) {
+                    try { if (!fxSound) return null; const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+                        const a = new AC(); if (a.state === 'suspended') a.resume(); const cp = a.createDynamicsCompressor(), bus = a.createGain(); bus.gain.value = .55 * (SND_G[key] || 1); bus.connect(cp); cp.connect(a.destination); return { a, bus, k: 1, t0: 0 }; } catch (e) { return null; }
+                }
+                function play(key, done) {
+                    if (running || !S[key]) { done(); return; } running = true;
+                    if (!cv) { cv = document.createElement('canvas'); cv.id = 'of-fx'; cv.setAttribute('aria-hidden', 'true'); cv.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:90;opacity:0;transition:opacity .28s;cursor:pointer;touch-action:manipulation'; document.body.appendChild(cv); ctx = cv.getContext('2d'); }
+                    const dpr = Math.min(2, devicePixelRatio || 1), W = innerWidth, H = innerHeight, u = Math.min(W, H) / 100 * (W > 900 ? 1.15 : 1);
+                    cv.width = W * dpr; cv.height = H * dpr; cv.style.display = 'block'; void cv.offsetWidth; cv.style.opacity = '1';
+                    const sc = S[key], st = sc.init(u), t0 = performance.now(); let fin = false, A = audioOn(key);
+                    const k = 1; HINT = true;   // siempre la animación completa, con el aviso para saltarla
+                    if (A) { try { A.k = k; A.t0 = A.a.currentTime + .05; SND[key](A, A.t0); } catch (e) { A = null; } }
+                    const end = () => { if (fin) return; fin = true; cancelAnimationFrame(raf); done(); if (A) { const a = A.a, g = A.bus.gain; try { g.setValueAtTime(g.value, a.currentTime); g.linearRampToValueAtTime(0, a.currentTime + .25); } catch (e) {} setTimeout(() => { try { a.close(); } catch (e) {} }, 500); } cv.style.opacity = '0'; setTimeout(() => { cv.style.display = 'none'; running = false; }, 330); };
+                    cv.onclick = () => { end(); };
+                    const loop = now => { if (fin) return; const t = (now - t0) / 1000 / k; frame(key, Math.min(t, sc.D), st, W, H, u); if (t >= sc.D + .08 / k) end(); else raf = requestAnimationFrame(loop); };
+                    raf = requestAnimationFrame(loop);
+                }
+                const ping = () => { const A = audioOn('genesis'); if (!A) return; const t = A.a.currentTime + .03; bell(A, t, 1318.5, .07, 1); bell(A, t + .09, 1760, .06, 1); setTimeout(() => { try { A.a.close(); } catch (e) {} }, 1600); };
+                return { ping, play, S, SND, frame, _init: (c, w, h) => { ctx = c; }, setCtx: c => { ctx = c; } };
+            })();
+
         (function () {
             // ---- Dado de la portada: gira, se para en un número, espera y vuelve a girar ----
             (function () {
@@ -457,7 +691,7 @@
             // ---- Selección al azar: cada visita a la portada enseña otras razas y otras clases ----
             // Para añadir una raza o clase nueva a este sorteo, añádela a su lista (id = el del enlace: razas.html#id / clases.html#id).
             // Para cambiar cuántas salen, cambia el número de cada pintar(...). Los oficios (oficios.html#id) funcionan igual.
-            const RAZAS = [{"id": "engendro", "name": "Engendro", "tag": "Formas libres y exóticas"}, {"id": "mecarionte", "name": "Mecarionte", "tag": "Carne y metal antiguo"}, {"id": "bestia", "name": "Bestia", "tag": "Híbridos salvajes"}, {"id": "abisal", "name": "Abisal", "tag": "Tentáculos y ojos insondables"}, {"id": "profundos", "name": "Profundos", "tag": "Señores de las mareas"}, {"id": "celestial", "name": "Celestial", "tag": "Esencia de luz y sabiduría"}, {"id": "trasgoide", "name": "Trasgoide", "tag": "Fuerza bruta y robustez"}, {"id": "enanos", "name": "Enanos", "tag": "Maestros de la piedra y forja"}, {"id": "infernal", "name": "Infernal", "tag": "Parias con cornamentas"}, {"id": "elfo", "name": "Elfo", "tag": "Elegancia milenaria y arquería"}, {"id": "humano", "name": "Humano", "tag": "Versatilidad incansable"}];
+            const RAZAS = [{"id": "engendro", "name": "Engendro", "tag": "Formas libres y exóticas"}, {"id": "mecarionte", "name": "Mecarionte", "tag": "Carne y metal antiguo"}, {"id": "bestia", "name": "Bestia", "tag": "Híbridos salvajes"}, {"id": "abisal", "name": "Abisal", "tag": "Tentáculos y ojos insondables"}, {"id": "profundos", "name": "Profundos", "tag": "Señores de las mareas"}, {"id": "celestial", "name": "Celestial", "tag": "Esencia de luz y sabiduría"}, {"id": "trasgoide", "name": "Trasgoide", "tag": "Fuerza bruta y robustez"}, {"id": "enanos", "name": "Enanos", "tag": "Maestros de la piedra y forja"}, {"id": "infernal", "name": "Infernal", "tag": "Cornamentas e infiernos olvidados"}, {"id": "elfo", "name": "Elfo", "tag": "Elegancia milenaria y arquería"}, {"id": "humano", "name": "Humano", "tag": "Versatilidad incansable"}];
             const CLASES = [{"id": "barbaro", "name": "Bárbaro", "sub": "Luchador de Vanguardia"}, {"id": "bardo", "name": "Bardo", "sub": "Sonomancia"}, {"id": "luchador", "name": "Luchador", "sub": "Defensor Marcial"}, {"id": "monje", "name": "Monje", "sub": "Artista Marcial"}, {"id": "explorador", "name": "Explorador", "sub": "Tirador y Cazador"}, {"id": "artificiero", "name": "Artificiero", "sub": "Inventor y Apoyo Técnico"}, {"id": "picaro", "name": "Pícaro", "sub": "Asesino de un solo objetivo"}, {"id": "hechicero", "name": "Hechicero", "sub": "Artillería de Magia Innata"}, {"id": "brujo", "name": "Brujo", "sub": "Pactos y Maldiciones"}, {"id": "clerigo", "name": "Clérigo", "sub": "Sanador y Castigador Divino"}, {"id": "paladin", "name": "Paladín", "sub": "Defensor Sagrado y Sanador"}, {"id": "psionico", "name": "Psiónico", "sub": "Mente sobre Materia"}];
             const OFICIOS = [{"id": "alquimista", "name": "Alquimista", "sub": "Maestro de químicos y pócimas"}, {"id": "cocinero", "name": "Cocineros", "sub": "Artista culinario"}, {"id": "herrero", "name": "Herreros", "sub": "Maestro del metal y el fuego"}, {"id": "joyero", "name": "Joyeros", "sub": "Artista de las piedras preciosas"}, {"id": "herborista", "name": "Herboristas", "sub": "Recolector de plantas"}, {"id": "cazador", "name": "Cazadores", "sub": "Rastreador y depredador"}, {"id": "minero", "name": "Mineros", "sub": "Explorador del subsuelo"}, {"id": "pescador", "name": "Pescador", "sub": "Señor de ríos y mares"}, {"id": "lenador", "name": "Leñador", "sub": "Talador de bosques"}];
             const barajar = lista => {
@@ -529,6 +763,42 @@
                 c.addEventListener('pointerenter', () => { c.style.transitionDelay = '0s'; }, { once: true });
             });
 
+            // ---- Mejoras de portada ----
+            const HERO_INTRO = true;   // pon false para quitar la escena de apertura de la primera visita
+            const SND_KEYS = ['aetherna_intro_sound', 'aetherna_razas_sound', 'aetherna_clases_sound', 'aetherna_oficios_sound', 'aetherna_book_sound', 'aetherna_dice_sound'];
+            const reduceFx = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+            // escena de apertura (una vez por sesión, después de la puerta de entrada)
+            const heroEl = document.getElementById('inicio');
+            const playIntro = () => { if (reduceFx || !OFX.S.genesis) return; OFX.play('genesis', () => {}); };
+            try { if (HERO_INTRO && heroEl && !sessionStorage.getItem('aetherna_intro')) { let n = 0; const wait = () => { if (!document.body.contains(heroEl)) return; if (document.getElementById('entry-gate')) { if (n++ < 300) setTimeout(wait, 150); return; } sessionStorage.setItem('aetherna_intro', '1'); setTimeout(playIntro, 250); }; wait(); } } catch (e) {}
+            // sonido general de las animaciones (afecta a Razas, Clases, Oficios, Lore, Dioses y Época)
+            const tools = document.getElementById('hm2-tools'), snd = document.getElementById('hmSnd'), rep = document.getElementById('hmReplay');
+            const sndOn = () => { try { return SND_KEYS.every(k => localStorage.getItem(k) !== '0') && sessionStorage.getItem('aetherna_sound') !== '0'; } catch (e) { return true; } };
+            const paintSnd = () => { const on = sndOn(); snd.setAttribute('aria-pressed', on ? 'true' : 'false'); snd.title = on ? 'Silenciar el sonido de las animaciones en toda la web' : 'Activar el sonido de las animaciones en toda la web';
+                snd.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/>' + (on ? '<path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/>' : '<path d="M17 9l5 6M22 9l-5 6"/>') + '</svg><span>Efectos: ' + (on ? 'sí' : 'no') + '</span>'; };
+            if (snd) { paintSnd(); snd.addEventListener('click', () => { const on = !sndOn(); try { SND_KEYS.forEach(k => localStorage.setItem(k, on ? '1' : '0')); sessionStorage.setItem('aetherna_sound', on ? '1' : '0'); } catch (e) {} fxSound = on; paintSnd(); if (on) OFX.ping(); }); }
+            if (rep) rep.addEventListener('click', playIntro);
+            // las tarjetas del sorteo y los botones de test avisan a la página de destino para que reproduzca su animación o abra el test
+            ['razas-grid', 'clases-grid'].forEach(id => { const g = document.getElementById(id); if (g) g.addEventListener('click', ev => { const a = ev.target.closest('a[href*="#"]'); if (!a || ev.ctrlKey || ev.metaKey || ev.shiftKey) return; try { sessionStorage.setItem('aetherna_play', a.getAttribute('href').split('#')[1]); } catch (e) {} }, true); });
+            document.querySelectorAll('[data-quiz]').forEach(a => a.addEventListener('click', () => { try { sessionStorage.setItem('aetherna_quiz', a.dataset.quiz); } catch (e) {} }, true));
+            // dioses
+            const GODS = [['chassaria', 'Chassaria', 'Deidad mayor', 'Lujuria, Ira, Gula, Envidia…'], ['iasis', 'Iasis', 'Deidad mayor', 'Vida, muerte, naturaleza, caza'], ['irion', 'Irion', 'Deidad intermedia', 'Luz, Purificación, Guerra, Orden'], ['lothshi', 'Lothshi', 'Deidad mayor', 'Asesinato, Urdimbre, Sombras…'], ['baraka', 'Baraka', 'Deidad menor', 'Caos, destrucción, sufrimiento'], ['mushalee', 'Mushalee', 'Deidad intermedia', 'Agua, Tormenta, Caos, Aire'], ['serathovah', 'Serathovah', 'Deidad menor', 'Amor, Arte, Viaje, Protección'], ['zark', 'Zark', 'Deidad intermedia', 'Tiranía, Fuerza, Mal'], ['luminae', 'Luminae', 'Deidad intermedia', 'Noche, Espiritismo, Estrellas, Sueños'], ['vilza', 'Vilza', 'Deidad intermedia', 'Bien, Saber, Equilibrio'], ['zenelithca', 'Zenelithca', 'Deidad intermedia', 'Dolor, Terror, Urdimbre sombría…']];
+            const gbox = document.getElementById('hm2-gods');
+            if (gbox) gbox.innerHTML = GODS.map(g => '<a href="dioses.html" class="hm2-god frame-panel gold-card"><img src="fotos/' + g[0] + '.webp" alt="" loading="lazy" decoding="async" width="160" height="160" onerror="this.remove()"><b>' + g[1] + '</b><em>' + g[2] + '</em><span>' + g[3] + '</span></a>').join('');
+            // jugadores conectados en Discord (si el servidor tiene activada la invitación pública)
+            const dco = document.getElementById('hm2-online');
+            try { fetch('https://discord.com/api/v10/invites/gWMFjzKaPe?with_counts=true').then(r => r.ok ? r.json() : Promise.reject()).then(j => { const n = j && j.approximate_presence_count; if (n > 0 && dco) { dco.querySelector('b').textContent = n; dco.hidden = false; } }).catch(() => {}); } catch (e) {}
+            // menú rápido de secciones en móvil
+            const qn = document.getElementById('hm2-qn');
+            if (qn && heroEl && 'IntersectionObserver' in window) {
+                new IntersectionObserver(es => { qn.classList.toggle('show', !es[0].isIntersecting); }, { threshold: 0, rootMargin: '-60px 0px 0px 0px' }).observe(heroEl);
+                qn.addEventListener('click', ev => { const a = ev.target.closest('a'); if (!a) return; ev.preventDefault(); const t = document.querySelector(a.getAttribute('href')); if (t) t.scrollIntoView({ behavior: reduceFx ? 'auto' : 'smooth', block: 'start' }); });
+                const secs = [...qn.querySelectorAll('a')].map(a => [a, document.querySelector(a.getAttribute('href'))]);
+                window.addEventListener('scroll', () => { let act = null; secs.forEach(([a, s]) => { if (s && s.getBoundingClientRect().top < 140) act = a; }); secs.forEach(([a]) => a.classList.toggle('on', a === act)); }, { passive: true });
+            }
+            // fecha relativa de las noticias
+            const rel = iso => { const d = Date.parse(iso); if (!d) return ''; const dd = Math.floor((Date.now() - d) / 864e5); if (dd < 0) return ''; if (dd === 0) return 'hoy'; if (dd === 1) return 'ayer'; if (dd < 30) return 'hace ' + dd + ' días'; const m = Math.floor(dd / 30); if (m < 12) return 'hace ' + m + (m === 1 ? ' mes' : ' meses'); const y = Math.floor(dd / 365); return 'hace ' + y + (y === 1 ? ' año' : ' años'); };
+
             // ---- Últimos anuncios: las 3 noticias más recientes de noticias.json (la misma lista que usa noticias.html) ----
             const escH = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
             fetch('noticias.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(list => {
@@ -542,7 +812,7 @@
                         ${n.video ? '<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="rgba(11,8,36,.55)" stroke="#D9B46A" stroke-width="2"/><path d="M26 20l20 12-20 12z" fill="#F0D79E"/></svg>' : ''}
                     </span>
                     <span class="block p-6 sm:p-8">
-                        <span class="home-news-meta"><span class="home-news-tag">${escH(n.tag)}</span><time datetime="${escH(n.iso)}">${escH(n.date)}</time></span>
+                        <span class="home-news-meta"><span class="home-news-tag">${escH(n.tag)}</span><time datetime="${escH(n.iso)}">${escH(n.date)}</time><span class="hm2-rel">${rel(n.iso)}</span></span>
                         <h3 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight mb-2">${escH(n.title)}</h3>
                         <span class="font-garamond text-aetherna-textNormal text-base block leading-relaxed">${escH(n.summary)}</span>
                         <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Leer noticia &rarr;</span>
@@ -559,6 +829,7 @@
                 });
             }).catch(() => { /* si falla, se queda la noticia que ya está escrita en el HTML */ });
         })();
+})();
     </script>
 </body>
 </html>
