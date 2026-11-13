@@ -189,6 +189,18 @@
         .bk-toc b { min-width: 2.4rem; font: 700 .8rem 'Cinzel', serif; letter-spacing: .1em; color: rgb(var(--bk-a)); }
         .bk-toc span { flex: 1; }
         .bk-toc:hover { color: #FFF2CF; padding-left: .8rem; }
+        .bk-tp { font: 600 .72rem 'Cinzel', serif; letter-spacing: .1em; color: rgba(var(--bk-a), .7); }
+        .bk-cp { display: flex; flex-direction: column; }
+        .bk-cp > .bk-txt { flex: 0 0 auto; }
+        .bk-txt p { text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
+        .bk-txt b { color: #FFF2CF; font-weight: 700; }
+        .bk-run { flex: 0 0 auto; font: 600 .66rem 'Cinzel', serif; letter-spacing: .16em; text-transform: uppercase; color: rgba(var(--bk-a), .8); padding-bottom: .55rem; margin-bottom: 1.1rem; border-bottom: 1px solid rgba(var(--bk-a), .22); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .bk-pn { margin-top: auto; padding-top: .9rem; text-align: center; font: 600 .74rem 'Cinzel', serif; letter-spacing: .2em; color: rgba(var(--bk-a), .65); flex: 0 0 auto; }
+        .bk-cp .bk-fig { margin-top: 1.2rem; flex: 0 0 auto; }
+        #book .pg.fp .bk-fig img { height: 330px !important; }
+        @media (max-width: 640px) { #book .pg.fp .bk-fig img { height: 250px !important; } }
+        #book .pg .bk-fig img { height: 190px !important; max-height: none !important; width: 100%; object-fit: cover; display: block; }
+        @media (max-width: 640px) { #book .pg .bk-fig img { height: 150px !important; } }
         .bk-fin-in { text-align: center; max-width: 24rem; }
         .bk-orn { color: rgb(var(--bk-a)); font-size: 1.4rem; letter-spacing: .6em; margin-bottom: 1rem; }
 
@@ -363,7 +375,7 @@
                 </div>
             </section>
             <!-- Prólogo -->
-            <article class="pg lore-hover frame-panel p-6 sm:p-10">
+            <article data-pag class="pg lore-hover frame-panel p-6 sm:p-10">
                 <div class="rv flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
                     <span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">Prólogo</span>
                     <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-aetherna-goldLight">EL ORIGEN DE LA CREACIÓN</h2>
@@ -383,7 +395,7 @@
             </article>
 
             <!-- Capítulo 1 -->
-            <article class="pg lore-hover frame-panel p-6 sm:p-10">
+            <article data-pag class="pg lore-hover frame-panel p-6 sm:p-10">
                 <div class="rv flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
                     <span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">Capítulo 1</span>
                     <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-aetherna-goldLight">LA DESTRUCCIÓN DE LA VIDA</h2>
@@ -414,7 +426,7 @@
             </article>
 
             <!-- Capítulo 2 -->
-            <article class="pg lore-hover frame-panel p-6 sm:p-10">
+            <article data-pag class="pg lore-hover frame-panel p-6 sm:p-10">
                 <div class="rv flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
                     <span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">Capítulo 2</span>
                     <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-aetherna-goldLight">LA REDENCIÓN DE LOS DIOSES</h2>
@@ -444,7 +456,7 @@
             </article>
 
             <!-- Capítulo 3 -->
-            <article class="pg lore-hover frame-panel p-6 sm:p-10">
+            <article data-pag class="pg lore-hover frame-panel p-6 sm:p-10">
                 <div class="rv flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
                     <span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">Capítulo 3</span>
                     <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-aetherna-goldLight">LA NADA: LA SEMILLA DE LA DESTRUCCIÓN DE LA ÚLTIMA ESPERANZA</h2>
@@ -575,10 +587,11 @@
             const roman = ['P', '1', '2', '3', '4', '5', '6', '7', '8'];
             const chName = i => i === 0 ? 'Prólogo' : 'Capítulo ' + i;
             const titles = arts.map(a => { const h2 = a.querySelector('h2'); return h2 ? h2.textContent.trim() : ''; });
+            let P = [], chFirst = [0], TOTAL = 0;   // páginas de contenido, primera página de cada capítulo (1..), total
             const NC = arts.length;
             const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
             const mk = (cls, html, tag) => { const d = document.createElement(tag || 'div'); d.className = cls; if (html) d.innerHTML = html; return d; };
-            const KEY = 'aetherna_lore_cap';
+            const KEY = 'aetherna_lore_pg';
             const rd = () => { try { return +localStorage.getItem(KEY) || 0; } catch (e) { return 0; } };
             const wr = c => { try { localStorage.setItem(KEY, String(c)); } catch (e) {} };
 
@@ -676,7 +689,6 @@
             paintSnd(); bar.appendChild(sbtn);
             sbtn.addEventListener('click', () => { sndOn = !sndOn; try { localStorage.setItem('aetherna_book_sound', sndOn ? '1' : '0'); } catch (e) {} paintSnd(); if (sndOn) { AC(); sound('page'); } });
             let saved = rd();
-            arts.forEach(p => p.querySelectorAll('.reveal, .rv').forEach(e => e.classList.add('active')));
 
             // Sello rúnico en la portada
             const slot = cover.querySelector('.bk-sigil-slot');
@@ -735,10 +747,10 @@
             const ribbon = mk('bk-ribbon', '<span></span>', 'button'); ribbon.type = 'button';
             const rbLabel = mk('bk-rb-label', 'Continuar donde lo dejaste');
             function updateMark(atCover) {
-                if (saved >= 1) { ribbon.setAttribute('aria-label', 'Continuar en ' + chName(saved - 1) + ': ' + titles[saved - 1]); ribbon.title = 'Continuar: ' + chName(saved - 1) + ' · ' + titles[saved - 1]; }
-                book.classList.toggle('show-rb', !!atCover && saved >= 1);
+                if (saved >= 1 && P[saved - 1]) { const c = +P[saved - 1].dataset.ch; ribbon.setAttribute('aria-label', 'Continuar en ' + chName(c - 1) + ', página ' + saved); ribbon.title = 'Continuar: ' + chName(c - 1) + ' · pág. ' + saved; }
+                book.classList.toggle('show-rb', !!atCover && saved >= 1 && saved <= TOTAL);
             }
-            function save(c) { if (c >= 1) { saved = c; wr(c); } }
+            function save(n) { if (n >= 1 && n <= TOTAL) { saved = n; wr(n); } }
 
             // Puntos de la barra
             const dotEls = [];
@@ -749,21 +761,17 @@
                 b.addEventListener('click', () => goChapter(i));
                 dots.appendChild(b); dotEls.push(b);
             });
+            const chOf = n => (n >= 1 && n <= TOTAL) ? +P[n - 1].dataset.ch : -1;
             const setDots = list => dotEls.forEach((d, k) => d.setAttribute('aria-selected', list.indexOf(k) >= 0 ? 'true' : 'false'));
-
-            // Efecto dorado: la luz sigue al cursor
-            arts.forEach(c => c.addEventListener('pointermove', ev => {
-                const r = c.getBoundingClientRect();
-                c.style.setProperty('--mx', (ev.clientX - r.left) + 'px'); c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
-            }));
 
             const desk = matchMedia('(min-width: 1024px) and (min-height: 600px)');
             const isSpread = desk.matches;
             desk.addEventListener('change', e => { if (e.matches !== isSpread) location.reload(); });
-            let goChapter, step;   // goChapter(0..NC): portada o capítulo · step(+1/-1)
+            let goChapter = () => {}, step = () => {};   // goChapter(0..NC): portada o capítulo · step(+1/-1)
 
-            const hashChap = () => { const m = /^#cap-(\d+)$/.exec(location.hash); return m ? Math.min(NC, +m[1]) : 0; };
-            const setHash = c => { c = Math.min(NC, c); try { history.replaceState(null, '', c ? '#cap-' + c : location.pathname + location.search); } catch (e) {} };
+            const hashPage = () => { let m = /^#pag-(\d+)$/.exec(location.hash); if (m) return Math.max(0, Math.min(TOTAL, +m[1])); m = /^#cap-(\d+)$/.exec(location.hash); return m ? (chFirst[Math.min(NC, +m[1])] || 0) : 0; };
+            const setHash = n => { try { history.replaceState(null, '', n >= 1 && n <= TOTAL ? '#pag-' + n : location.pathname + location.search); } catch (e) {} };
+            let goPage = () => {};
 
             // Rueda / teclado / dedo, comunes a los dos modos
             let lock = 0, acc = 0, accT = 0, gTurned = false, lockUntil = t => { lock = t; };
@@ -786,7 +794,7 @@
                 const k = ev.key;
                 if (k === 'ArrowRight' || k === 'PageDown') { ev.preventDefault(); step(1); }
                 else if (k === 'ArrowLeft' || k === 'PageUp') { ev.preventDefault(); step(-1); }
-                else if (k === 'Home') goChapter(0); else if (k === 'End') goChapter(NC);
+                else if (k === 'Home') goChapter(0); else if (k === 'End') goPage(TOTAL);
             });
             let tx = 0, ty = 0, tt = 0;
             book.addEventListener('touchstart', ev => { const t = ev.touches[0]; tx = t.clientX; ty = t.clientY; tt = Date.now(); }, { passive: true });
@@ -796,14 +804,79 @@
             }, { passive: true });
             prev.addEventListener('click', () => step(-1));
             next.addEventListener('click', () => step(1));
-            ribbon.addEventListener('click', () => { if (saved >= 1) goChapter(saved); });
+            ribbon.addEventListener('click', () => { if (saved >= 1 && saved <= TOTAL) goPage(saved); });
+
+
+            /* ===================================================================
+               Paginación: el texto se reparte en hojas del tamaño exacto de la página
+               =================================================================== */
+            function paginate(mkProbe) {
+                const [probe, dispose] = mkProbe();
+                const HEAD = d => '<div class="rv flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20"><span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">' + d.badge + '</span><h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-aetherna-goldLight">' + d.title + '</h2></div>';
+                const RUN = d => '<div class="bk-run">' + d.badge + ' · ' + d.title + '</div>';
+                const FIG = f => '<div class="lore-lift relative frame-panel overflow-hidden group bk-fig"><img src="' + f.src + '" alt="' + f.alt + '"><div class="absolute inset-0 bg-gradient-to-t from-aetherna-bgMain/90 via-transparent to-transparent"></div><div class="absolute bottom-3 left-3 right-3 text-center"><span class="font-garamond italic text-xs text-aetherna-parchment drop-shadow">' + f.cap + '</span></div></div>';
+                const render = (el, r) => {
+                    el.innerHTML = (r.first ? HEAD(r.d) : RUN(r.d)) +
+                        (r.items.length ? '<div class="' + (r.first ? 'rv ' : '') + 'bk-txt font-garamond text-aetherna-textNormal text-base sm:text-lg space-y-4 leading-relaxed">' + r.items.map(p => '<p' + (p.c ? ' class="' + p.c + '"' : '') + '>' + p.h + '</p>').join('') + '</div>' : '') +
+                        (r.fig ? FIG(r.fig) : '') + '<div class="bk-pn">00</div>';
+                };
+                const fitsRec = r => { render(probe, r); return probe.scrollHeight <= probe.clientHeight + 1; };
+                const out = [], first = [0];
+                arts.forEach((a, ci) => {
+                    if (!a.hasAttribute('data-pag')) { a.dataset.ch = ci + 1; first[ci + 1] = out.length + 1; out.push(a); return; }
+                    const d = { badge: a.querySelector('span').textContent.trim(), title: a.querySelector('h2').textContent.trim() };
+                    const im = a.querySelector('img'), cp = a.querySelector('.lore-lift span');
+                    d.fig = im ? { src: im.getAttribute('src'), alt: im.getAttribute('alt') || '', cap: cp ? cp.innerHTML : '' } : null;
+                    const queue = [...a.querySelectorAll('.font-garamond > p')].map(p => ({
+                        h: p.innerHTML.replace(/\s+/g, ' ').trim().replace(/<strong[^>]*>(.*?)<\/strong>/g, (m, t) => t.split(' ').map(w => '<b>' + w + '</b>').join(' ')),
+                        c: p.className
+                    }));
+                    const recs = []; let isFirst = true;
+                    while (queue.length) {
+                        const r = { d, first: isFirst, items: [], fig: null };
+                        while (queue.length) {
+                            const p = queue[0];
+                            r.items.push(p);
+                            if (fitsRec(r)) { queue.shift(); continue; }
+                            r.items.pop();
+                            const w = p.h.split(' '); let lo = 0, hi = w.length - 1;
+                            while (lo < hi) {
+                                const m = (lo + hi + 1) >> 1;
+                                r.items.push({ h: w.slice(0, m).join(' '), c: p.c });
+                                const ok = fitsRec(r); r.items.pop();
+                                if (ok) lo = m; else hi = m - 1;
+                            }
+                            let k = lo; if (w.length - k < 5) k = Math.max(0, w.length - 5);
+                            if (!r.items.length) k = Math.max(k, 1);
+                            if (k >= 8 || !r.items.length) { r.items.push({ h: w.slice(0, k).join(' '), c: p.c }); queue[0] = { h: w.slice(k).join(' '), c: p.c }; }
+                            break;
+                        }
+                        recs.push(r); isFirst = false;
+                    }
+                    if (d.fig) { const L = recs[recs.length - 1]; L.fig = d.fig; if (!fitsRec(L)) { L.fig = null; recs.push({ d, first: false, items: [], fig: d.fig }); } }
+                    first[ci + 1] = out.length + 1;
+                    recs.forEach(r => { const el = document.createElement('article'); el.className = 'pg lore-hover frame-panel p-6 sm:p-10 bk-cp'; el.dataset.ch = ci + 1; render(el, r); if (!r.items.length) el.classList.add('fp'); out.push(el); });
+                    a.remove();
+                });
+                dispose();
+                out.forEach((el, i) => {
+                    let pn = el.querySelector('.bk-pn');
+                    if (!pn) { pn = mk('bk-pn', '', 'div'); pn.style.marginTop = '1.4rem'; el.appendChild(pn); }
+                    pn.textContent = i + 1;
+                    el.querySelectorAll('.reveal, .rv').forEach(e => e.classList.add('active'));
+                    el.addEventListener('pointermove', ev => { const r = el.getBoundingClientRect(); el.style.setProperty('--mx', (ev.clientX - r.left) + 'px'); el.style.setProperty('--my', (ev.clientY - r.top) + 'px'); });
+                });
+                P = out; chFirst = first; TOTAL = out.length;
+            }
 
             /* ===================================================================
                MODO 1 · una sola página (móvil y pantallas pequeñas)
                =================================================================== */
             function initSingle() {
+                paginate(() => { const pr = mk('pg lore-hover frame-panel p-6 sm:p-10 bk-cp', '', 'article'); book.appendChild(pr); return [pr, () => pr.remove()]; });
+                P.forEach(p => book.appendChild(p));
                 const runeP = runePage(false); book.appendChild(runeP);
-                const pages = [cover].concat(arts, [runeP, backc]), N = pages.length;
+                const pages = [cover].concat(P, [runeP, backc]), N = pages.length;
                 const board = mk('bk-board', '<span class="bk-corner tr"></span><span class="bk-corner br"></span>');
                 const spine = mk('bk-spine', '<i style="top:11%"></i><i style="top:17%"></i><i style="top:83%"></i><i style="top:89%"></i>');
                 book.prepend(board, spine, mk('bk-edge-r'), mk('bk-edge-b'));
@@ -830,8 +903,8 @@
                     }
                     const c = pages[i]; c.scrollTop = 0; c.classList.remove('enter'); void c.offsetWidth;
                     if (!dir) c.classList.add('enter');
-                    setDots([i]); prev.disabled = i === 0; next.disabled = i === N - 1;
-                    if (i) save(Math.min(i, NC));
+                    setDots(i === 0 ? [0] : [chOf(i)]); prev.disabled = i === 0; next.disabled = i === N - 1;
+                    if (i) save(i);
                     updateMark(i === 0); setHash(i);
                 }
                 function go(i) {
@@ -841,10 +914,10 @@
                     const dir = cur < 0 ? 0 : (i > cur ? 1 : -1);
                     render(i, dir); cur = i;
                 }
-                goChapter = go; step = d => go(cur + d);
+                goChapter = c => go(c === 0 ? 0 : chFirst[Math.min(NC, c)]); goPage = n => go(Math.max(1, Math.min(TOTAL, n))); step = d => go(cur + d);
                 rewindBook = () => { if (cur !== N - 1 || Date.now() < lock) return; lockUntil(Date.now() + 1200); rewind(() => { render(0, 0); cur = 0; }, '', '', 2400); };
                 const open = document.getElementById('bk-open'); if (open) open.addEventListener('click', () => go(1));
-                const h0 = hashChap(); render(h0, 0); cur = h0;
+                const h0 = hashPage(); render(h0, 0); cur = h0;
             }
 
             /* ===================================================================
@@ -852,10 +925,11 @@
                =================================================================== */
             function initSpread() {
                 book.classList.add('sp');
+                paginate(() => { const w = mk('bk-leaves'), lf = mk('lf'), fc = mk('fc front'), pr = mk('pg lore-hover frame-panel p-6 sm:p-10 bk-cp', '', 'article'); fc.append(pr); lf.append(fc); w.append(lf); book.append(w); return [pr, () => w.remove()]; });
                 // Páginas extra: índice (reverso de la tapa) y final (reverso de la última hoja)
                 const idx = mk('pg bk-index lore-hover frame-panel', '<div class="bk-idx-in"><span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">ÍNDICE</span>' +
                     '<h2 class="font-cinzel font-bold text-aetherna-goldLight mt-4">LAS CRÓNICAS</h2><ol>' +
-                    arts.map((a, i) => '<li><button type="button" class="bk-toc" data-c="' + (i + 1) + '"><b>' + roman[i] + '</b><span>' + titles[i] + '</span></button></li>').join('') + '</ol></div>', 'section');
+                    arts.map((a, i) => '<li><button type="button" class="bk-toc" data-c="' + (i + 1) + '"><b>' + roman[i] + '</b><span>' + titles[i] + '</span><i class="bk-tp">' + chFirst[i + 1] + '</i></button></li>').join('') + '</ol></div>', 'section');
                 const fin = runePage(true);
                 fin.querySelector('.bk-closebtn').addEventListener('click', () => setS(NL));
                 idx.addEventListener('click', e => { const b = e.target.closest('.bk-toc'); if (b) goChapter(+b.dataset.c); });
@@ -864,9 +938,12 @@
                 const board = mk('bk-board', '<span class="bk-corner tr"></span><span class="bk-corner br"></span><span class="bk-corner tl"></span><span class="bk-corner bl"></span>');
                 const wrap = mk('bk-leaves');
                 const blank = mk('pg bk-blank lore-hover frame-panel', '<div class="bk-orn">\u2726</div>', 'section');
-                const pairs = [[cover, idx], [arts[0], arts[1]], [arts[2], arts[3]], [arts[4], arts[5]], [fin, backc]];
+                const SEQ = P.concat(P.length % 2 ? [blank, fin] : [fin]);   // tras la tapa y el índice; con la contraportada el total ha de ser par
+                const pairs = [[cover, idx]];
+                for (let j = 0; j + 1 < SEQ.length; j += 2) pairs.push([SEQ[j], SEQ[j + 1]]);
+                pairs.push([SEQ[SEQ.length - 1], backc]);
                 const leaves = pairs.map(([f, b], k) => {
-                    const el = mk('lf'), ff = mk('fc front' + (k === 0 ? ' cvf' : '')), bf = mk('fc back' + (k === 4 ? ' bcv' : ''));
+                    const el = mk('lf'), ff = mk('fc front' + (k === 0 ? ' cvf' : '')), bf = mk('fc back' + (k === pairs.length - 1 ? ' bcv' : ''));
                     ff.append(f, mk('sh')); bf.append(b, mk('sh')); el.append(ff, bf); wrap.append(el);
                     return { el, f: ff.querySelector('.sh'), b: bf.querySelector('.sh') };
                 });
@@ -875,18 +952,19 @@
                 book.prepend(board, mk('bk-edge-r'), mk('bk-edge-l'), mk('bk-edge-b'));
                 book.append(wrap, mk('bk-gl'), mk('bk-gr'), castR, castL, burst, ribbon, rbLabel);
 
-                const NL = leaves.length;            // 4 hojas: tapa + 3
-                const SP_OF = [0, 1, 2, 2, 3, 3, 4];     // capítulo → doble página
-                const CH_OF = [[0], [1], [2, 3], [4, 5], [6], []];
+                const NL = leaves.length;            // hojas: tapa + las de contenido
+                const spreadOf = n => n % 2 ? (n + 1) / 2 : n / 2 + 1;   // página n → doble página en la que se ve
                 let s = 0;
                 const clamp = v => Math.max(0, Math.min(NL, v));
                 function stat() {
                     leaves.forEach((l, k) => { l.el.classList.toggle('flipped', k < s); l.el.style.zIndex = k < s ? 10 + k : 50 - k; });
                     book.classList.toggle('closed', s === 0); book.classList.toggle('closed-end', s === NL);
                     book.style.setProperty('--r', NL - s); book.style.setProperty('--l', s);
-                    setDots(CH_OF[s]); prev.disabled = s === 0; next.disabled = s === NL;
-                    const c = s === 0 ? 0 : (s >= 5 ? NC : CH_OF[s][0]); if (c) save(c);
-                    updateMark(s === 0); setHash(c);
+                    const nr = 2 * s - 1, nl = 2 * s - 2;     // páginas visibles (derecha / izquierda)
+                    const vis = s === 0 ? [0] : [chOf(nl), chOf(nr)].filter((v, k, a) => v > 0 && a.indexOf(v) === k);
+                    setDots(vis); prev.disabled = s === 0; next.disabled = s === NL;
+                    const n = s === 0 || s === NL ? 0 : (nr <= TOTAL ? nr : nl); if (n) save(n);
+                    updateMark(s === 0); setHash(n);
                 }
                 const FW0 = [{ transform: 'rotateY(0deg) skewY(0deg)' }, { transform: 'rotateY(-7deg) skewY(-.4deg)', offset: .13 }, { transform: 'rotateY(-72deg) skewY(-1.2deg)', offset: .5 }, { transform: 'rotateY(-150deg) skewY(.9deg)', offset: .84 }, { transform: 'rotateY(-180deg) skewY(0deg)' }];
                 const BW0 = [{ transform: 'rotateY(-180deg) skewY(0deg)' }, { transform: 'rotateY(-150deg) skewY(.9deg)', offset: .16 }, { transform: 'rotateY(-72deg) skewY(-1.2deg)', offset: .5 }, { transform: 'rotateY(-7deg) skewY(-.4deg)', offset: .87 }, { transform: 'rotateY(0deg) skewY(0deg)' }];
@@ -918,14 +996,17 @@
                     lockUntil(now + SPIN + (list.length - 1) * 320 + (reduce ? 120 : (list.indexOf(0) >= 0 ? 2000 : 1500)));
                     if (opening) setTimeout(() => { burst.classList.remove('on'); void burst.offsetWidth; burst.classList.add('on'); setTimeout(() => burst.classList.remove('on'), 1950); }, SPIN);
                 }
-                goChapter = c => setS(c === 0 ? 0 : SP_OF[Math.min(NC, c)]);
+                goChapter = c => setS(c === 0 ? 0 : spreadOf(chFirst[Math.min(NC, c)])); goPage = n => setS(spreadOf(Math.max(1, Math.min(TOTAL, n))));
                 rewindBook = () => { if (s !== NL || Date.now() < lock) return; lockUntil(Date.now() + 1200); rewind(() => setS(0, true), 'translateX(25%)', 'translateX(-25%)', 2600); };
                 step = d => setS(s + d);
                 const open = document.getElementById('bk-open'); if (open) open.addEventListener('click', () => setS(1));
-                const h0 = hashChap(); if (h0) { s = SP_OF[h0]; } stat();
+                const h0 = hashPage(); if (h0) { s = spreadOf(h0); } stat();
             }
 
-            (isSpread ? initSpread : initSingle)();
+            const dims = [innerWidth, innerHeight]; let rzT = 0;
+            addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => { if (!book.isConnected) return; if (innerWidth !== dims[0] || Math.abs(innerHeight - dims[1]) > 120) location.reload(); }, 500); });
+            const ready = Promise.race([document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve(), new Promise(r => setTimeout(r, 1800))]);
+            ready.then(() => { if (book.isConnected) (isSpread ? initSpread : initSingle)(); });
         })();
     </script>
 </body>
