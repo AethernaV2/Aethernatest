@@ -76,6 +76,8 @@
         .dz-wrap { position: relative; width: 100%; }
         .dz-topbar { display: flex; align-items: flex-end; justify-content: flex-end; margin-bottom: .6rem; }
         .dz-snd { padding: .45rem .8rem; font: 700 9.5px 'Cinzel', serif; letter-spacing: .2em; text-transform: uppercase; color: #CDBB98; background: var(--dz-frame); border: 1px solid var(--dz-line); cursor: pointer; transition: color .2s, box-shadow .2s; }
+        .dz-nav { display: flex; justify-content: space-between; gap: .8rem; flex-wrap: wrap; margin: 1.1rem 0; }
+        .dz-nav .dz-snd { padding: .6rem 1rem; font-size: 10.5px; }
         .dz-snd:hover { color: #FFF2CF; box-shadow: 0 0 12px rgba(var(--dz-glow), .4); }
         .dz-snd[aria-pressed="false"] { opacity: .65; }
         .dz-start { cursor: default; flex-direction: column; gap: 4px; }
@@ -207,6 +209,7 @@
             <div class="dz-wrap" id="dz-wrap">
             <div class="dz-topbar">
                 <button type="button" class="dz-snd" id="dz-snd" aria-pressed="true" title="Activar o quitar el sonido del dado"></button>
+                <button type="button" class="dz-snd" id="dz-anim" aria-pressed="true" title="Activar o quitar las animaciones del dado y de la ficha"></button>
             </div>
             <div class="dz-board" id="dz-board" role="group" aria-label="Mapa de los dioses">
                 <div class="dz-tile dz-start" id="dz-pad" aria-hidden="true"><span class="n">0</span><img src="fotos/Logo.png" alt=""><span class="lb">Salida</span></div>
@@ -312,7 +315,10 @@
             if (!board) return;
             const $ = id => document.getElementById(id);
             const token = $('dz-token'), say = $('dz-say'), d20 = $('dz-d20'), numEl = $('dz-num'), panel = $('dz-panel'), pad = $('dz-pad'), wrap = $('dz-wrap');
-            const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const prefReduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const readAnim = () => { try { return localStorage.getItem('aetherna_dice_anim') !== '0'; } catch (e) { return true; } };
+            let animOn = readAnim();
+            let reduce = prefReduce || !animOn;   // sin animaciones: todo va directo
             const alive = () => !!document.getElementById('dz-board') && document.getElementById('dz-board') === board;
             const wait = ms => new Promise(r => setTimeout(r, ms));
             const rnd = (a, b) => a + ((Math.random() * (b - a + 1)) | 0);
@@ -378,6 +384,10 @@
             let sndOn = readSnd();
             const paintSnd = () => { sndBtn.textContent = 'Sonido: ' + (sndOn ? 'sí' : 'no'); sndBtn.setAttribute('aria-pressed', sndOn ? 'true' : 'false'); };
             paintSnd();
+            const animBtn = $('dz-anim');
+            const paintAnim = () => { animBtn.textContent = 'Animaciones: ' + (animOn ? 'sí' : 'no'); animBtn.setAttribute('aria-pressed', animOn ? 'true' : 'false'); };
+            paintAnim();
+            animBtn.addEventListener('click', () => { animOn = !animOn; reduce = prefReduce || !animOn; try { localStorage.setItem('aetherna_dice_anim', animOn ? '1' : '0'); } catch (e) {} paintAnim(); });
             const ac = () => { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (actx && actx.state === 'suspended') actx.resume().catch(() => {}); return actx; };
             // un «tac» seco de dado sobre madera: ráfaga de ruido filtrada + un cuerpo breve
             const tac = (t, vol, f) => {
@@ -480,10 +490,14 @@
                 toneB(B, 'sine', 90, 55, t + .72, .16, .9);
                 [660, 990, 1320, 1980].forEach((f, i) => toneB(B, 'sine', f, f, t + .8 + i * .07, .11 / (i + 1), 1.8));
             };
+            const navRow = k => {
+                const pk = (k + GODS.length - 2) % GODS.length + 1, nk = k % GODS.length + 1;
+                return '<div class="dz-nav"><button type="button" class="dz-snd dz-pn" data-go="-1">&lsaquo; ' + esc(GODS[pk - 1].n) + '</button><button type="button" class="dz-snd dz-pn" data-go="1">' + esc(GODS[nk - 1].n) + ' &rsaquo;</button></div>';
+            };
             const detailHtml = k => {
                 const g = GODS[k - 1];
                 const paras = g.d ? String(g.d).split(/\n\s*\n/).map(p => '<p>' + esc(p.trim()) + '</p>').join('') : '<p class="italic opacity-75">El Códice aún guarda silencio sobre este dios.</p>';
-                return '<a href="#" class="dz-back font-cinzel text-xs tracking-[0.14em] uppercase text-aetherna-goldMain hover:text-aetherna-goldHover">&larr; Todos los dioses</a>' +
+                return '<a href="#" class="dz-back font-cinzel text-xs tracking-[0.14em] uppercase text-aetherna-goldMain hover:text-aetherna-goldHover">&larr; Todos los dioses</a>' + navRow(k) +
                     '<article class="lore-hover frame-panel p-6 sm:p-10">' +
                     '<div class="rv flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">' +
                     '<span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">Dios ' + k + ' de ' + GODS.length + '</span>' +
@@ -495,11 +509,12 @@
                     (g.dom ? '<div class="dz-kv"><b>Dominios</b>' + esc(g.dom) + '</div>' : '') +
                     (g.p ? '<div class="dz-kv"><b>Plano natal</b>' + esc(g.p) + '</div>' : '') +
                     (g.s ? '<div class="dz-kv"><b>Símbolo</b>' + esc(g.s) + '</div>' : '') + '</div></article>' +
-                    '<a href="#" class="dz-back font-cinzel text-xs tracking-[0.14em] uppercase text-aetherna-goldMain hover:text-aetherna-goldHover" style="margin:1.6rem 0 0">&larr; Todos los dioses</a>';
+                    navRow(k) + '<a href="#" class="dz-back font-cinzel text-xs tracking-[0.14em] uppercase text-aetherna-goldMain hover:text-aetherna-goldHover" style="margin:.4rem 0 0">&larr; Todos los dioses</a>';
             };
             const detail = $('dz-detail'), layout = document.querySelector('.dz-layout');
-            const showDetail = k => {
-                savedY = window.scrollY;
+            let curDetail = 0;
+            const showDetail = (k, keepY) => {
+                curDetail = k; if (!keepY) savedY = window.scrollY;
                 detail.innerHTML = detailHtml(k); detail.hidden = false; layout.hidden = true; document.querySelector('main').classList.add('dz-reading');
                 detail.classList.remove('show'); void detail.offsetWidth; detail.classList.add('show');
                 window.scrollTo(0, 0);
@@ -522,8 +537,23 @@
                 ov.className = 'dz-cine out';
                 await wait(850); ov.remove(); anim = false;
             }
-            detail.addEventListener('click', e => { if (e.target.closest('.dz-back')) { e.preventDefault(); closeDetail(); } });
-            document.addEventListener('keydown', e => { if (e.key === 'Escape' && alive()) closeDetail(); });
+            // Pasar de un dios a otro sin salir de la ficha y sin animación: la ficha del tablero y la ficha del mapa quedan en ese dios
+            const gotoGod = dir => {
+                if (anim || !curDetail) return;
+                const k = (curDetail - 1 + dir + GODS.length) % GODS.length + 1;
+                cur = godPos[k - 1]; clearOn(); pad.classList.remove('on'); tiles[cur].classList.add('on');
+                say.innerHTML = 'Has llegado a <b>' + esc(GODS[k - 1].n.toUpperCase()) + '</b>.';
+                showGod(k); showDetail(k, true);
+            };
+            detail.addEventListener('click', e => {
+                if (e.target.closest('.dz-back')) { e.preventDefault(); closeDetail(); return; }
+                const pn = e.target.closest('.dz-pn'); if (pn) gotoGod(+pn.dataset.go);
+            });
+            document.addEventListener('keydown', e => {
+                if (!alive()) return;
+                if (e.key === 'Escape') closeDetail();
+                else if (!detail.hidden && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) gotoGod(e.key === 'ArrowRight' ? 1 : -1);
+            });
             const showSpecial = (pos, note) => {
                 const sp = spAt[pos];
                 swapIn('<div class="dz-mono">' + sigil() + '<span>&#10022;</span></div>' +
@@ -669,7 +699,8 @@
             async function goTo(target) {
                 if (busy) return;
                 setBusy(true); ac(); clearOn(); pad.classList.remove('on');
-                if (await travel(target)) await arrive(target, true);
+                if (!animOn) { cur = target; setToken(cur); d20.classList.remove('go'); await arrive(target, true); }
+                else if (await travel(target)) await arrive(target, true);
                 if (alive()) setBusy(false);
             }
 
