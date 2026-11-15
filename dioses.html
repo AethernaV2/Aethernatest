@@ -381,13 +381,13 @@
             const sndBtn = $('dz-snd');
             // Suena salvo que se entrara a la web «sin sonido» o se quite con el botón.
             const readSnd = () => { try { const v = localStorage.getItem('aetherna_dice_sound'); if (v !== null) return v === '1'; return sessionStorage.getItem('aetherna_sound') !== '0'; } catch (e) { return true; } };
-            let sndOn = readSnd();
+            let sndOn = readSnd() && animOn;   // sin animaciones tampoco hay sonido
             const paintSnd = () => { sndBtn.textContent = 'Sonido: ' + (sndOn ? 'sí' : 'no'); sndBtn.setAttribute('aria-pressed', sndOn ? 'true' : 'false'); };
             paintSnd();
             const animBtn = $('dz-anim');
             const paintAnim = () => { animBtn.textContent = 'Animaciones: ' + (animOn ? 'sí' : 'no'); animBtn.setAttribute('aria-pressed', animOn ? 'true' : 'false'); };
             paintAnim();
-            animBtn.addEventListener('click', () => { animOn = !animOn; reduce = prefReduce || !animOn; try { localStorage.setItem('aetherna_dice_anim', animOn ? '1' : '0'); } catch (e) {} paintAnim(); });
+            animBtn.addEventListener('click', () => { animOn = !animOn; reduce = prefReduce || !animOn; sndOn = animOn ? readSnd() : false; paintSnd(); try { localStorage.setItem('aetherna_dice_anim', animOn ? '1' : '0'); } catch (e) {} paintAnim(); });
             const ac = () => { if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (actx && actx.state === 'suspended') actx.resume().catch(() => {}); return actx; };
             // un «tac» seco de dado sobre madera: ráfaga de ruido filtrada + un cuerpo breve
             const tac = (t, vol, f) => {
@@ -509,7 +509,7 @@
                     (g.dom ? '<div class="dz-kv"><b>Dominios</b>' + esc(g.dom) + '</div>' : '') +
                     (g.p ? '<div class="dz-kv"><b>Plano natal</b>' + esc(g.p) + '</div>' : '') +
                     (g.s ? '<div class="dz-kv"><b>Símbolo</b>' + esc(g.s) + '</div>' : '') + '</div></article>' +
-                    navRow(k) + '<a href="#" class="dz-back font-cinzel text-xs tracking-[0.14em] uppercase text-aetherna-goldMain hover:text-aetherna-goldHover" style="margin:.4rem 0 0">&larr; Todos los dioses</a>';
+                    navRow(k);
             };
             const detail = $('dz-detail'), layout = document.querySelector('.dz-layout');
             let curDetail = 0;
